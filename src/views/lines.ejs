@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Draw Features</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/api/ol/ol.css" type="text/css" />
+    <script src="/api/ol/ol.js"></script>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+
+      .map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script>
+      let details = {
+        coordinates: {
+          lat: -1.2988205,
+          lng: 36.8160574,
+        },
+        url: "https://www.duniamaps.com/tile/{z}/{x}/{y}.png",
+        attribution:
+          'Map data & copy; <a href="https://duniamaps.com/">DuniaMaps</a>',
+      };
+
+      const iconFeature = new ol.Feature({
+        geometry: new ol.geom.Point(
+          ol.proj.fromLonLat([details.coordinates.lng, details.coordinates.lat])
+        ),
+        name: "My Location",
+      });
+
+      const iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 0.5],
+          anchorXUnits: "fraction",
+          anchorYUnits: "fraction",
+          src: "/api/images/icon.svg",
+        }),
+      });
+      iconFeature.setStyle(iconStyle);
+
+      const vectorSource = new ol.source.Vector({
+        features: [iconFeature],
+      });
+
+      const vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+      });
+
+      const raster = new ol.layer.Tile({
+        source: new ol.source.XYZ({
+          url:
+            "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}" +
+            "?access_token=pk.eyJ1IjoiZ2F0aG9nbzEiLCJhIjoiY2t0djhndnB4MGkzdDJucDg2bW5uNXNrcyJ9.mnbTMXxDrdYnTrb8Gr7_MA",
+        }),
+      });
+
+      const linelayer = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: "#ffcc33",
+            width: 2,
+          }),
+        }),
+      });
+
+      const mappedlines = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: lineStyle,
+      });
+
+      const pointLayer = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 6,
+            stroke: new ol.style.Stroke({
+              color: "rgba(200,0,200,1.0)",
+              width: 2,
+            }),
+            fill: new ol.style.Fill({
+              color: "rgba(255,255,0,1.0)",
+            }),
+          }),
+        }),
+      });
+
+      let points = {
+        type: "FeatureCollection",
+        features: [],
+        crs: {
+          type: "name",
+          properties: { name: "urn:ogc:def:crs:EPSG::4326" },
+        },
+      };
+
+      let lineFeature = {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            id: 1,
+            geometry: {
+              type: "LineString",
+              coordinates: [],
+            },
+          },
+        ],
+        crs: {
+          type: "name",
+          properties: { name: "urn:ogc:def:crs:EPSG::4326" },
+        },
+      };
+
+      let mappedFeature = {
+        type: "FeatureCollection",
+        features: [],
+        crs: {
+          type: "name",
+          properties: { name: "urn:ogc:def:crs:EPSG::4326" },
+        },
+      };
+
+      const view = new ol.View({
+        center: ol.proj.fromLonLat([
+          details.coordinates.lng,
+          details.coordinates.lat,
+        ]),
+        zoom: 15,
+      });
+
+      const map = new ol.Map({
+        layers: [raster, mappedlines, pointLayer, linelayer, vectorLayer],
+        target: "map",
+        view: view,
+      });
+
+      //coordinate array to be supplied from the mobile device in production
+      function plotLineString(lon, lat) {
+        const lonlat = [parseFloat(lon), parseFloat(lat)];
+        let pp = points.features;
+        pp.push({
+          type: "Feature",
+          id: pp.length,
+          geometry_name: "geom",
+          geometry: {
+            type: "Point",
+            coordinates: lonlat,
+          },
+        });
+        let pf = points;
+        pf.features = pp;
+        pointLayer.setSource(
+          new ol.source.Vector({
+            features: new ol.format.GeoJSON({
+              dataProjection: "EPSG:4326",
+              featureProjection: "EPSG:3857",
+            }).readFeatures(pf),
+          })
+        );
+      }
+
+      function adjustMarker(lng, lat) {
+        iconFeature.setGeometry(
+          new ol.geom.Point(ol.proj.fromLonLat([lng, lat]))
+        );
+        view.setCenter(ol.proj.fromLonLat([lng, lat]));
+        view.setZoom(18);
+      }
+
+     // loadData("sewerlines");
+
+      function loadData(type) {
+        fetch(`/api/${type}`)
+          .then((res) => {
+            if (res.ok) return res.json();
+            else throw Error("");
+          })
+          .then((data) => {
+            if (data?.length > 0) {
+              let features = [];
+              data.map((item, i) => {
+                let f = {
+                  type: "Feature",
+                  id: i,
+                  geometry: {
+                    type: "LineString",
+                    coordinates: [],
+                  },
+                };
+                let coords = [];
+                item?.Coordinates?.map((i) => {
+                  coords.push(i);
+                });
+
+                f.geometry.coordinates = coords;
+                features.push(f);
+              });
+              mappedFeature.features = features;
+              mappedlines.setSource(
+                new ol.source.Vector({
+                  features: new ol.format.GeoJSON({
+                    dataProjection: "EPSG:4326",
+                    featureProjection: "EPSG:3857",
+                  }).readFeatures(mappedFeature),
+                })
+              );
+            }
+          })
+          .catch((e) => {});
+      }
+
+      function lineStyle(feature, resolution) {
+        return new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: getRandomColor(),
+            width: 2,
+          }),
+        });
+      }
+
+      function fetchLineData(data) {
+        let d = lineFeature;
+        d.features[0].geometry.coordinates = data;
+        linelayer.setSource(
+          new ol.source.Vector({
+            features: new ol.format.GeoJSON({
+              dataProjection: "EPSG:4326",
+              featureProjection: "EPSG:3857",
+            }).readFeatures(d),
+          })
+        );
+        data?.map((item) => {
+          plotLineString(item[0], item[1]);
+        });
+      }
+
+      map.on("singleclick", function (evt) {
+        // var lonlat = ol.proj.transform(
+        //   evt.coordinate,
+        //   "EPSG:3857",
+        //   "EPSG:4326"
+        // );
+        //comment out the line below in production
+        //plotLineString(lonlat);
+      });
+
+      function getRandomColor() {
+        var letters = "0123456789ABCDEF";
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+    </script>
+  </body>
+</html>

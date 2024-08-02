@@ -1,0 +1,421 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/api/ol/ol.css" type="text/css" />
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    .map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    .ol-popup {
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #cccccc;
+      bottom: 12px;
+      left: -50px;
+      width: fit-content;
+    }
+
+    .ol-popup:after,
+    .ol-popup:before {
+      top: 100%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .ol-popup:after {
+      border-top-color: white;
+      border-width: 10px;
+      left: 48px;
+      margin-left: -10px;
+    }
+
+    .ol-popup:before {
+      border-top-color: #cccccc;
+      border-width: 11px;
+      left: 48px;
+      margin-left: -11px;
+    }
+
+    .ol-popup-closer {
+      text-decoration: none;
+      position: absolute;
+      top: 2px;
+      right: 8px;
+    }
+
+    .ol-popup-closer:after {
+      content: "✖";
+    }
+
+    #floating-panel {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      background-color: #fff;
+      padding: 5px;
+      border: 1px solid #999;
+      text-align: center;
+      font-family: "Roboto", "sans-serif";
+      line-height: 30px;
+      padding-left: 10px;
+
+      * {
+        font-size: small !important;
+      }
+    }
+
+    #directions-panel {
+      position: absolute;
+      display: none;
+      top: 64px;
+      left: 1.2em;
+      right: 1.2em;
+      z-index: 5;
+      background-color: #1d7d85;
+      padding: 8px 10px 8px 10px;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px #60606030;
+      text-align: center;
+      font-family: "Roboto", "sans-serif";
+      color: white;
+      grid-template-columns: auto 1fr;
+      line-height: 1.3;
+      gap: 10px;
+    }
+
+    #button {
+      position: absolute;
+      display: none;
+      bottom: 24px;
+      left: 10%;
+      right: 10%;
+      z-index: 5;
+      background-color: #1d7d85;
+      padding: 16px;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px #60606030;
+      text-align: center;
+      font-family: "Roboto", "sans-serif";
+      color: white;
+    }
+
+    img {
+      height: 44px;
+      width: 44px;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+      border: none;
+      outline: none;
+    }
+
+    .ol-zoom {
+      position: absolute;
+      top: auto;
+      left: auto;
+      bottom: 84px;
+      right: 10px;
+    }
+  </style>
+  <script src="/api/ol/ol.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuvt2CB5r1jLoA5k00VnDkJmrAM3cL52g"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
+  <script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
+  <title>Navigation App</title>
+</head>
+
+<body style="margin: 0; padding: 0">
+  <div class="instructions"></div>
+  <div id="map" class="map"></div>
+  <div id="directions-panel">
+    <img id="img" src="" alt="" />
+    <div>
+      <p id="content"></p>
+      <p id="duration"></p>
+    </div>
+
+  </div>
+  <button id="button">File Report</button>
+  <script type="text/javascript">
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    const directionsService = new google.maps.DirectionsService();
+    var map;
+    var view;
+    var carMarker;
+    var currentStep = 0;
+    var cStep = 0;
+    var startHeading = 360;
+    var startPoint = [37.1292776, -0.4713071];
+    var endPoint = [37.1292776, -0.4713071];
+    var wayPoints = [];
+
+    const linelayer = new ol.layer.Vector({
+      source: new ol.source.Vector(),
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: "blue",
+          width: 3,
+        }),
+      }),
+    });
+
+    var pointFeature = new ol.Feature({
+      geometry: new ol.geom.Point([37.1292776, -0.4713071]),
+    });
+
+    carMarker = new ol.layer.Vector({
+      source: new ol.source.Vector(),
+      style: new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 0.5],
+          scale: 0.09,
+          rotation: 0,
+          anchorXUnits: "fraction",
+          anchorYUnits: "fraction",
+          src: "/api/images/car.png",
+        }),
+      }),
+    });
+
+    function initMap() {
+      view = new ol.View({
+        center: [37.1292776, -0.4713071],
+        zoom: 15,
+        projection: "EPSG:4326",
+
+      });
+
+      map = new ol.Map({
+        target: "map",
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.XYZ({
+              url: "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+            }),
+          }),
+          linelayer,
+          carMarker,
+        ],
+        view: view,
+      });
+    }
+    initMap();
+    carMarker.getSource().addFeature(pointFeature);
+
+    function calculateAndDisplayRoute(oLat, oLng, dLat, dLng) {
+      directionsService
+        .route({
+          origin: {
+            lat: parseFloat(oLat),
+            lng: parseFloat(oLng),
+          },
+          destination: {
+            lat: parseFloat(dLat),
+            lng: parseFloat(dLng),
+          },
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: google.maps.UnitSystem.METRIC,
+        })
+        .then((response) => {
+          if (response.routes[0].legs[0].distance.value == 0) {
+
+
+            document.getElementById("directions-panel").style.display =
+              "grid";
+            document.getElementById(
+              "directions-panel"
+            ).innerHTML = `<img src="/api/images/destination.png"/><p>You have arrived!</p>`;
+            document.getElementById("button").style.display = "block";
+          } else {
+            const point = response.routes[0].legs[0].start_location
+            pointFeature.getGeometry().setCoordinates([point.lng(), point.lat()]);
+
+            directionsRenderer.setDirections(response);
+            drawRoute(response.routes[0].overview_path);
+            wayPoints = response.routes[0].overview_path;
+            showTextDirections(response.routes[0].legs[0].steps);
+          }
+        })
+        .catch((e) => {
+          window.alert("Directions request failed due to " + status);
+        });
+    }
+
+    calculateAndDisplayRoute(-0.4713071, 37.1292776, -0.4275473, 37.1460865); // web test
+
+    function showTextDirections(steps) {
+      console.log(steps)
+      document.getElementById("content").innerHTML = steps[0].instructions;
+      document.getElementById("duration").innerHTML = `${steps[0].distance.text}, ${steps[0].duration.text}`;
+      if (steps[0].maneuver == "turn-left") {
+        document.getElementById("img").src = "/api/images/turn-left.png";
+      } else if (steps[0].maneuver == "turn-right") {
+        document.getElementById("img").src = "/api/images/turn-right.png";
+      } else {
+        document.getElementById("img").src = "/api/images/head-forward.png";
+      }
+      document.getElementById("directions-panel").style.display = "grid";
+    }
+
+    function drawRoute(steps) {
+      if (currentStep >= steps.length) {
+        return;
+      }
+
+      let points = [];
+
+      steps.forEach((item, i) => {
+        points.push([item.lng(), item.lat()]);
+      });
+
+      let lineFeature = {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            geometry: { type: "LineString", coordinates: points },
+          },
+        ],
+        crs: {
+          type: "name",
+          properties: { name: "urn:ogc:def:crs:EPSG::4326" },
+        },
+      };
+
+      linelayer.setSource(
+        new ol.source.Vector({
+          features: new ol.format.GeoJSON().readFeatures(lineFeature),
+        })
+      );
+      var extent = linelayer.getSource().getExtent();
+      view.fit(extent, {
+        padding: [100, 100, 100, 100],
+      });
+    }
+
+    function simulateMovement(steps) {
+      if (cStep + 1 >= steps.length) {
+        return;
+      }
+
+      var pos = { lat: steps[cStep].lat(), lng: steps[cStep].lng() };
+      var pos1 = { lat: steps[cStep + 1].lat(), lng: steps[cStep + 1].lng() };
+      let heading = google.maps.geometry.spherical.computeHeading(pos, pos1);
+
+      if (heading < 0) {
+        heading = Math.abs(heading);
+      } else {
+        heading = 360 - heading;
+      }
+
+      heading = heading * (Math.PI / 180);
+      moveFeature([pos.lng, pos.lat], heading);
+
+      cStep++;
+      setTimeout(() => {
+        simulateMovement(steps);
+      }, 5000);
+    }
+
+    function adjustMarker(lng, lat) {
+      endPoint = [lng, lat];
+      var moveAnimation = new ol.featureAnimation.Point({
+        source: startPoint,
+        destination: endPoint,
+        duration: 1000,
+        easing: ol.easing.easeInOut,
+      });
+
+      map.beforeRender(moveAnimation);
+      pointFeature.getGeometry().setCoordinates([lng, lat]);
+      startPoint = [lng, lat];
+    }
+
+    function moveFeature(lat, lng, dLat, dLng, bearing) {
+      if (wayPoints.length == 0) return;
+      console.log(bearing);
+
+      pointFeature.set("rotation", bearing * (Math.PI / 180));
+
+      var pos = { lat: lat, lng: lng };
+      var pos1 = { lat: wayPoints[0].lat(), lng: wayPoints[0].lng() };
+      let heading = google.maps.geometry.spherical.computeHeading(pos, pos1);
+
+      if (heading < 0) {
+        heading = Math.abs(heading);
+      } else {
+        heading = 360 - heading;
+      }
+
+      heading = heading * (Math.PI / 180);
+      var coordinates = [lng, lat];
+      var duration = 5000; // Animation duration in milliseconds
+      var startTime = null;
+
+      directionsService
+        .route({
+          origin: {
+            lat: parseFloat(oLat),
+            lng: parseFloat(oLng),
+          },
+          destination: {
+            lat: parseFloat(dLat),
+            lng: parseFloat(dLng),
+          },
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: google.maps.UnitSystem.METRIC,
+        })
+        .then((response) => {
+          if (response.routes[0].legs[0].distance.value == 0) {
+            document.getElementById("directions-panel").style.display =
+              "grid";
+            document.getElementById(
+              "directions-panel"
+            ).innerHTML = `<img src="/api/images/destination.png"/><p>You have arrived!</p>`;
+            document.getElementById("button").style.display = "block";
+          } else {
+            const point = response.routes[0].legs[0].start_location
+            pointFeature.getGeometry().setCoordinates([point.lng(), point.lat()]);
+            directionsRenderer.setDirections(response);
+            drawRoute(response.routes[0].overview_path);
+            wayPoints = response.routes[0].overview_path;
+            showTextDirections(response.routes[0].legs[0].steps);
+          }
+        })
+        .catch((e) => {
+          window.alert("Directions request failed due to " + status);
+        });
+
+      view.animate({
+        center: coordinates,
+        zoom: 20,
+        rotation: heading,
+        duration: 2000,
+      });
+    }
+  </script>
+  <script></script>
+</body>
+
+</html>

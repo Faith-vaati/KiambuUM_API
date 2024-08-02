@@ -1,0 +1,177 @@
+const { Sequelize, QueryTypes } = require("sequelize");
+const sequelize = require("../../configs/connection");
+const MasterMeters = require("../../models/MasterMeters")(sequelize, Sequelize);
+
+MasterMeters.sync({ force: false });
+exports.createMasterMeter = (MasterMetersData) => {
+  return new Promise(async (resolve, reject) => {
+    MasterMeters.create(MasterMetersData).then(
+      async (result) => {
+        try {
+          const id = result.dataValues.ID;
+          const [data, dmeta] = await sequelize.query(
+            `UPDATE public."MasterMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+          );
+          resolve({
+            success: "Created successfully",
+            token: result.dataValues.ObjectID,
+          });
+        } catch (error) {
+          reject({ success: "Data saved without geometry" });
+        }
+      },
+      (err) => {
+        reject({ error: "MasterMeter creation failed" });
+      }
+    );
+  });
+};
+
+exports.findMasterMeterById = (id) => {
+  return new Promise((resolve, reject) => {
+    MasterMeters.findByPk(id).then(
+      (result) => {
+        if (result == null) {
+          reject({ status: 404, error: "MasterMeter not found" });
+        }
+        resolve(result);
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.updateMasterMeterById = (MasterMeterData, id) => {
+  return new Promise((resolve, reject) => {
+    MasterMeters.update(MasterMeterData, {
+      where: {
+        ID: id,
+      },
+    }).then(
+      (result) => {
+        resolve({ success: "Updated successfully", token: id });
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.deleteMasterMeterById = (id) => {
+  return new Promise((resolve, reject) => {
+    MasterMeters.destroy({
+      where: {
+        ID: id,
+      },
+    }).then(
+      (result) => {
+        if (result != 0) resolve({ success: "Deleted successfully!!!" });
+        else reject({ error: "MasterMeter does not exist!!!" });
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.findMasterMeterByObjectId = (id) => {
+  return new Promise((resolve, reject) => {
+    MasterMeters.findAll({
+      where: {
+        ObjectID: id,
+      },
+    }).then(
+      (result) => {
+        resolve(result);
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.findAllMasterMeters = () => {
+  return new Promise((resolve, reject) => {
+    MasterMeters.findAll({}).then(
+      (result) => {
+        resolve(result);
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.findMasterMetersPagnited = (offset) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [result, meta] = await sequelize.query(
+        `SELECT * FROM "MasterMeters" ORDER BY "updatedAt" DESC LIMIT 12 OFFSET ${offset}`
+      );
+      const [count, mdata] = await sequelize.query(
+        `SELECT COUNT(*) FROM "MasterMeters"`
+      );
+      resolve({
+        data: result,
+        total: count[0].count,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve Failed!" });
+    }
+  });
+};
+
+exports.findMasterMetersPagnitedSearch = (column, value, offset) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [result, metadata] = await sequelize.query(
+        `SELECT * FROM "MasterMeters" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
+      );
+      const [count, mdata] = await sequelize.query(
+        `SELECT COUNT(*) FROM "MasterMeters" WHERE "${column}" ILIKE '%${value}%'`
+      );
+      resolve({
+        data: result,
+        total: count[0].count,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve failed!" });
+    }
+  });
+};
+
+exports.totalMapped = (offset) => {
+  return new Promise((resolve, reject) => {
+    MasterMeters.findAll({}).then(
+      async (result) => {
+        const count = await MasterMeters.count();
+        resolve({
+          success: count,
+        });
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.getGeoJSON = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const users = await sequelize.query(
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."MasterMeters"`,
+        { type: QueryTypes.SELECT }
+      );
+      resolve(users);
+    } catch (error) {
+      reject({ error: "Retrieve failed" });
+    }
+  });
+};

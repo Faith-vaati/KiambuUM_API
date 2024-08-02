@@ -1,0 +1,57 @@
+const Sequelize = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  const Manholes = sequelize.define("Manholes", {
+    ID: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
+    ObjectID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+    },
+    Longitude: {
+      type: DataTypes.DECIMAL,
+      allowNull: true,
+    },
+    Latitude: {
+      type: DataTypes.DECIMAL,
+      allowNull: true,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY("POINT", 4326),
+      allowNull: true,
+    },
+    Name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Depth: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Material: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Route: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Remarks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    User: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  });
+  return Manholes;
+};
