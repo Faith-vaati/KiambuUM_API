@@ -11,20 +11,8 @@ exports.insert = (req, res) => {
   );
 };
 
-
-exports.enumeratorlogin = (req, res) => {
-  MobileModel.enumeratorLogin(res, req.body).then(
-    (result) => {
-      res.status(200).send(result);
-    },
-    (err) => {
-      res.status(203).send(err);
-    }
-  );
-};
-
-exports.meterreaderlogin = (req, res) => {
-  MobileModel.meterreaderLogin(res, req.body).then(
+exports.Login = (req, res) => {
+  MobileModel.Login(res, req.body).then(
     (result) => {
       res.status(200).send(result);
     },

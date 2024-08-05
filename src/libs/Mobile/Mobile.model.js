@@ -43,7 +43,7 @@ exports.createAuth = (MobileData) => {
   });
 };
 
-exports.enumeratorLogin = (res, MobileData) => {
+exports.Login = (res, MobileData) => {
   return new Promise(async (resolve, reject) => {
     //check email
     Mobile.findAll({
@@ -53,7 +53,9 @@ exports.enumeratorLogin = (res, MobileData) => {
       raw: true,
     }).then(
       async (result) => {
-        if (result[0].Role != "Enumerator")
+        console.log(result);
+
+        if (result.length === 0)
           return reject({ error: "This user does not exist!" });
         if (
           result[0].Role === "Enumerator" &&
@@ -63,55 +65,6 @@ exports.enumeratorLogin = (res, MobileData) => {
             return reject({ error: "Account disabled by Administrator" });
           }
 
-          const token = jwt.sign(
-            {
-              UserID: result[0].UserID,
-              Name: result[0].Name,
-              Email: result[0].Email,
-              Position: result[0].Position,
-              Department: result[0].Department,
-              Status: result[0].Status,
-              Role: result[0].Role,
-              Phone: result[0].Phone,
-            },
-            process.env.TOKEN_KEY_USR,
-            {
-              expiresIn: "2h",
-            }
-          );
-
-          res.cookie("cilbup_ksa", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-          });
-
-          resolve({ token: token, success: "Login successful" });
-        } else {
-          reject({ error: "User Authentication failed" });
-        }
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
-  });
-};
-
-exports.meterreaderLogin = (res, MobileData) => {
-  return new Promise(async (resolve, reject) => {
-    //check email
-    Mobile.findAll({
-      where: {
-        Email: MobileData.Email,
-      },
-      raw: true,
-    }).then(
-      async (result) => {
-        if (result.length == 0)
-          return reject({ error: "This user does not exist!" });
-        if (result[0].Role != "Meter Reader")
-          return reject({ error: "Unauthorized user role!" });
-        if (await bcrypt.compare(MobileData.Password, result[0].Password)) {
           const token = jwt.sign(
             {
               UserID: result[0].UserID,
