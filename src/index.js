@@ -3,8 +3,8 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const env = require("./configs/env");
 const Auth = require("./libs/Auth/Auth.route");
-const { Sequelize, Op } = require("sequelize");
 const sequelize = require("./configs/connection");
+const { Sequelize, Op } = require("sequelize");
 const CustomerBilling = require("./libs/CustomerBilling/CustomerBilling.route");
 const Manholes = require("./libs/Manholes/Manholes.route");
 const Mobile = require("./libs/Mobile/Mobile.route");
@@ -30,7 +30,7 @@ const Washouts = require("./libs/Washouts/Washouts.route");
 const PublicUsers = require("./libs/PublicUsers/PublicUsers.route");
 const ToolsList = require("./libs/ToolsList/ToolsList.route");
 const Categories = require("./libs/Categories/Categories.route");
-const IncidentResolution = require("./libs/IncidentResolution/IncidentResolution.route");
+const AssignedReports = require("./libs/AssignedReports/AssignedReports.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -129,6 +129,36 @@ app.get("/googlemap", (req, res) => {
   res.render("googleMap");
 });
 
+app.get("/geojson/:table", async (req, res) => {
+  const tableName = req.params.table;
+  try {
+    // Query to select only valid geometries
+    const [data, meta] = await sequelize.query(`
+      SELECT jsonb_build_object(
+        'type', 'FeatureCollection',
+        'features', jsonb_agg(jsonb_build_object(
+          'type', 'Feature',
+          'geometry', ST_AsGeoJSON(geom)::jsonb,
+          'properties', to_jsonb(row) - 'geom'
+        ))
+      ) AS data
+      FROM (
+        SELECT *
+        FROM "${tableName}"
+        WHERE ST_IsValid(geom) -- Filter for valid geometries
+      ) row;
+    `);
+
+    res.status(200).json(data[0].data);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(203)
+      .json({ error: "An error occurred while fetching GeoJSON data." });
+  }
+});
+
+
 Auth.AuthRoutes(app);
 Mobile.MobileRoutes(app);
 CustomerMeters.CustomersRoutes(app);
@@ -154,7 +184,7 @@ Washouts.WashoutsRoutes(app);
 PublicUsers.PublicUsersRoutes(app);
 ToolsList.ToolsListRoutes(app);
 Categories.CategoriesRoutes(app);
-IncidentResolution.IncidentResolutionRoutes(app);
+AssignedReports.AssignedReportRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(
@@ -180,7 +210,6 @@ app.get("/insert/:scheme/:start", (req, res) => {
       else throw Error("");
     })
     .then(async (data) => {
-
       let n = await createNew(data.jsonData);
       res.send({ Created: n });
     })

@@ -66,10 +66,9 @@ exports.loginAuth = (res, AuthData) => {
       raw: true,
     }).then(
       async (result) => {
-        if (
-          result.length != 0 &&
-          (await bcrypt.compare(AuthData.Password, result[0].Password))
-        ) {
+        if (result.length == 0)
+          return reject({ error: "User does not exist!" });
+        if (await bcrypt.compare(AuthData.Password, result[0].Password)) {
           if (!result[0].Status)
             return reject({ error: "Account disabled by administrator!" });
           if (await bcrypt.compare("123456", result[0].Password)) {

@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY("LINESTRING", 4326),
+      type: DataTypes.GEOMETRY("MultiLineString", 4326),
       allowNull: true,
     },
   });

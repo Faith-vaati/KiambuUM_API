@@ -90,12 +90,13 @@ exports.findAllReports = () => {
     try {
       const [data, metdata] =
         await sequelize.query(`SELECT "Reports"."Longitude","Reports"."Longitude", "Reports"."Latitude", "Reports"."Image", "Reports"."SerialNo", "Reports"."Type", "Reports"."Description", 
-         "Reports"."Location", "Reports"."Route", "Reports"."Name","Reports"."ReporterType", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
+         "Reports"."Location", "Reports"."Route", "Reports"."Name", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
         "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved" FROM "Reports" 
         LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar ORDER BY "DateReported"`);
-      resolve({data: data});
+      resolve({ data: data });
     } catch (error) {
+      console.log(error);
       reject({ error: "Retrieve Failed!" });
     }
   });
@@ -106,7 +107,7 @@ exports.findReportsPaginated = (type) => {
     try {
       const [results, metadata] = await sequelize.query(
         `SELECT "Reports"."SerialNo", "Reports"."Longitude", "Reports"."Latitude", "Reports"."Type", "Reports"."Description", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
-         "Reports"."Location", "Reports"."Route", "Reports"."Name","Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."ReporterType", "Reports"."updatedAt" AS "DateResolved", "Reports"."ID", "Reports"."Image" FROM "Reports" 
+         "Reports"."Location", "Reports"."Route", "Reports"."Name","Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved", "Reports"."ID", "Reports"."Image" FROM "Reports" 
         LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar WHERE "Reports"."Type" = '${type}'
          ORDER BY "DateReported" DESC`
@@ -390,11 +391,13 @@ exports.findReportByID = (id) => {
 };
 
 exports.updateReportByID = (ReportsData, id) => {
+  console.log(ReportsData);
+
   return new Promise(async (resolve, reject) => {
     try {
       const Images = `${ReportsData.Type}-${Date.now()}.png`;
       createFileFromBase64(ReportsData.TaskImage, Images);
-      ReportsData.Image = Images;
+      ReportsData.TaskImage = Images;
       Reports.update(ReportsData, {
         where: { ID: id },
       });
@@ -689,9 +692,8 @@ exports.findCharts = (start, end) => {
 exports.findAllReportsPaginated = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
-
       const [result, metadata] = await sequelize.query(
-        `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo", "Reports"."Name", "Reports"."Type", "Reports"."Description", "Reports"."ReporterType", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
+        `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo", "Reports"."Name", "Reports"."Type", "Reports"."Description", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
         "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved" FROM "Reports" 
         LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar ORDER BY "DateReported" DESC LIMIT 12 OFFSET ${offset}`
@@ -708,13 +710,12 @@ exports.findAllReportsPaginated = (offset) => {
   });
 };
 
-
 exports.searchReports = (col, val) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
         `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo",
-        "Reports"."Type", "Reports"."Description", "Reports"."ReporterType", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
+        "Reports"."Type", "Reports"."Description", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
         "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved"
         FROM "Reports" LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar
@@ -740,7 +741,7 @@ exports.paginatedSearchReports = (column, value, offset) => {
     try {
       const [result, metadata] = await sequelize.query(
         `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo", "Reports"."Name",
-        "Reports"."Type", "Reports"."Description", "Reports"."ReporterType", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
+        "Reports"."Type", "Reports"."Description",  "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
         "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved"
         FROM "Reports" LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar
@@ -778,10 +779,10 @@ exports.searchFacility = (value) => {
 
 exports.filterReports = (column, operator, value) => {
   return new Promise(async (resolve, reject) => {
-    try {      
+    try {
       const [result, metadata] = await sequelize.query(
         `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo",
-        "Reports"."Type", "Reports"."Description", "Reports"."ReporterType", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
+        "Reports"."Type", "Reports"."Description",  "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
         "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved"
         FROM "Reports" LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar
@@ -804,10 +805,10 @@ exports.filterReports = (column, operator, value) => {
 
 exports.paginatedFilterReports = (column, operator, value, offset) => {
   return new Promise(async (resolve, reject) => {
-    try {      
+    try {
       const [result, metadata] = await sequelize.query(
         `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo", "Reports"."Name",
-        "Reports"."Type", "Reports"."Description", "Reports"."ReporterType", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
+        "Reports"."Type", "Reports"."Description",  "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
         "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved"
         FROM "Reports" LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar

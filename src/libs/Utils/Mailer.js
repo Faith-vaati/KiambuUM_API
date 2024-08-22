@@ -1,8 +1,7 @@
-//send reply email
 const nodemailer = require("nodemailer");
 
 const transport = nodemailer.createTransport({
-  host: "smtp-mail.outlook.com",
+  host: "mail.dat.co.ke",
   port: 587,
   secure: false, // use TLS
   auth: {
@@ -10,24 +9,24 @@ const transport = nodemailer.createTransport({
     pass: process.env.password,
   },
   tls: {
-    ciphers: "SSLv3",
+    rejectUnauthorized: false,
   },
 });
 transport.verify(function (error, success) {
   if (error) {
+    console.log(error);
   } else {
+    console.log(success);
   }
 });
 
 function sendMail(subject, email, content) {
-  transport
-    .sendMail({
-      from: process.env.user,
-      to: email,
-      subject: subject,
-      html: content,
-    })
-    .catch((err) => console.log(err));
+  return transport.sendMail({
+    from: process.env.user,
+    to: email,
+    subject: subject,
+    html: content,
+  });
 }
 //send email
 

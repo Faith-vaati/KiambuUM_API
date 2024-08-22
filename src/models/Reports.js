@@ -67,26 +67,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    TaskImage: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    TaskRemark: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    ResolvedDate: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    ResolvedTime: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    ReporterType: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
   });
   return Reports;
 };
