@@ -4,9 +4,7 @@ const verifyToken = require("./VerifyToken");
 exports.MobileRoutes = function (app) {
   app.post("/mobile/register", [MobileController.insert]);
 
-  app.post("/mobile/login", [MobileController.enumeratorlogin]);
-
-  app.post("/mobile/meterreaderlogin", [MobileController.meterreaderlogin]);
+  app.post("/mobile/login", [MobileController.Login]);
 
   app.get("/mobile/logout", [MobileController.logout]);
 
