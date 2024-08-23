@@ -31,6 +31,7 @@ const PublicUsers = require("./libs/PublicUsers/PublicUsers.route");
 const ToolsList = require("./libs/ToolsList/ToolsList.route");
 const Categories = require("./libs/Categories/Categories.route");
 const AssignedReports = require("./libs/AssignedReports/AssignedReports.route");
+const BulkMeters = require("./libs/BulkMeters/BulkMeters.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -185,6 +186,7 @@ PublicUsers.PublicUsersRoutes(app);
 ToolsList.ToolsListRoutes(app);
 Categories.CategoriesRoutes(app);
 AssignedReports.AssignedReportRoutes(app);
+BulkMeters.BulkMetersRoute(app)
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(

@@ -1,5 +1,5 @@
 {
-  "name": "DAT-API",
+  "name": "dat-api",
   "version": "1.0.0",
   "description": "NARIGP PHASE II API",
   "main": "src/index.js",
