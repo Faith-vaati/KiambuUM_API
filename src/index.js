@@ -38,7 +38,6 @@ const Offtake = require("./libs/Offtake/Offtake.route");
 const SewerMainTrunk = require("./libs/SewerMainTrunk/SewerMainTrunk.route");
 const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
 
-
 const fetch = require("node-fetch");
 const path = require("path");
 const app = express();
@@ -164,7 +163,6 @@ app.get("/geojson/:table", async (req, res) => {
       .json({ error: "An error occurred while fetching GeoJSON data." });
   }
 });
-
 
 Auth.AuthRoutes(app);
 Mobile.MobileRoutes(app);
