@@ -32,6 +32,12 @@ const ToolsList = require("./libs/ToolsList/ToolsList.route");
 const Categories = require("./libs/Categories/Categories.route");
 const AssignedReports = require("./libs/AssignedReports/AssignedReports.route");
 const BulkMeters = require("./libs/BulkMeters/BulkMeters.route");
+const CustomerChamber = require("./libs/CustomerChamber/CustomerChamber.route");
+const ConnectionChamber = require("./libs/ConnectionChamber/ConnectionChamber.route");
+const Offtake = require("./libs/Offtake/Offtake.route");
+const SewerMainTrunk = require("./libs/SewerMainTrunk/SewerMainTrunk.route");
+const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
+
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -186,7 +192,12 @@ PublicUsers.PublicUsersRoutes(app);
 ToolsList.ToolsListRoutes(app);
 Categories.CategoriesRoutes(app);
 AssignedReports.AssignedReportRoutes(app);
-BulkMeters.BulkMetersRoute(app)
+BulkMeters.BulkMetersRoute(app);
+CustomerChamber.CustomerChamberRoute(app);
+ConnectionChamber.ConnectionChamberRoute(app);
+Offtake.OfftakeRoute(app);
+SewerMainTrunk.SewerMainTrunkRoute(app);
+TreatmentPlant.TreatmentPlantRoute(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(
