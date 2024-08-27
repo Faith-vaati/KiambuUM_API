@@ -22,8 +22,7 @@ module.exports = (sequelize, Datatypes) => {
         RecordTime: {
             type: Sequelize.DATE,
             allowNull: true
-        },
-       
+        },       
         Length: {
             type: Sequelize.FLOAT,
             allowNull: true
