@@ -1,4 +1,5 @@
-const Sequelize = require('sequelize')
+const Sequelize = require('sequelize');
+
 module.exports = (sequelize, Datatypes) => {
     const ConnectionChamber = sequelize.define("ConnectionChamber", {
         ID: {
@@ -7,90 +8,126 @@ module.exports = (sequelize, Datatypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        ObjectID: {
-            type: Sequelize.INTEGER,
-            allowNull: false
+        Name: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        RecordTime: {
-            type: Sequelize.DATE,
-            allowNull: true
+        RecTime: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
         Latitude: {
-            type: Sequelize.FLOAT,
-            allowNull: false
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
         Longitude: {
-            type: Sequelize.FLOAT,
-            allowNull: false
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
         Elevation: {
-            type: Sequelize.STRING,
-            allowNull: false
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
-        Chamber: {
-            type: Sequelize.INTEGER,
-            allowNull: true
+        OrthoHt: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
-        ChamberDimension: {
-            type: Sequelize.STRING,
-            allowNull: true
+        Chamber1: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        Dimensions: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
         Depth: {
-            type: Sequelize.FLOAT,
-            allowNull: true
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
-        No_of_Co_1: {
-            type: Sequelize.INTEGER,
-            allowNull: true
+        NoOfConnections: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
         Status: {
-            type: Sequelize.STRING,
-            allowNull: true
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
         Zone: {
-            type: Sequelize.INTEGER,
-            allowNull: true
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        YearConnection: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
         },
         Lateral: {
-            type: Sequelize.STRING,
-            allowNull: true
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        Manhole_1: {
-            type: Sequelize.INTEGER,
-            allowNull: true
+        Manhole: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
         LineDiameter: {
-            type: Sequelize.STRING,
-            allowNull: true
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        Connection: {
-            type: Sequelize.STRING,
-            allowNull: true
+        ConnectionType: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        ChamberAccessibility: {
-            type: Sequelize.STRING,
-            allowNull: true
+        Accessibility: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        ChamberCondition: {
-            type: Sequelize.STRING,
-            allowNull: true
+        Condition: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        Chamber_5: {
-            type: Sequelize.STRING,
-            allowNull: true
+        Installation: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
-        Inflitra_1: {
-            type: Sequelize.STRING,
-            allowNull: true
+        Inflitration: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
         Subzone: {
-            type: Sequelize.STRING,
-            allowNull: true
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Remarks: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
         Picture: {
-            type: Sequelize.STRING,
-            allowNull: true
+            type: Sequelize.STRING(254),
+            allowNull: true,
         },
+        Year: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        Chamber: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Type: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Size: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        PipeMaterial: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+    }, {
+        tableName: 'ConnectionChambers',
+        timestamps: true, // Sequelize will automatically manage createdAt and updatedAt
     });
+
     return ConnectionChamber;
 };
