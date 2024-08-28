@@ -111,7 +111,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    InstallationType: {
+    Installationtype: {
       type: DataTypes.STRING,
       allowNull: true,
     },
