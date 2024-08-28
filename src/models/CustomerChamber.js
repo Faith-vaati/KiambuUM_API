@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: true,
         },
-        ConnectionTypeConnectionType: {
+        ConnectionType: {
             type: Sequelize.STRING(254),
             allowNull: true,
         },
