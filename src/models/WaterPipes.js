@@ -7,71 +7,75 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    ObjectID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
+    RecTime: {
+      type: DataTypes.STRING, 
+      allowNull: true,
     },
-    LineName: {
-      type: DataTypes.STRING,
+    Length: {
+      type: DataTypes.DOUBLE, 
+    },
+    Name: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    Diameter: {
+      type: DataTypes.STRING, 
       allowNull: true,
     },
     Material: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, 
       allowNull: true,
     },
-    Intake: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Coordinates: {
-      type: DataTypes.ARRAY(DataTypes.ARRAY(DataTypes.DECIMAL)),
-      allowNull: true,
-    },
-    Type: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Function: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    DMA: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    SchemeName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Route: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Zone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Size: {
-      type: DataTypes.STRING,
+    Class: {
+      type: DataTypes.STRING, 
       allowNull: true,
     },
     Status: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    Distribution: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    Year: {
+      type: DataTypes.DOUBLE, 
+      allowNull: true,
+    },
+    Layer: {
+      type: DataTypes.STRING, 
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, 
       allowNull: true,
     },
-    User: {
-      type: DataTypes.STRING,
+    Picture: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    Route: {
+      type: DataTypes.STRING, 
       allowNull: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY("MultiLineString", 4326),
+      type: DataTypes.GEOMETRY("LineString", 4326), 
       allowNull: true,
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.literal('now()'), 
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.literal('now()'), 
+    },
+  }, {
+    tableName: 'WaterPipes', 
+    timestamps: true, 
   });
+
   return WaterPipes;
 };
