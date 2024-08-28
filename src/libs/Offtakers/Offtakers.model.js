@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const Offtake = require("../../models/Offtake")(sequelize, Sequelize);
+const Offtake = require("../../models/Offtakers")(sequelize, Sequelize);
 
 Offtake.sync({ force: false });
 

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 module.exports = (sequelize, Datatypes) => {
-    const Offtake = sequelize.define("Offtake", {
+    const Offtake = sequelize.define("Offtakers", {
         ID: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,

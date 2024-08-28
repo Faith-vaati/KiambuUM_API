@@ -34,7 +34,7 @@ const AssignedReports = require("./libs/AssignedReports/AssignedReports.route");
 const BulkMeters = require("./libs/BulkMeters/BulkMeters.route");
 const CustomerChamber = require("./libs/CustomerChamber/CustomerChamber.route");
 const ConnectionChamber = require("./libs/ConnectionChamber/ConnectionChamber.route");
-const Offtake = require("./libs/Offtake/Offtake.route");
+const Offtake = require("./libs/Offtakers/Offtakers.route");
 const SewerMainTrunk = require("./libs/SewerMainTrunk/SewerMainTrunk.route");
 const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
 
