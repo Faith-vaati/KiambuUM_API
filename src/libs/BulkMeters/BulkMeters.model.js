@@ -261,10 +261,10 @@ exports.getStats = () => {
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
       );
       const [cb, cbmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."OfftakersBillings"`
+        `SELECT SUM("Amount") as total FROM public."BulkMetersBillings"`
       );
       const [inv, invmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."OfftakersBillings"`
+        `SELECT SUM("Amount") as total FROM public."BulkMetersBillings"`
         // ROUND( AVG(some_column)::numeric, 2 )
       );
 
