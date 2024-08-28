@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'BulkMeters',
-        timestamps: true,  // This enables createdAt and updatedAt fields
+        timestamps: true,  
         createdAt: 'createdAt',
         updatedAt: 'updatedAt'
     });

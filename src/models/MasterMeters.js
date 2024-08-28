@@ -8,59 +8,59 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     RecTime: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Longitude: {
-      type: DataTypes.DOUBLE, // Matches double precision
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DOUBLE, // Matches double precision
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     Elevation: {
-      type: DataTypes.DOUBLE, // Matches double precision
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     OrthoHt: {
-      type: DataTypes.DOUBLE, // Matches double precision
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     Name: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Diameter: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     MeterNo: {
-      type: DataTypes.DOUBLE, // Matches double precision
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     Type: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Year: {
-      type: DataTypes.DOUBLE, // Matches double precision
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     Status: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Route: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     DMA: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Picture: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     geom: {
@@ -68,23 +68,23 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Cover: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Location: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
     User: {
-      type: DataTypes.STRING(254), // Matches character varying(254)
+      type: DataTypes.STRING(254), 
       allowNull: true,
     },
   }, {
-    timestamps: true, // Enable timestamps (createdAt, updatedAt)
+    timestamps: true, 
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     defaultScope: {

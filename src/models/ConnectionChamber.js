@@ -126,7 +126,7 @@ module.exports = (sequelize, Datatypes) => {
         },
     }, {
         tableName: 'ConnectionChambers',
-        timestamps: true, // Sequelize will automatically manage createdAt and updatedAt
+        timestamps: true,
     });
 
     return ConnectionChamber;

@@ -98,9 +98,9 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
   }, {
-    timestamps: true, // Enable automatic createdAt and updatedAt management
-    createdAt: 'createdAt', // Explicitly naming the fields
-    updatedAt: 'updatedAt', // Explicitly naming the fields
+    timestamps: true, 
+    createdAt: 'createdAt', 
+    updatedAt: 'updatedAt', 
   });
 
   return SewerLines;

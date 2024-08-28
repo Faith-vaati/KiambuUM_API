@@ -151,7 +151,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tableName: 'Manholes',
-    timestamps: true, // Ensure Sequelize handles createdAt and updatedAt automatically
+    timestamps: true, 
   });
 
   return Manholes;

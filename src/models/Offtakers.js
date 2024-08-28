@@ -12,55 +12,55 @@ module.exports = (sequelize, Datatypes) => {
             allowNull: false
         },
         RecordTime: {
-            type: Sequelize.STRING, // Changing to STRING to match SQL schema's character varying
+            type: Sequelize.STRING, 
             allowNull: true
         },
         Latitude: {
-            type: Sequelize.DOUBLE, // Changing to DOUBLE to match SQL schema's double precision
+            type: Sequelize.DOUBLE, 
             allowNull: false
         },
         Longitude: {
-            type: Sequelize.DOUBLE, // Changing to DOUBLE to match SQL schema's double precision
+            type: Sequelize.DOUBLE, 
             allowNull: false
         },
         Elevation: {
-            type: Sequelize.DOUBLE, // Changing to DOUBLE to match SQL schema's double precision
+            type: Sequelize.DOUBLE, 
             allowNull: true
         },
         Name: {
-            type: Sequelize.STRING, // Adjusted length to match SQL schema's character varying(254)
+            type: Sequelize.STRING, 
             allowNull: true
         },
         Diameter: {
-            type: Sequelize.STRING, // Adjusted length to match SQL schema's character varying(254)
+            type: Sequelize.STRING, 
             allowNull: true
         },
         Year_in_1: {
-            type: Sequelize.STRING, // Changing to STRING to match SQL schema's character varying
+            type: Sequelize.STRING, 
             allowNull: true
         },
         Picture: {
-            type: Sequelize.STRING, // Adjusted length to match SQL schema's character varying(254)
+            type: Sequelize.STRING, 
             allowNull: true
         },
         Status: {
-            type: Sequelize.STRING, // Adjusted length to match SQL schema's character varying(254)
+            type: Sequelize.STRING, 
             allowNull: true
         },
         geom: {
-            type: Sequelize.GEOMETRY('POINT'), // Adding geom field with geometry type
+            type: Sequelize.GEOMETRY('POINT'), 
             allowNull: true
         },
         Remarks: {
-            type: Sequelize.STRING, // Adding Remarks field
+            type: Sequelize.STRING, 
             allowNull: true
         },
         RecTime: {
-            type: Sequelize.STRING, // Adding RecTime field
+            type: Sequelize.STRING, 
             allowNull: true
         },
     }, {
-        timestamps: true, // Adding timestamps for createdAt and updatedAt
+        timestamps: true, 
         createdAt: 'createdAt',
         updatedAt: 'updatedAt'
     });

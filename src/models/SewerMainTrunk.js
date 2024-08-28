@@ -17,11 +17,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         RecordTime: {
-            type: Sequelize.STRING(254), // This is a character varying in the SQL schema
+            type: Sequelize.STRING(254), 
             allowNull: true
         },
         Length: {
-            type: Sequelize.FLOAT, // Matches the double precision type in SQL
+            type: Sequelize.FLOAT, 
             allowNull: true
         },
         TrunkName: {
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         PipeStatus: {
-            type: Sequelize.STRING(254), // Corrected typo from PipeStastus to PipeStatus
+            type: Sequelize.STRING(254), 
             allowNull: true
         },
         Condition: {
@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         Intersec_1: {
-            type: Sequelize.STRING(254), // Renamed to match SQL schema
+            type: Sequelize.STRING(254), 
             allowNull: true
         },
         Outfall: {
@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         YearLaid: {
-            type: Sequelize.FLOAT, // Matches double precision type in SQL
+            type: Sequelize.FLOAT, 
             allowNull: true
         },
         Picture: {
@@ -68,13 +68,13 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.FLOAT,
             allowNull: true
         },
-        geom: { // Adding the geometry field
-            type: Sequelize.GEOMETRY('LINESTRING', 4326), // Assuming you're using PostgreSQL with PostGIS
+        geom: { 
+            type: Sequelize.GEOMETRY('LINESTRING', 4326), 
             allowNull: true
         }
     }, {
-        tableName: 'SewerMainTrunk', // Make sure this matches your SQL table name
-        timestamps: true, // Assuming you're using createdAt and updatedAt
+        tableName: 'SewerMainTrunk', 
+        timestamps: true, 
         createdAt: 'createdAt',
         updatedAt: 'updatedAt'
     });

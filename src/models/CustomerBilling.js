@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      primaryKey: true, // Assuming it's the primary key
+      primaryKey: true,
     },
     Amount: {
       type: DataTypes.DECIMAL,
@@ -68,7 +68,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-  });
+  }); 
 
   return CustomerBilling;
 };

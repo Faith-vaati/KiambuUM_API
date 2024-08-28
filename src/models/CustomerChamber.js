@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
     const CustomerChamber = sequelize.define("CustomerChamber", {
         ID: {
@@ -7,142 +8,139 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        ObjectID: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        },
-        RecordTime: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Latitude: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: false,
-        },
-        Longitude: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: false,
-        },
-        Elevation: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: false,
-        },
-        OrthoHt: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: true,
-        },
-        AccountNo: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: true,
-        },
-        Chamber_1: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Shape: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        ChamberDimension: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Depth: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: true,
-        },
-        Zone: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        YearOfConstruction: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: true,
-        },
-        LineDiameter: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Chamber_3: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Connection: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Infiltra_1: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        ChamberAccessibility: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        ChamberStatus: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        WaterSource: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Billing: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        Category: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        No_Of_Units: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
-            allowNull: true,
-        },
-        Status: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
+        geom: {
+            type: Sequelize.GEOMETRY('POINTZM', 4326),
             allowNull: true,
         },
         Remarks: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        RecTime: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Latitude: {
+            type: Sequelize.DOUBLE,
+            allowNull: false,
+        },
+        Longitude: {
+            type: Sequelize.DOUBLE,
+            allowNull: false,
+        },
+        Elevation: {
+            type: Sequelize.DOUBLE,
+            allowNull: false,
+        },
+        OrthoHt: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        Account1: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        Chamber1: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Type: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Dimensions: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Depth: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        Zone: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Year: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        LineDiameter: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Installation: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        ConnectionTypeConnectionType: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Infiltration: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Accessibility: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Condition: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        WaterSource: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Billing: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Category: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        NoOfUnits: {
+            type: Sequelize.DOUBLE,
+            allowNull: true,
+        },
+        Subzone: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Addition1: {
+            type: Sequelize.STRING(254),
+            allowNull: true,
+        },
+        Status: {
+            type: Sequelize.STRING(254),
             allowNull: true,
         },
         Picture: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
+            type: Sequelize.STRING(254),
             allowNull: true,
         },
         Name: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
+            type: Sequelize.STRING(254),
             allowNull: true,
         },
-        FolderPath: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        PopUpInfo: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
-            allowNull: true,
-        },
-        YearLaid: {
-            type: Sequelize.DOUBLE, // Updated to match SQL type 'double precision'
+        Chamber: {
+            type: Sequelize.STRING(254),
             allowNull: true,
         },
         Size: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
+            type: Sequelize.STRING(254),
             allowNull: true,
         },
         PipeMaterial: {
-            type: Sequelize.STRING, // Updated to match SQL type 'character varying(254)'
+            type: Sequelize.STRING(254),
             allowNull: true,
         },
     }, {
-        timestamps: true, // Includes 'createdAt' and 'updatedAt' fields
-        createdAt: 'createdAt', // Matches SQL schema
-        updatedAt: 'updatedAt', // Matches SQL schema
+        timestamps: true,
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt',
     });
-
-    // Define the spatial data type, if applicable
-    // sequelize.query('SELECT AddGeometryColumn(\'CustomerChamber\', \'geom\', 4326, \'POINTZM\', 2)')
 
     return CustomerChamber;
 };
