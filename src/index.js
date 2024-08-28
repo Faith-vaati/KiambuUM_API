@@ -190,7 +190,7 @@ PublicUsers.PublicUsersRoutes(app);
 ToolsList.ToolsListRoutes(app);
 Categories.CategoriesRoutes(app);
 AssignedReports.AssignedReportRoutes(app);
-BulkMeters.BulkMetersRoute(app);
+BulkMeters.BulkMetersRoutes(app);
 CustomerChamber.CustomerChamberRoute(app);
 ConnectionChamber.ConnectionChamberRoute(app);
 Offtake.OfftakersRoutes(app);

@@ -1,45 +1,176 @@
 const BulkMetersModel = require("./BulkMeters.model");
 
-exports.createBulkMeters = async (req, res) => {
-    try {
-        const result = await BulkMetersModel.createBulkMeters(req.body);
-        res.status(201).send(result); 
-    } catch (err) {
-        res.status(400).send({ error: err.message || "Creation failed" });
+exports.create = (req, res) => {
+  BulkMetersModel.createBulkMeters(req.body).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
     }
+  );
 };
 
-
-exports.updateBulkMeters = async (req, res) => {
-    try {
-        const affectedRows = await BulkMetersModel.updateBulkMetersByID(req.body, req.params.id);
-        if (affectedRows === 0) { 
-            return res.status(203).send({ error: "BulkMeters not found" }); 
-        }
-        res.status(200).send({ success: "Updated successfully" }); 
-    } catch (err) {
-        res.status(203).send({ error: err.message || "Update failed" }); 
+exports.findBulkMetersById = (req, res) => {
+  BulkMetersModel.findBulkMetersById(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
     }
+  );
 };
 
-
-exports.getAllBulkMetersController = async (req, res) => {
-    try {
-        const result = await BulkMetersModel.getAllBulkMeters();
-        res.status(200).send(result); 
-    } catch (error) {
-        res.status(500).send({ error: error.message || "An error occurred" }); 
+exports.findBulkMetersByAccount = (req, res) => {
+  BulkMetersModel.findBulkMetersByAccount(req.params.Account).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
     }
+  );
 };
 
-exports.deleteBulkMeters = async (req, res) => {
-    try {
-        const affectedRows = await BulkMetersModel.deleteBulkMetersByID(req.params.id);
-        if (affectedRows === 0) {
-            return res.status(404).send({ error: "BulkMeters not found" });
-        }
-        res.status(200).send({ success: "Deleted successfully" });
-    } catch (err) {
-        res.status(400).send({ error: err.message || "Deletion failed" });
+exports.updateBulkMetersById = (req, res) => {
+  BulkMetersModel.updateBulkMetersById(req.body, req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+
+    (err) => {
+      res.status(203).send(err);
     }
+  );
+};
+
+exports.deleteBulkMetersById = (req, res) => {
+  BulkMetersModel.deleteBulkMetersById(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findAllBulkMeters = (req, res) => {
+  BulkMetersModel.findAllBulkMeters().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findBulkMetersPagnited = (req, res) => {
+  BulkMetersModel.findBulkMetersPagnited(req.params.offset).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findBulkMetersPagnitedSearch = (req, res) => {
+  OfftakersModel.findBulkMetersPagnitedSearch(
+    req.params.column,
+    req.params.value,
+    req.params.offset
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.searchOneBulkMeters = (req, res) => {
+  BulkMetersModel.searchOneBulkMeters(req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.searchOthers = (req, res) => {
+  BulkMetersModel.searchOthers(req.params.table, req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.filterBulkMeters = (req, res) => {
+  BulkMetersModel.filterBulkMeters(
+    req.params.column,
+    req.params.operator,
+    req.params.value,
+    req.params.offset
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.totalMapped = (req, res) => {
+  BulkMetersModel.totalMapped().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.getGeoJSON = (req, res) => {
+  BulkMetersModel.getGeoJSON().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.getStats = (req, res) => {
+  BulkMetersModel.getStats().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findCharts = (req, res) => {
+  BulkMetersModel.findCharts().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
 };
