@@ -1,46 +1,176 @@
 const CustomerChamberModel = require("./CustomerChamber.model");
 
-
-exports.createCustomerChamber = async (req, res) => {
-    try {
-        const result = await CustomerChamberModel.createCustomerChamber(req.body);
-        res.status(201).send(result); 
-    } catch (err) {
-        res.status(400).send({ error: err.message || "Creation failed" });
+exports.create = (req, res) => {
+    CustomerChamberModel.createCustomerChamber(req.body).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
     }
+  );
 };
 
-
-exports.updateCustomerChamber = async (req, res) => {
-    try {
-        const affectedRows = await CustomerChamberModel.updateCustomerChamberByID(req.body, req.params.id);
-        if (affectedRows === 0) { 
-            return res.status(203).send({ error: "CustomerChamber not found" }); 
-        }
-        res.status(200).send({ success: "Updated successfully" }); 
-    } catch (err) {
-        res.status(203).send({ error: err.message || "Update failed" }); 
+exports.findCustomerChamberById = (req, res) => {
+    CustomerChamberModel.findCustomerChamberById(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
     }
+  );
 };
 
-
-exports.getAllCustomerChamberController = async (req, res) => {
-    try {
-        const result = await CustomerChamberModel.getAllCustomerChamber();
-        res.status(200).send(result); 
-    } catch (error) {
-        res.status(500).send({ error: error.message || "An error occurred" }); 
+exports.findCustomerChamberByAccount = (req, res) => {
+    CustomerChamberModel.findCustomerChamberByAccount(req.params.Account).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
     }
+  );
 };
 
-exports.deleteCustomerChamber = async (req, res) => {
-    try {
-        const affectedRows = await CustomerChamberModel.deleteCustomerChamberByID(req.params.id);
-        if (affectedRows === 0) {
-            return res.status(404).send({ error: "CustomerChamber not found" });
-        }
-        res.status(200).send({ success: "Deleted successfully" });
-    } catch (err) {
-        res.status(400).send({ error: err.message || "Deletion failed" });
+exports.updateCustomerChamberById = (req, res) => {
+    CustomerChamberModel.updateCustomerChamberById(req.body, req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+
+    (err) => {
+      res.status(203).send(err);
     }
+  );
+};
+
+exports.deleteCustomerChamberById = (req, res) => {
+    CustomerChamberModel.deleteCustomerChamberById(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findAllCustomerChamber = (req, res) => {
+    CustomerChamberModel.findAllCustomerChamber().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findCustomerChamberPagnited = (req, res) => {
+    CustomerChamberModel.findCustomerChamberPagnited(req.params.offset).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findCustomerChamberPagnitedSearch = (req, res) => {
+    CustomerChamberModel.finCustomerChamberdPagnitedSearch(
+    req.params.column,
+    req.params.value,
+    req.params.offset
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.searchOneCustomerChamber = (req, res) => {
+    CustomerChamberModel.searchOneCustomerChamber(req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.searchOthers = (req, res) => {
+    CustomerChamberModel.searchOthers(req.params.table, req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.filterCustomerChamber = (req, res) => {
+    CustomerChamberModel.filterCustomerChamber(
+    req.params.column,
+    req.params.operator,
+    req.params.value,
+    req.params.offset
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.totalMapped = (req, res) => {
+    CustomerChamberModel.totalMapped().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.getGeoJSON = (req, res) => {
+    CustomerChamberModel.getGeoJSON().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.getStats = (req, res) => {
+    CustomerChamberModel.getStats().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findCharts = (req, res) => {
+    CustomerChamberModel.findCharts().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
 };
