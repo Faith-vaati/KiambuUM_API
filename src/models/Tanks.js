@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../configs/connection");
+
 module.exports = (sequelize, DataTypes) => {
   const Tanks = sequelize.define("Tanks", {
     ID: {
@@ -14,65 +15,97 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
     },
     Name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Longitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY("POINT", 4326),
+      type: DataTypes.GEOMETRY("POINTZM", 4326),
       allowNull: true,
     },
     Elevation: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     Area: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Location: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Zone: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     InletPipe: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     OutletPipe: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Material: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Capacity: {
-      type: DataTypes.STRING,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     Status: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     User: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
+    RecTime: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Category: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Type: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Shape: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Year: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+    },
+    Picture: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+  }, {
+    timestamps: true,
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    defaultScope: {
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    },
   });
+
   return Tanks;
 };
