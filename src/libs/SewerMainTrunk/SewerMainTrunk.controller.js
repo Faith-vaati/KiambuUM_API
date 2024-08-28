@@ -1,46 +1,101 @@
 const SewerMainTrunkModel = require("./SewerMainTrunk.model");
 
-
-exports.createSewerMainTrunk = async (req, res) => {
-    try {
-        const result = await SewerMainTrunkModel.createSewerMainTrunk(req.body);
-        res.status(201).send(result); 
-    } catch (err) {
-        res.status(400).send({ error: err.message || "Creation failed" });
+exports.create = (req, res) => {
+  SewerMainTrunkModel.createSewerMainTrunk(req.body).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
     }
+  );
 };
 
-
-exports.updateSewerMainTrunk = async (req, res) => {
-    try {
-        const affectedRows = await SewerMainTrunkModel.updateSewerMainTrunkByID(req.body, req.params.id);
-        if (affectedRows === 0) { 
-            return res.status(203).send({ error: "SewerMainTrunk not found" }); 
-        }
-        res.status(200).send({ success: "Updated successfully" }); 
-    } catch (err) {
-        res.status(203).send({ error: err.message || "Update failed" }); 
+exports.findSewerMainTrunkById = (req, res) => {
+  SewerMainTrunkModel.findSewerMainTrunkById(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
     }
+  );
 };
 
-
-exports.getAllSewerMainTrunkController = async (req, res) => {
-    try {
-        const result = await SewerMainTrunkModel.getAllSewerMainTrunk();
-        res.status(200).send(result); 
-    } catch (error) {
-        res.status(500).send({ error: error.message || "An error occurred" }); 
+exports.findSewerMainTrunkByObjectId = (req, res) => {
+  SewerMainTrunkModel.findSewerMainTrunkByObjectId(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
     }
+  );
 };
 
-exports.deleteSewerMainTrunk = async (req, res) => {
-    try {
-        const affectedRows = await SewerMainTrunkModel.deleteSewerMainTrunkByID(req.params.id);
-        if (affectedRows === 0) {
-            return res.status(404).send({ error: "SewerMainTrunk not found" });
-        }
-        res.status(200).send({ success: "Deleted successfully" });
-    } catch (err) {
-        res.status(400).send({ error: err.message || "Deletion failed" });
+exports.updateSewerMainTrunkById = (req, res) => {
+  SewerMainTrunkModel.updateSewerMainTrunkById(req.body, req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+
+    (err) => {
+      res.status(203).send(err);
     }
+  );
+};
+
+exports.deleteSewerMainTrunkById = (req, res) => {
+  SewerMainTrunkModel.deleteSewerMainTrunkById(req.params.ID).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findAllSewerMainTrunk = (req, res) => {
+  SewerMainTrunkModel.findAllSewerMainTrunk().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findSewerMainTrunkPagnited = (req, res) => {
+  SewerMainTrunkModel.findSewerMainTrunkPagnited(req.params.offset).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.totalMapped = (req, res) => {
+  SewerMainTrunkModel.totalMapped().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.getGeoJSON = (req, res) => {
+  SewerMainTrunkModel.getGeoJSON().then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
 };

@@ -194,7 +194,7 @@ BulkMeters.BulkMetersRoute(app);
 CustomerChamber.CustomerChamberRoute(app);
 ConnectionChamber.ConnectionChamberRoute(app);
 Offtake.OfftakersRoutes(app);
-SewerMainTrunk.SewerMainTrunkRoute(app);
+SewerMainTrunk.SewerMainTrunkRoutes(app);
 TreatmentPlant.TreatmentPlantRoute(app);
 
 app.get("/update/:scheme/:start", (req, res) => {

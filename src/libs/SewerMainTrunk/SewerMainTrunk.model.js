@@ -1,56 +1,204 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
 const SewerMainTrunk = require("../../models/SewerMainTrunk")(sequelize, Sequelize);
 
 SewerMainTrunk.sync({ force: false });
 
-exports.createSewerMainTrunk = async (SewerMainTrunkData) => {
+exports.createSewerMainTrunk = (SewerMainTrunkData) => {
+  return new Promise(async (resolve, reject) => {
     try {
-        if (!SewerMainTrunkData.ObjectID) {
-            throw new Error("Body is required!");
+      const coordinates = SewerMainTrunkData.Coordinates;
+      SewerMainTrunkData.Coordinates = null;
+      const result = await SewerMainTrunk.create(SewerMainTrunkData);
+      const id = result.dataValues.ID;
+
+      if (coordinates.length > 0) {
+        try {
+          // Generate the points in the required format
+          const points = coordinates
+            .map(
+              (coord) =>
+                `ST_SetSRID(ST_MakePoint(${coord.longitude}, ${coord.latitude}), 4326)`
+            )
+            .join(",\n    ");
+          // Construct the SQL query
+          const sqlQuery = `
+            WITH geom AS (
+              SELECT ST_Multi(ST_MakeLine(ARRAY[
+                ${points}
+              ])) AS geom
+            )
+            UPDATE "SewerMainTrunk"
+            SET "geom" = geom.geom
+            FROM geom
+            WHERE "ID" = '${id}';
+            `;
+          const [results, metadata] = await sequelize.query(sqlQuery);
+          resolve({
+            success: "Created successfully",
+          });
+        } catch (error) {
+          reject({
+            error: error.message,
+          });
         }
-        await SewerMainTrunk.create(SewerMainTrunkData);
-        return { success: "SewerMainTrunk created successfully" };
-    } catch (error) {
-        console.error(error);
-        throw new Error("Creation failed");
+      } else {
+        reject({
+          error: "Invalid coordinates",
+        });
+      }
+    } catch (err) {
+      reject({ error: "SewerMainTrunk creation failed" ?? err.message });
     }
+  });
 };
 
-exports.updateSewerMainTrunkByID = async (SewerMainTrunkData, id) => {
-    try {
-        const affectedRows = await Offtake.update(SewerMainTrunkData, {
-            where: { ID: id }
-        });
-        console.log(affectedRows);
-        
-        if (affectedRows === 0) {
-            throw new Error("Update failed. No rows affected.");
-        }
-        return { success: "Updated successfully" };
-    } catch (error) {
-        console.error(error);
-        throw new Error("Update failed");
-    }
+exports.findSewerMainTrunkById = (id) => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.findByPk(id).then(
+      (result) => {
+        resolve(result);
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
 };
 
-exports.getAllSewerMainTrunk = async () => {
-    try {
-        const result = await SewerMainTrunk.findAll();
-        return result;
-    } catch (error) {
-        console.error(error);
-        throw new Error("Failed to retrieve SewerMainTrunk");
-    }
+exports.findSewerMainTrunkByObjectId = (id) => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.findAll({
+      where: {
+        ObjectID: id,
+      },
+    }).then(
+      (result) => {
+        resolve(result);
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
 };
-exports.deleteSewerMainTrunkByID = async (id) => {
-    try {
-        const affectedRows = await SewerMainTrunk.destroy({
-            where: { ID: id }
+
+exports.updateSewerMainTrunkById = (SewerMainTrunkData, id) => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.update(SewerMainTrunkData, {
+      where: {
+        ObjectID: id,
+      },
+    }).then(
+      async (result) => {
+        const coordinates = await SewerMainTrunk.findAll({
+          where: {
+            ObjectID: id,
+          },
         });
-        return affectedRows;
+
+        let q = `LINESTRING(`;
+        coordinates[0]?.Coordinates?.map((item) => {
+          q = q + `${item[0]} ${item[1]}, `;
+        });
+
+        q = q.trim().slice(0, -1);
+        q = q + ")";
+
+        const [results, metadata] = await sequelize.query(
+          `WITH geom AS (
+              SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
+            )
+          UPDATE "SewerMainTrunk" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
+        );
+
+        resolve({
+          success: "Updated successfully",
+          coordinates: coordinates.length > 0 ? coordinates[0].Coordinates : [],
+        });
+      },
+      (err) => {
+        reject({ error: "Update failed" });
+      }
+    );
+  });
+};
+
+exports.deleteSewerMainTrunkById = (id) => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.destroy({
+      where: {
+        ID: id,
+      },
+    }).then(
+      (result) => {
+        if (result != 0) resolve({ success: "Deleted successfully!!!" });
+        else reject({ error: "SewerMainTrunk does not exist!!!" });
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.findAllSewerMainTrunk = () => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.findAll({}).then(
+      (result) => {
+        resolve(result);
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.findSewerMainTrunkPagnited = (offset) => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.findAll({
+      offset: offset,
+      limit: 10,
+      order: [["updatedAt", "DESC"]],
+    }).then(
+      async (result) => {
+        const count = await SewerMainTrunk.count();
+        resolve({ data: result, total: count });
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.totalMapped = (offset) => {
+  return new Promise((resolve, reject) => {
+    SewerMainTrunk.findAll({}).then(
+      async (result) => {
+        const count = await SewerMainTrunk.count();
+        resolve({
+          success: count,
+        });
+      },
+      (err) => {
+        reject({ error: "Retrieve failed" });
+      }
+    );
+  });
+};
+
+exports.getGeoJSON = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const SewerMainTrunk = await sequelize.query(
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."SewerMainTrunk"`,
+        { type: QueryTypes.SELECT }
+      );
+      resolve(SewerMainTrunk);
     } catch (error) {
-        console.error(error);
-        throw new Error("Deletion failed");
+      reject({ error: "Retrieve failed" });
     }
+  });
 };
