@@ -193,7 +193,7 @@ AssignedReports.AssignedReportRoutes(app);
 BulkMeters.BulkMetersRoute(app);
 CustomerChamber.CustomerChamberRoute(app);
 ConnectionChamber.ConnectionChamberRoute(app);
-Offtake.OfftakeRoute(app);
+Offtake.OfftakersRoutes(app);
 SewerMainTrunk.SewerMainTrunkRoute(app);
 TreatmentPlant.TreatmentPlantRoute(app);
 
