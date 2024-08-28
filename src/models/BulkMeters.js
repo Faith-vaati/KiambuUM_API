@@ -1,5 +1,6 @@
-const Sequelize = require('sequelize')
-module.exports = (sequelize, Datatypes) => {
+const Sequelize = require('sequelize');
+
+module.exports = (sequelize, DataTypes) => {
     const BulkMeters = sequelize.define("BulkMeters", {
         ID: {
             type: Sequelize.UUID,
@@ -7,62 +8,74 @@ module.exports = (sequelize, Datatypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        ObjectID: {
-            type: Sequelize.INTEGER,
-            allowNull: false
-        },
         Remarks: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: true
         },
-        RecordTime: {
-            type: Sequelize.DATE,
+        RecTime: {
+            type: Sequelize.STRING(254),
             allowNull: false
         },
         Latitude: {
-            type: Sequelize.FLOAT,
+            type: Sequelize.DOUBLE,
             allowNull: false
         },
         Longitude: {
-            type: Sequelize.FLOAT,
+            type: Sequelize.DOUBLE,
             allowNull: false
         },
         Elevation: {
-            type: Sequelize.STRING,
+            type: Sequelize.DOUBLE,
             allowNull: false
         },
         MeterNo: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: true
         },
         Type: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: true
         },
         Year: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.DOUBLE,
             allowNull: false
         },
-        Current: {
-            type: Sequelize.STRING,
+        WaterPipe: {
+            type: Sequelize.STRING(254),
             allowNull: true
         },
         DMA: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: true
         },
         Picture: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: true
         },
         Status: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: true
         },
         Diameter: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(254),
             allowNull: false
         },
+        createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.NOW
+        },
+        updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.NOW
+        }
+    }, {
+        tableName: 'BulkMeters',
+        timestamps: true,  // This enables createdAt and updatedAt fields
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
     });
+
     return BulkMeters;
 };
