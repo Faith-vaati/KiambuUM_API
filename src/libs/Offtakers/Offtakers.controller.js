@@ -1,4 +1,4 @@
-const OfftakeModel = require("./Offtake.model");
+const OfftakeModel = require("./Offtakers.model");
 
 
 exports.createOfftake = async (req, res) => {
