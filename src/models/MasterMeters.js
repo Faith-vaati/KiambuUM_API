@@ -2,64 +2,95 @@ const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   const MasterMeters = sequelize.define("MasterMeters", {
     ID: {
-      type: Sequelize.UUID,
+      type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
       allowNull: false,
       primaryKey: true,
     },
-    ObjectID: { 
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
+    RecTime: {
+      type: DataTypes.STRING(254), // Matches character varying(254)
+      allowNull: true,
     },
     Longitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE, // Matches double precision
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE, // Matches double precision
       allowNull: true,
     },
-    geom: {
-      type: DataTypes.GEOMETRY("POINT", 4326),
+    Elevation: {
+      type: DataTypes.DOUBLE, // Matches double precision
+      allowNull: true,
+    },
+    OrthoHt: {
+      type: DataTypes.DOUBLE, // Matches double precision
       allowNull: true,
     },
     Name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
-    Size: {
-      type: DataTypes.STRING,
+    Diameter: {
+      type: DataTypes.STRING(254), // Matches character varying(254)
+      allowNull: true,
+    },
+    MeterNo: {
+      type: DataTypes.DOUBLE, // Matches double precision
+      allowNull: true,
+    },
+    Type: {
+      type: DataTypes.STRING(254), // Matches character varying(254)
+      allowNull: true,
+    },
+    Year: {
+      type: DataTypes.DOUBLE, // Matches double precision
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
     Route: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Zone: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
     DMA: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
+      allowNull: true,
+    },
+    Picture: {
+      type: DataTypes.STRING(254), // Matches character varying(254)
+      allowNull: true,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY('POINT', 4326),
       allowNull: true,
     },
     Cover: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
     Location: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
     User: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254), // Matches character varying(254)
       allowNull: true,
     },
+  }, {
+    timestamps: true, // Enable timestamps (createdAt, updatedAt)
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    defaultScope: {
+      attributes: { exclude: ['updatedAt'] },
+    },
   });
+
   return MasterMeters;
 };
