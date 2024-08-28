@@ -67,30 +67,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY('POINT', 4326),
       allowNull: true,
     },
-    Cover: {
-      type: DataTypes.STRING(254), 
-      allowNull: true,
-    },
-    Location: {
-      type: DataTypes.STRING(254), 
-      allowNull: true,
-    },
+    
     Remarks: {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
-    User: {
-      type: DataTypes.STRING(254), 
-      allowNull: true,
-    },
-  }, {
-    timestamps: true, 
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    defaultScope: {
-      attributes: { exclude: ['updatedAt'] },
-    },
-  });
+  
+  },);
 
   return MasterMeters;
 };

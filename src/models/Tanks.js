@@ -34,26 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    Area: {
-      type: DataTypes.STRING(254),
-      allowNull: true,
-    },
-    Location: {
-      type: DataTypes.STRING(254),
-      allowNull: true,
-    },
-    Zone: {
-      type: DataTypes.STRING(254),
-      allowNull: true,
-    },
-    InletPipe: {
-      type: DataTypes.STRING(254),
-      allowNull: true,
-    },
-    OutletPipe: {
-      type: DataTypes.STRING(254),
-      allowNull: true,
-    },
+    
+   
+  
+   
     Material: {
       type: DataTypes.STRING(254),
       allowNull: true,
@@ -70,10 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-    User: {
-      type: DataTypes.STRING(254),
-      allowNull: true,
-    },
+   
     RecTime: {
       type: DataTypes.STRING(254),
       allowNull: true,
@@ -97,13 +78,6 @@ module.exports = (sequelize, DataTypes) => {
     Picture: {
       type: DataTypes.STRING(254),
       allowNull: true,
-    },
-  }, {
-    timestamps: true,
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    defaultScope: {
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
     },
   });
 

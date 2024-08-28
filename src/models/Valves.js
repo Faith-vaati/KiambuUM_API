@@ -76,11 +76,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     },
-    {
-      timestamps: true,
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
-    }
   );
 
   return Valves;
