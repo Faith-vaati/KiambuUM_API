@@ -16,11 +16,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Longitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     geom: {
@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Zone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    CurrentZone: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -51,7 +55,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    BrandName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Material: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    MeterMaterial: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -60,6 +72,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     AccountNo: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+    },
+    SerialNo: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -72,6 +88,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     MeterStatus: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    MeterType: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -91,6 +111,30 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    InstallationType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Sewered: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OtherMete: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Picture: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    FRecTime: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Remarks: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -100,5 +144,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   });
+
   return CustomerMeters;
 };
