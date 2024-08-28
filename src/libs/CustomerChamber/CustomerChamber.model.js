@@ -17,7 +17,7 @@ exports.createCustomerChamber = (CustomerChamberData) => {
               try {
                 const id = result.dataValues.ID;
                 const [data, dmeta] = await sequelize.query(
-                  `UPDATE public."CustomerChamber" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+                  `UPDATE public."CustomerChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
                 );
                 resolve({
                   success: "CustomerChamber Created successfully",
@@ -128,10 +128,10 @@ exports.findCustomerChamberPagnited = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "CustomerChamber" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
+        `SELECT * FROM "CustomerChambers" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "CustomerChamber"`
+        `SELECT COUNT(*) FROM "CustomerChambers"`
       );
       resolve({
         data: result,
@@ -147,10 +147,10 @@ exports.findCustomerChamberPagnitedSearch = (column, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "CustomerChamber" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "CustomerChambers" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "CustomerChamber" WHERE "${column}" ILIKE '%${value}%'`
+        `SELECT COUNT(*) FROM "CustomerChambers" WHERE "${column}" ILIKE '%${value}%'`
       );
       resolve({
         data: result,
@@ -166,7 +166,7 @@ exports.searchOneCustomerChamber = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "CustomerChamber" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "CustomerChambers" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
@@ -192,11 +192,11 @@ exports.filterCustomerChamber = (column, operator, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "CustomerChamber" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "CustomerChambers" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
       );
 
       const [count, cmetadata] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "CustomerChamber" WHERE "${column}" ${operator} '${value}'`
+        `SELECT Count(*)::int AS total FROM "CustomerChambers" WHERE "${column}" ${operator} '${value}'`
       );
 
       resolve({
@@ -229,7 +229,7 @@ exports.getGeoJSON = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const users = await sequelize.query(
-        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."CustomerChamber"`,
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."CustomerChambers"`,
         { type: QueryTypes.SELECT }
       );
       resolve(users);
@@ -243,13 +243,13 @@ exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [cs, smeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."CustomerChamber"`
+        `SELECT Count(*)::FLOAT as total FROM public."CustomerChambers"`
       );
       const [dm, hmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."CustomerChamber"`
+        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."CustomerChambers"`
       );
       const [zn, dmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."CustomerChamber"`
+        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."CustomerChambers"`
       );
       const [tnk, fmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
@@ -288,23 +288,23 @@ exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [accType, dmeta] = await sequelize.query(
-        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."CustomerChamber" GROUP BY "AccountType"`
+        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."CustomerChambers" GROUP BY "AccountType"`
       );
       const [accStatus, ameta] = await sequelize.query(
-        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."CustomerChamber" GROUP BY "AccountStatus"`
+        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."CustomerChambers" GROUP BY "AccountStatus"`
       );
 
       const [mtrStatus, mtrmeta] = await sequelize.query(
-        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."CustomerChamber" GROUP BY "MeterStatus"`
+        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."CustomerChambers" GROUP BY "MeterStatus"`
       );
       const [dma, dmameta] = await sequelize.query(
-        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."CustomerChamber" GROUP BY "DMA"`
+        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."CustomerChambers" GROUP BY "DMA"`
       );
       const [zone, znmeta] = await sequelize.query(
-        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."CustomerChamber" GROUP BY "Zone"`
+        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."CustomerChambers" GROUP BY "Zone"`
       );
       const [mtrclass, clmeta] = await sequelize.query(
-        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."CustomerChamber" GROUP BY "Class"`
+        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."CustomerChambers" GROUP BY "Class"`
       );
 
       resolve({
