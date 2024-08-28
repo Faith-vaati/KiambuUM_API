@@ -1,52 +1,107 @@
-const Sequelize = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
-  const SewerLines = sequelize.define("SewerLines", {
+const Sequelize = require('sequelize');
+const DataTypes = Sequelize.DataTypes;
+
+module.exports = (sequelize) => {
+  const SewerLines = sequelize.define('SewerLines', {
     ID: {
-      type: Sequelize.UUID,
-      defaultValue: Sequelize.UUIDV4,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true,
     },
-    Material: {
-      type: DataTypes.STRING,
+    geom: {
+      type: DataTypes.GEOMETRY('LineStringZ', 4326),
       allowNull: true,
     },
-    Coordinates: {
-      type: DataTypes.ARRAY(DataTypes.ARRAY(DataTypes.DECIMAL)),
+    Name: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    RecTime: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Length: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+    },
+    Lateral: {
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Type: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
-    Route: {
-      type: DataTypes.STRING,
+    LineDiameter: {
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
-    Zone: {
-      type: DataTypes.STRING,
+    PipeMaterial: {
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
-    Size: {
-      type: DataTypes.STRING,
+    PipeStatus: {
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
-    Status: {
-      type: DataTypes.STRING,
+    Condition: {
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
-    geom: {
-      type: DataTypes.GEOMETRY("MultiLineString", 4326),
+    Intersection: {
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
-    User: {
-      type: DataTypes.STRING,
+    Outfall: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    YearLaid: {
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
+    Picture: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    PipeName: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    PipeDia1: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Route: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Diameter: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Zone: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    TrunkName: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+  }, {
+    timestamps: true, // Enable automatic createdAt and updatedAt management
+    createdAt: 'createdAt', // Explicitly naming the fields
+    updatedAt: 'updatedAt', // Explicitly naming the fields
   });
+
   return SewerLines;
 };
