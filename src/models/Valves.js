@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../configs/connection");
+
 module.exports = (sequelize, DataTypes) => {
   const Valves = sequelize.define("Valves", {
     ID: {
@@ -8,60 +9,75 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    ObjectID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-    },
-    Type: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    DMA: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Longitude: {
-      type: DataTypes.DECIMAL,
+    RecTime: {
+      type: DataTypes.STRING(254),  // character varying(254)
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DOUBLE, // double precision
+      allowNull: true,
+    },
+    Longitude: {
+      type: DataTypes.DOUBLE, // double precision
+      allowNull: true,
+    },
+    Elevation: {
+      type: DataTypes.DOUBLE, // double precision
+      allowNull: true,
+    },
+    Year: {
+      type: DataTypes.DOUBLE, // double precision
+      allowNull: true,
+    },
+    Route: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Type: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Diameter: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Pipeline: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Picture: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Name: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Remarks: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Fitting: {
+      type: DataTypes.STRING(254), // character varying(254)
+      allowNull: true,
+    },
+    Depth: {
+      type: DataTypes.DOUBLE, // double precision
       allowNull: true,
     },
     geom: {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
-    Status: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Size: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Zone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Route: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Location: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-
-    Remarks: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    User: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+  }, {
+    timestamps: true, // To enable createdAt and updatedAt fields
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
   });
+
   return Valves;
 };
