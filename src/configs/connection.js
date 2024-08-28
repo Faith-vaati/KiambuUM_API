@@ -11,8 +11,8 @@ const sequelize = new Sequelize(env.db_name, env.db_username, env.db_password, {
     timestamps: true,
   },
   pool: {
-    max: 5,
-    min: 0,
+    max: 20,
+    min: 5,
     acquire: 30000,
     idle: 10000,
   },

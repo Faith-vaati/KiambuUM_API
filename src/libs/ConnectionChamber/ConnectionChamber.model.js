@@ -1,25 +1,25 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const CustomerChamber = require("../../models/CustomerChamber")(sequelize, Sequelize);
+const ConnectionChamber = require("../../models/ConnectionChamber")(sequelize, Sequelize);
 
-CustomerChamber.sync({ force: false });
+ConnectionChamber.sync({ force: false });
 
-exports.createCustomerChamber = async (CustomerChamberData) => {
+exports.createConnectionChamber = async (ConnectionChamberData) => {
     try {
-        if (!CustomerChamberData.ObjectID) {
+        if (!ConnectionChamberData.ObjectID) {
             throw new Error("Body is required!");
         }
-        await CustomerChamber.create(CustomerChamberData);
-        return { success: "CustomerChamber created successfully" };
+        await ConnectionChamber.create(ConnectionChamberData);
+        return { success: "ConnectionChamber created successfully" };
     } catch (error) {
         console.error(error);
         throw new Error("Creation failed");
     }
 };
 
-exports.updateCustomerChamberByID = async (CustomerChamberData, id) => {
+exports.updateConnectionChamberByID = async (ConnectionChamberData, id) => {
     try {
-        const affectedRows = await CustomerChamber.update(CustomerChamberData, {
+        const affectedRows = await ConnectionChamber.update(ConnectionChamberData, {
             where: { ID: id }
         });
         console.log(affectedRows);
@@ -34,18 +34,18 @@ exports.updateCustomerChamberByID = async (CustomerChamberData, id) => {
     }
 };
 
-exports.getAllCustomerChamber = async () => {
+exports.getAllConnectionChamber = async () => {
     try {
-        const result = await CustomerChamber.findAll();
+        const result = await ConnectionChamber.findAll();
         return result;
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to retrieve CustomerChamber");
+        throw new Error("Failed to retrieve ConnectionChamber");
     }
 };
-exports.deleteCustomerChamberByID = async (id) => {
+exports.deleteConnectionChamberByID = async (id) => {
     try {
-        const affectedRows = await CustomerChamber.destroy({
+        const affectedRows = await ConnectionChamber.destroy({
             where: { ID: id }
         });
         return affectedRows;
