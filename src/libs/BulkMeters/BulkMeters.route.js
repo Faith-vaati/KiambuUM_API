@@ -1,5 +1,12 @@
 const BulkMetersController = require("./BulkMeters.controller");
 
+
 exports.BulkMetersRoute = function (app) {
-    app.get("/bulkmeters/getall", [BulkMetersController.getAllBulkMetersController]);
+    app.post("/BulkMeters/create", BulkMetersController.createBulkMeters);
+
+    app.put("/BulkMeters/update/:id", BulkMetersController.updateBulkMeters);
+
+    app.get("/BulkMeters", BulkMetersController.getAllBulkMetersController); 
+
+    app.delete("/BulkMeters/delete/:id", BulkMetersController.deleteBulkMeters);
 };
