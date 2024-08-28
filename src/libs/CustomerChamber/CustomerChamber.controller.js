@@ -79,7 +79,7 @@ exports.findCustomerChamberPagnited = (req, res) => {
 };
 
 exports.findCustomerChamberPagnitedSearch = (req, res) => {
-    CustomerChamberModel.finCustomerChamberdPagnitedSearch(
+    CustomerChamberModel.findCustomerChamberPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
