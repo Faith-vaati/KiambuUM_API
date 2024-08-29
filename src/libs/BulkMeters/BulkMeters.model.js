@@ -5,38 +5,29 @@ const BulkMeters = require("../../models/BulkMeters")(sequelize, Sequelize);
 BulkMeters.sync({ force: false });
 exports.createBulkMeters = (BulkMetersData) => {
   return new Promise(async (resolve, reject) => {
-    BulkMeters.findAll({
-      where: {
-        AccountNo: BulkMetersData.AccountNo,
-      },
-    }).then(
-      (result) => {
-        if (result?.length === 0) {
-          BulkMeters.create(BulkMetersData).then(
-            async (result) => {
-              try {
-                const id = result.dataValues.ID;
-                const [data, dmeta] = await sequelize.query(
-                  `UPDATE public."BulkMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
-                );
-                resolve({
-                  success: "BulkMeters Created successfully",
-                  token: result.dataValues.ID,
-                });
-              } catch (error) {
-                reject({ success: "Data saved without geometry" });
-              }
-            },
-            (err) => {
-              reject({ error: "Offtakers creation failed" });
-            }
+    if (BulkMetersData.Longitude === undefined || BulkMetersData.Latitude === undefined) {
+      reject({ error: "Location is required" });
+    }
+
+    BulkMeters.create(BulkMetersData).then(
+      async (result) => {
+        try {
+          const id = result.dataValues.ID;
+          const [data, dmeta] = await sequelize.query(
+            `UPDATE public."BulkMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
-        } else {
-          reject({ error: "This account number exists" });
+          resolve({
+            success: "BulkMeters Created successfully",
+            token: result.dataValues.ID,
+          });
+        } catch (error) {
+          reject({ success: "Data saved without geometry" });
         }
       },
       (err) => {
-        reject({ error: "Offtakers creation failed" });
+        console.log(err);
+        
+        reject({ error: "BulkMeters creation failed" });
       }
     );
   });
