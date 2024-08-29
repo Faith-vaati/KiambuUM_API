@@ -124,10 +124,8 @@ module.exports = (sequelize, Datatypes) => {
             type: Sequelize.STRING(254),
             allowNull: true,
         },
-    }, {
-        tableName: 'ConnectionChambers',
-        timestamps: true,
-    });
+    }, 
+    );
 
     return ConnectionChamber;
 };
