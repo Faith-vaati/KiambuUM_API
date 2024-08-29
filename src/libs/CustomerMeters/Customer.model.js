@@ -31,7 +31,6 @@ exports.createCustomer = (CustomerData) => {
               }
             },
             (err) => {
-      
               reject({ error: "Customer creation failed" });
             }
           );
@@ -40,7 +39,6 @@ exports.createCustomer = (CustomerData) => {
         }
       },
       (err) => {
-    
         reject({ error: "Customer creation failed" });
       }
     );
@@ -169,7 +167,6 @@ exports.findCustomersPagnitedSearch = (column, value, offset) => {
 
 exports.searchOneCustomer = (value) => {
   return new Promise(async (resolve, reject) => {
-   
     try {
       const [result, metadata] = await sequelize.query(
         `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "CustomerMeters" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
@@ -210,7 +207,6 @@ exports.filterCustomers = (column, operator, value, offset) => {
         total: count[0].total,
       });
     } catch (error) {
-   
       reject({ error: "Retrieve failed!" });
     }
   });
@@ -249,41 +245,39 @@ exports.getGeoJSON = () => {
 exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [cs, smeta] = await sequelize.query(
+      const [Customers, smeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."CustomerMeters"`
       );
-      const [dm, hmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."CustomerMeters"`
-      );
-      const [zn, dmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."CustomerMeters"`
-      );
-      const [tnk, fmeta] = await sequelize.query(
+      const [Tanks, fmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
       );
-      const [vl, imeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."Valves"`
+      const [MasterMeters, imeta] = await sequelize.query(
+        `SELECT Count(*)::FLOAT as total FROM public."MasterMeters"`
       );
-      const [mn, pmeta] = await sequelize.query(
+      const [BulkMeters, pmeta] = await sequelize.query(
+        `SELECT Count(*)::FLOAT as total FROM public."BulkMeters"`
+      );
+      const [Manholes, cbmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
       );
-      const [cb, cbmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."CustomerBillings"`
+      const [CustomerChambers, invmeta] = await sequelize.query(
+        `SELECT Count(*)::FLOAT as total FROM public."CustomerChambers"`
       );
-      const [inv, invmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."CustomerBillings"`
-        // ROUND( AVG(some_column)::numeric, 2 )
+      const [ConnectionChambers, cmeta] = await sequelize.query(
+        `SELECT Count(*)::FLOAT as total FROM public."ConnectionChambers"`
       );
-
+      const [SewerLines, semeta] = await sequelize.query(
+        `SELECT Count(*)::FLOAT as total FROM public."SewerLines"`
+      );
       resolve({
-        Customers: cs,
-        DMA: dm,
-        Zone: zn,
-        Tanks: tnk,
-        Valves: vl,
-        Manholes: mn,
-        CurrentBalance: cb,
-        InvoiceAmount: inv,
+        Customers: Customers[0].total,
+        Tanks: Tanks[0].total,
+        MasterMeters: MasterMeters[0].total,
+        BulkMeters: BulkMeters[0].total,
+        Manholes: Manholes[0].total,
+        CustomerChambers: CustomerChambers[0].total,
+        ConnectionChambers: ConnectionChambers[0].total,
+        SewerLines: SewerLines[0].total,
       });
     } catch (error) {
       reject(null);
@@ -294,35 +288,30 @@ exports.getStats = () => {
 exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [accType, dmeta] = await sequelize.query(
-        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."CustomerMeters" GROUP BY "AccountType"`
+      const [MeterStatus, dmeta] = await sequelize.query(
+        `SELECT "MeterStatus" AS name,Count(*)::int AS value FROM public."CustomerMeters" GROUP BY "MeterStatus"`
       );
-      const [accStatus, ameta] = await sequelize.query(
-        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "AccountStatus"`
+      const [MeterMaterial, ameta] = await sequelize.query(
+        `SELECT "MeterMaterial"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "MeterMaterial"`
       );
 
-      const [mtrStatus, mtrmeta] = await sequelize.query(
-        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "MeterStatus"`
+      const [MeterSize, mtrmeta] = await sequelize.query(
+        `SELECT "MeterSize"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "MeterSize"`
       );
-      const [dma, dmameta] = await sequelize.query(
-        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "DMA"`
-      );
-      const [zone, znmeta] = await sequelize.query(
-        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "Zone"`
-      );
-      const [mtrclass, clmeta] = await sequelize.query(
-        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "Class"`
+
+      const [Tanks, dmameta] = await sequelize.query(
+        `SELECT "Name"  AS name,Sum("Capacity")::FLOAT  AS value FROM public."Tanks" GROUP BY "Name"`
       );
 
       resolve({
-        AccountType: accType,
-        AccountStatus: accStatus,
-        MeterStatus: mtrStatus,
-        DMA: dma,
-        Zone: zone,
-        Class: mtrclass,
+        MeterStatus,
+        MeterMaterial,
+        MeterSize,
+        Tanks,
       });
     } catch (error) {
+      console.log(error);
+
       reject({ error: "failed" });
     }
   });
