@@ -16,10 +16,11 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: true
         },
-        RecordTime: {
-            type: Sequelize.STRING(254), 
-            allowNull: true
-        },
+    
+        RecTime: {
+            type: DataTypes.STRING(254),
+            allowNull: true,
+          },
         Length: {
             type: Sequelize.FLOAT, 
             allowNull: true
@@ -44,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: true
         },
-        Intersec_1: {
+        Intersection: {
             type: Sequelize.STRING(254), 
             allowNull: true
         },
@@ -52,10 +53,7 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: true
         },
-        Current_1: {
-            type: Sequelize.STRING(254),
-            allowNull: true
-        },
+        
         YearLaid: {
             type: Sequelize.FLOAT, 
             allowNull: true
@@ -64,20 +62,12 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: true
         },
-        ShapeLength: {
-            type: Sequelize.FLOAT,
-            allowNull: true
-        },
+        
         geom: { 
             type: Sequelize.GEOMETRY('LINESTRING', 4326), 
             allowNull: true
         }
-    }, {
-        tableName: 'SewerMainTrunk', 
-        timestamps: true, 
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt'
-    });
+    }, );
 
     return SewerMainTrunk;
 };
