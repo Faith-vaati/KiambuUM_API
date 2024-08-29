@@ -30,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    
-   
-  
-   
     Material: {
       type: DataTypes.STRING(254),
       allowNull: true,
@@ -50,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-   
+
     RecTime: {
       type: DataTypes.STRING(254),
       allowNull: true,
