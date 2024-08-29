@@ -21,10 +21,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(254),
             allowNull: true,
         },
-        RecordTime: {
+        RecTime: {
             type: DataTypes.STRING(254), 
             allowNull: true,
-        },
+          },
         Length: {
             type: DataTypes.DOUBLE, 
             allowNull: true,
@@ -41,39 +41,30 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(254),
             allowNull: true,
         },
-        Year_Ins_1: {
+        Year: {
             type: DataTypes.DOUBLE, 
             allowNull: true,
-        },
-        Design_C_1: {
-            type: DataTypes.DOUBLE, 
-            allowNull: true,
-        },
-        Bulk_Meter_1: {
+          },
+       
+        BulkMeter: {
             type: DataTypes.STRING(254),
             allowNull: true,
         },
-        Current_1: {
-            type: DataTypes.STRING(254),
+        Design: {
+            type: DataTypes.DOUBLE, 
             allowNull: true,
         },
+        Route: {
+            type: DataTypes.STRING,
+            allowNull: true,
+          },
+       
         Picture: {
             type: DataTypes.STRING(254),
             allowNull: true,
         },
-        ShapeLength: {
-            type: DataTypes.DOUBLE, 
-            allowNull: true,
-        },
-        Shape_Area: {
-            type: DataTypes.DOUBLE, 
-            allowNull: true,
-        },
-    }, {
-        timestamps: true, 
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt',
-    });
+       
+    },);
 
     return TreatmentPlant;
 };
