@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         RecTime: {
             type: Sequelize.STRING(254),
-            allowNull: false
+            allowNull: true
         },
         Latitude: {
             type: Sequelize.DOUBLE,
