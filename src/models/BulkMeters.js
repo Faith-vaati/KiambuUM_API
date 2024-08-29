@@ -60,22 +60,12 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: false
         },
-        createdAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-            defaultValue: Sequelize.NOW
-        },
-        updatedAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-            defaultValue: Sequelize.NOW
-        }
-    }, {
-        tableName: 'BulkMeters',
-        timestamps: true,  
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt'
-    });
+        geom: {
+            type: DataTypes.GEOMETRY("POINTZM", 4326),
+            allowNull: true,
+          },
+        
+    }, );
 
     return BulkMeters;
 };
