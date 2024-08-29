@@ -136,11 +136,7 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING(254),
             allowNull: true,
         },
-    }, {
-        timestamps: true,
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt',
-    });
+    }, );
 
     return CustomerChamber;
 };
