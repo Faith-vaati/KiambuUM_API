@@ -169,7 +169,7 @@ exports.searchOneCustomer = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "CustomerMeters" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "SerialNo","AccountNo", "Latitude", "Longitude" FROM "CustomerMeters" WHERE ("AccountNo"::text ILIKE '%${value}%' OR "SerialNo"::text ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
@@ -182,7 +182,7 @@ exports.searchOthers = (table, value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "ObjectID", "Name", "Latitude", "Longitude" FROM "${table}" WHERE ("ObjectID"::text ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "Name", "Latitude", "Longitude" FROM "${table}" WHERE ("Name"::text ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {

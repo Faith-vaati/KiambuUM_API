@@ -28,6 +28,8 @@ exports.createOfftakers = (OfftakersData) => {
               }
             },
             (err) => {
+              console.log(err);
+
               reject({ error: "Offtakers creation failed" });
             }
           );
@@ -36,6 +38,8 @@ exports.createOfftakers = (OfftakersData) => {
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Offtakers creation failed" });
       }
     );
