@@ -62,20 +62,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("LineString", 4326), 
       allowNull: true,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal('now()'), 
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal('now()'), 
-    },
-  }, {
-    tableName: 'WaterPipes', 
-    timestamps: true, 
-  });
+    
+  },);
 
   return WaterPipes;
 };
