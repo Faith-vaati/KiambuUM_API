@@ -97,11 +97,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-  }, {
-    timestamps: true, 
-    createdAt: 'createdAt', 
-    updatedAt: 'updatedAt', 
-  });
+  }, );
 
   return SewerLines;
 };

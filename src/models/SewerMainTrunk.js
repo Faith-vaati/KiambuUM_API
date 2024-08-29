@@ -72,12 +72,7 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.GEOMETRY('LINESTRING', 4326), 
             allowNull: true
         }
-    }, {
-        tableName: 'SewerMainTrunk', 
-        timestamps: true, 
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt'
-    });
+    }, );
 
     return SewerMainTrunk;
 };

@@ -7,14 +7,7 @@ module.exports = (sequelize, Datatypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        ObjectID: {
-            type: Sequelize.INTEGER,
-            allowNull: false
-        },
-        RecordTime: {
-            type: Sequelize.STRING, 
-            allowNull: true
-        },
+        
         Latitude: {
             type: Sequelize.DOUBLE, 
             allowNull: false
@@ -35,10 +28,7 @@ module.exports = (sequelize, Datatypes) => {
             type: Sequelize.STRING, 
             allowNull: true
         },
-        Year_in_1: {
-            type: Sequelize.STRING, 
-            allowNull: true
-        },
+        
         Picture: {
             type: Sequelize.STRING, 
             allowNull: true
@@ -59,11 +49,11 @@ module.exports = (sequelize, Datatypes) => {
             type: Sequelize.STRING, 
             allowNull: true
         },
-    }, {
-        timestamps: true, 
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt'
-    });
+        Year: {
+            type: Sequelize.DOUBLE,
+            allowNull: false
+        },
+    }, );
 
     return Offtake;
 };

@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
+    Name: {
+      type: Sequelize.STRING(254),
+      allowNull: true,
+  },
     RecTime: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -139,20 +143,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW,
-      allowNull: false,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW,
-      allowNull: false,
-    },
-  }, {
-    tableName: 'Manholes',
-    timestamps: true, 
-  });
+    
+  }, );
 
   return Manholes;
 };
