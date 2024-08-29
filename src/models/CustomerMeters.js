@@ -87,10 +87,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    MeterStatus: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     MeterType: {
       type: DataTypes.STRING,
       allowNull: true,

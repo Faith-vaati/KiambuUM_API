@@ -289,7 +289,7 @@ exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [MeterStatus, dmeta] = await sequelize.query(
-        `SELECT "MeterStatus" AS name,Count(*)::int AS value FROM public."CustomerMeters" GROUP BY "MeterStatus"`
+        `SELECT "Status" AS name,Count(*)::int AS value FROM public."CustomerMeters" GROUP BY "Status"`
       );
       const [MeterMaterial, ameta] = await sequelize.query(
         `SELECT "MeterMaterial"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "MeterMaterial"`
