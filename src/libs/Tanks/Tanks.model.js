@@ -26,6 +26,8 @@ exports.createTank = (TanksData) => {
         }
       },
       (err) => {
+        console.log(err);
+        
         reject({ error: "Tank creation failed" });
       }
     );
