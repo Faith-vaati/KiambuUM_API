@@ -7,14 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    Name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Phone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Longitude: {
       type: DataTypes.DOUBLE,
       allowNull: true,
@@ -27,19 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
-    Zone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     CurrentZone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Route: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    DMA: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -47,27 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    SchemeName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Brand: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     BrandName: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Material: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     MeterMaterial: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Class: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -79,31 +43,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    MeterNo: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     MeterSize: {
       type: DataTypes.STRING,
       allowNull: true,
     },
     MeterType: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    AccountStatus: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    AccountType: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Institution: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    ParcelNo: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -135,10 +79,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    User: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    
   });
 
   return CustomerMeters;
