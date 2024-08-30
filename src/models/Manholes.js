@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     Name: {
       type: Sequelize.STRING(254),
       allowNull: true,
-  },
+    },
     RecTime: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -143,8 +143,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
-    
-  }, );
+  });
 
   return Manholes;
 };

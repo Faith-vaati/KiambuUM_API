@@ -31,6 +31,8 @@ exports.createCustomer = (CustomerData) => {
               }
             },
             (err) => {
+              console.log(err);
+
               reject({ error: "Customer creation failed" });
             }
           );
@@ -39,6 +41,8 @@ exports.createCustomer = (CustomerData) => {
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Customer creation failed" });
       }
     );
