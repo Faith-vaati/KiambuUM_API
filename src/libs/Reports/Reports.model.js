@@ -6,6 +6,7 @@ const ReportsMailer = require("../Utils/ReportsMailer");
 const multer = require("multer");
 const Path = require("path");
 const fs = require("fs");
+const { FeatureCollection, Point } = require("geojson");
 
 Reports.sync({ force: false });
 
@@ -689,23 +690,68 @@ exports.findCharts = (start, end) => {
   });
 };
 
-exports.findAllReportsPaginated = (offset) => {
+exports.findAllReportsPaginated = (type, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
+      let typeQuery = "";
+      if (type != "All") {
+        typeQuery = `WHERE "Reports"."Type" = '${type}'`;
+      }
+
       const [result, metadata] = await sequelize.query(
-        `SELECT "Reports"."ID","Reports"."Latitude", "Reports"."Longitude", "Reports"."SerialNo", "Reports"."Name", "Reports"."Type", "Reports"."Description", "Reports"."createdAt" AS "DateReported", "Reports"."Phone" AS "ReportedBy",
-        "Reports"."Status", "Mobiles"."Name" AS "AssignedTo", "Reports"."updatedAt" AS "DateResolved" FROM "Reports" 
-        LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
-        LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar ORDER BY "DateReported" DESC LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Reports" ${typeQuery}  ORDER BY "createdAt" DESC LIMIT 12 OFFSET ${offset}`
       );
+
       const [count, cmeta] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "Reports" 
-        LEFT OUTER JOIN "Mobiles" ON "Reports"."NRWUserID" = "Mobiles"."UserID" :: VARCHAR
-        LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar`
+        `SELECT Count(*)::int AS total FROM "Reports" ${typeQuery}`
       );
+
       resolve({ data: result, total: count[0].total });
     } catch (error) {
       reject({ error: "Retrieve failed!" });
+    }
+  });
+};
+
+exports.findGeojson = (type) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let typeQuery = "";
+      if (type !== "All") {
+        typeQuery = `WHERE "Reports"."Type" = '${type}'`;
+      }
+
+      const [result, metadata] = await sequelize.query(
+        `SELECT "ID", "SerialNo", "Type", "Longitude", "Latitude", "geom", "Image", "Name", "Phone", "Description", "Status", "NRWUserID", "UserID", "TaskResources", "TaskRemarks", "TaskDate" FROM "Reports" ${typeQuery}`
+      );
+
+      // Convert the result to GeoJSON format
+      const geojson = {
+        type: "FeatureCollection",
+        features: result.map((report) => ({
+          type: "Feature",
+          geometry: report.geom,
+          properties: {
+            ID: report.ID,
+            SerialNo: report.SerialNo,
+            Type: report.Type,
+            Image: report.Image,
+            Name: report.Name,
+            Phone: report.Phone,
+            Description: report.Description,
+            Status: report.Status,
+            NRWUserID: report.NRWUserID,
+            UserID: report.UserID,
+            TaskResources: report.TaskResources,
+            TaskRemarks: report.TaskRemarks,
+            TaskDate: report.TaskDate,
+          },
+        })),
+      };
+
+      resolve(geojson);
+    } catch (error) {
+      reject(null);
     }
   });
 };
