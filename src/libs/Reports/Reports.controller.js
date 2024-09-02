@@ -93,6 +93,28 @@ exports.findStats = (req, res) => {
   );
 };
 
+exports.findStatusCountByType = (req, res) => {
+  ReportsModel.findStatusCountByType(req.params.type).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (error) => {
+      res.status(203).send(error);
+    }
+  );
+};
+
+exports.findMonthlyCountByType = (req, res) => {
+  ReportsModel.findMonthlyCountByType(req.params.type).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (error) => {
+      res.status(203).send(error);
+    }
+  );
+};
+
 exports.findType = (req, res) => {
   ReportsModel.findType().then(
     (result) => {
