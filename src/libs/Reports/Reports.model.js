@@ -722,7 +722,7 @@ exports.findGeojson = (type) => {
       }
 
       const [result, metadata] = await sequelize.query(
-        `SELECT "ID", "SerialNo", "Type", "Longitude", "Latitude", "geom", "Image", "Name", "Phone", "Description", "Status", "NRWUserID", "UserID", "TaskResources", "TaskRemarks", "TaskDate" FROM "Reports" ${typeQuery}`
+        `SELECT * FROM "Reports" ${typeQuery}`
       );
 
       // Convert the result to GeoJSON format
@@ -745,6 +745,7 @@ exports.findGeojson = (type) => {
             TaskResources: report.TaskResources,
             TaskRemarks: report.TaskRemarks,
             TaskDate: report.TaskDate,
+            createdAt: report.createdAt,
           },
         })),
       };
