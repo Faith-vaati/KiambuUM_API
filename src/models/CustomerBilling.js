@@ -113,7 +113,7 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     sConsumption: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.DECIMAL, 
       allowNull: true,
     },
     MState: {
@@ -132,7 +132,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-  }); 
+  });
 
   return CustomerBilling;
 };
