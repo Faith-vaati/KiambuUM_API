@@ -270,7 +270,7 @@ exports.findCharts = (req, res) => {
 };
 
 exports.findAllReportsPaginated = (req, res) => {
-  ReportsModel.findAllReportsPaginated(req.params.offset).then(
+  ReportsModel.findAllReportsPaginated(req.params.type, req.params.offset).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -280,11 +280,20 @@ exports.findAllReportsPaginated = (req, res) => {
   );
 };
 
+exports.findGeojson = (req, res) => {
+  ReportsModel.findGeojson(req.params.type).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+
 exports.searchReports = (req, res) => {
-  ReportsModel.searchReports(
-    req.params.col,
-    req.params.val
-  ).then(
+  ReportsModel.searchReports(req.params.col, req.params.val).then(
     (result) => {
       res.status(200).send(result);
     },

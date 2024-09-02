@@ -35,11 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Location: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Route: {
+    Phone: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -47,14 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Phone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    AccountNo: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+
     Status: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -65,6 +54,18 @@ module.exports = (sequelize, DataTypes) => {
     },
     UserID: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    TaskResources: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    TaskRemarks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    TaskDate: {
+      type: DataTypes.DATE,
       allowNull: true,
     },
   });

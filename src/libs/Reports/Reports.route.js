@@ -59,9 +59,14 @@ exports.ReportsRoutes = function (app) {
 
   app.get("/reports", [ReportsController.findAllReports]);
 
-  app.get("/reports/paginated/:offset", [
+  app.get("/reports/paginated/:type/:offset", [
     ReportsController.findAllReportsPaginated,
   ]);
+
+    app.get("/reports/geojson/:type", [
+      ReportsController.findGeojson,
+    ]);
+
 
   app.get("/reportsntasks/paginated/:offset", [
     ReportsController.findReportsnTasksPaginated,
