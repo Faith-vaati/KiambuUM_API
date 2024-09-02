@@ -1,41 +1,38 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const CustomerChamber = require("../../models/CustomerChamber")(sequelize, Sequelize);
+const CustomerChamber = require("../../models/CustomerChamber")(
+  sequelize,
+  Sequelize
+);
 
 CustomerChamber.sync({ force: false });
 exports.createCustomerChamber = (CustomerChamberData) => {
   return new Promise(async (resolve, reject) => {
-    CustomerChamber.findAll({
-      where: {
-        AccountNo: CustomerChamberData.AccountNo,
-      },
-    }).then(
-      (result) => {
-        if (result?.length === 0) {
-            CustomerChamber.create(CustomerChamberData).then(
-            async (result) => {
-              try {
-                const id = result.dataValues.ID;
-                const [data, dmeta] = await sequelize.query(
-                  `UPDATE public."CustomerChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
-                );
-                resolve({
-                  success: "CustomerChamber Created successfully",
-                  token: result.dataValues.ID,
-                });
-              } catch (error) {
-                reject({ success: "Data saved without geometry" });
-              }
-            },
-            (err) => {
-              reject({ error: "CustomerChamber creation failed" });
-            }
+    if (
+      CustomerChamberData.Longitude === undefined ||
+      CustomerChamberData.Latitude === undefined
+    ) {
+      reject({ error: "Location is required" });
+    }
+
+    CustomerChamber.create(CustomerChamberData).then(
+      async (result) => {
+        try {
+          const id = result.dataValues.ID;
+          const [data, dmeta] = await sequelize.query(
+            `UPDATE public."CustomerChamber" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
-        } else {
-          reject({ error: "This account number exists" });
+          resolve({
+            success: "CustomerChamber Created successfully",
+            token: result.dataValues.ID,
+          });
+        } catch (error) {
+          reject({ success: "Data saved without geometry" });
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "CustomerChamber creation failed" });
       }
     );
@@ -252,7 +249,7 @@ exports.getStats = () => {
         `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."CustomerChambers"`
       );
       const [tnk, fmeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
+        `SELECT Count(*)::FLOAT as total FROM public."CustomerChamber"`
       );
       const [vl, imeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Valves"`
@@ -272,7 +269,7 @@ exports.getStats = () => {
         Offtakers: cs,
         DMA: dm,
         Zone: zn,
-        Tanks: tnk,
+        CustomerChamber: tnk,
         Valves: vl,
         Manholes: mn,
         CurrentBalance: cb,
