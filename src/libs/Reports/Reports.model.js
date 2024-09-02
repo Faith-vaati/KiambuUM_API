@@ -513,7 +513,7 @@ exports.findStatusCountByType = (type) => {
   return new Promise((resolve, reject) => {
     sequelize
       .query(
-        `SELECT "Status" AS name, COUNT(*) AS value FROM "Reports" WHERE "Type" = :type GROUP BY "Status"`,
+        `SELECT "Status" AS label, COUNT(*) AS value FROM "Reports" WHERE "Type" = :type GROUP BY "Status"`,
         {
           replacements: { type },
           type: sequelize.QueryTypes.SELECT,
