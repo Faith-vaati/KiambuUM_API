@@ -37,6 +37,7 @@ const ConnectionChamber = require("./libs/ConnectionChamber/ConnectionChamber.ro
 const Offtake = require("./libs/Offtakers/Offtakers.route");
 const SewerMainTrunk = require("./libs/SewerMainTrunk/SewerMainTrunk.route");
 const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
+const MeterReadings = require("./libs/MeterReadings/MeterReadings.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -196,6 +197,7 @@ ConnectionChamber.ConnectionChamberRoutes(app);
 Offtake.OfftakersRoutes(app);
 SewerMainTrunk.SewerMainTrunkRoutes(app);
 TreatmentPlant.TreatmentPlantRoute(app);
+MeterReadings.MeterReadingsRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(
