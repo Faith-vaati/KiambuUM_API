@@ -1,5 +1,4 @@
 const MeterReadingsController = require("./MeterReadings.controller");
-const verifyToken = require("../Utils/VerifyToken");
 
 exports.MeterReadingsRoutes = function (app) {
   app.post("/meterreading/create", [MeterReadingsController.create]);
