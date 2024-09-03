@@ -106,6 +106,54 @@ exports.findCustomerBillingPaginated = (offset) => {
   });
 };
 
+exports.findManagementData = (req) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { offset = 0, search = "", year, month } = req.query;
+
+      console.log(req.query);
+
+      let whereClause = {};
+      if (year) {
+        whereClause.Period = year;
+      }
+      if (month) {
+        whereClause.Period = {
+          [Op.like]: `${year}-${String(month).padStart(2, "0")}%`,
+        };
+      }
+      if (search) {
+        whereClause = {
+          ...whereClause,
+          [Op.or]: [
+            { Name: { [Op.iLike]: `%${search}%` } },
+            { OldAcc: { [Op.iLike]: `%${search}%` } },
+            { Acc_No: { [Op.iLike]: `%${search}%` } },
+            { Bill_No: { [Op.iLike]: `%${search}%` } },
+            { Period: { [Op.iLike]: `%${search}%` } },
+            { Due_Date: { [Op.iLike]: `%${search}%` } },
+          ],
+        };
+      }
+
+      const data = await CustomerBilling.findAndCountAll({
+        where: whereClause,
+        limit: 12,
+        offset: parseInt(offset, 10),
+        order: [["Period", "DESC"]],
+      });
+
+      resolve({
+        data: data.rows,
+        total: data.count,
+      });
+    } catch (error) {
+      console.error("Error fetching customer billing data:", error);
+      reject({ error: "Failed to retrieve customer billing data." });
+    }
+  });
+};
+
 exports.findCustomersPagnitedSearch = (value, column, offset) => {
   return new Promise(async (resolve, reject) => {
     try {

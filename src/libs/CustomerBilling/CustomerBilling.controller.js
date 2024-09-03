@@ -78,6 +78,18 @@ exports.findCustomersPagnitedSearch = (req, res) => {
   );
 };
 
+//new
+exports.findManagementData = (req, res) => {
+  CustomerBillingModel.findManagementData(req).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
 exports.findCharts = (req, res) => {
   CustomerBillingModel.findCharts().then(
     (result) => {
