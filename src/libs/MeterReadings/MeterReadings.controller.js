@@ -7,7 +7,6 @@ exports.create = (req, res) => {
     },
     (err) => {
       res.status(203).send(err);
-      MeterReading;
     }
   );
 };

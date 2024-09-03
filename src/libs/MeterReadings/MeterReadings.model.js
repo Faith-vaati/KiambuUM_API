@@ -38,7 +38,7 @@ exports.create = (MeterReadingsData) => {
       const Images = `${MeterReadingsData.AccountNumber}-${Date.now()}.png`;
       createFileFromBase64(MeterReadingsData.Image, Images);
       MeterReadingsData.Image = Images;
-      const createdMeter = await Reports.create(MeterReadingsData);
+      const createdMeter = await MeterReadings.create(MeterReadingsData);
       const id = createdMeter.dataValues.ID;
 
       resolve({
