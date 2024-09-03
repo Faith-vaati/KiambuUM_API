@@ -4,9 +4,11 @@ const verifyToken = require("./VerifyToken");
 exports.CustomerBillingRoutes = function (app) {
   app.post("/customerbilling/create", [CustomerBillingController.insert]);
 
-   app.get("/customerbilling/managementdata", [
-     CustomerBillingController.findManagementData,
-   ]);
+  app.get("/customerbilling/managementdata", [
+    CustomerBillingController.findManagementData,
+  ]);
+
+  app.get("/customerbilling/mapdata", [CustomerBillingController.findMapData]);
 
   app.get("/customerbilling/mapdata/filter/:table/:column/:operator/:value", [
     CustomerBillingController.findCustomerBillingFilter,

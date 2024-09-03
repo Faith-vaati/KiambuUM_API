@@ -34,7 +34,7 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     Period: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: true,
     },
     Water: {

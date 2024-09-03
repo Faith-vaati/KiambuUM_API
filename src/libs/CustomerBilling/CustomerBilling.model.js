@@ -4,6 +4,10 @@ const CustomerBilling = require("../../models/CustomerBilling")(
   sequelize,
   Sequelize
 );
+const CustomerMeters = require("../../models/CustomerMeters")(
+  sequelize,
+  Sequelize
+);
 
 CustomerBilling.sync({ force: false });
 exports.createCustomerBilling = (CustomerBillingData) => {
@@ -106,6 +110,54 @@ exports.findCustomerBillingPaginated = (offset) => {
   });
 };
 
+exports.findMapData = (req) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { year, month } = req.query;
+
+      let whereClause = "";
+      if (year) {
+        whereClause += `EXTRACT(YEAR FROM cb."Period") = ${year}`;
+      }
+      if (month) {
+        if (whereClause) whereClause += " AND ";
+        whereClause += `EXTRACT(MONTH FROM cb."Period") = ${month}`;
+      }
+
+      const query = `
+        SELECT cb.*, cm."Latitude", cm."Longitude"
+        FROM "CustomerBillings" cb
+        LEFT JOIN "CustomerMeters" cm 
+        ON cb."Acc_No"::text = cm."AccountNo"::text 
+        OR cb."OldAcc"::text = cm."AccountNo"::text
+        ${whereClause ? `WHERE ${whereClause}` : ""}
+      `;
+
+      const [results] = await sequelize.query(query);
+
+      const geojson = {
+        type: "FeatureCollection",
+        features: results.map((billing) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              parseFloat(billing.Longitude),
+              parseFloat(billing.Latitude),
+            ],
+          },
+          properties: billing,
+        })),
+      };
+
+      resolve(geojson);
+    } catch (error) {
+      console.error("Error fetching geojson data:", error);
+      reject({ error: "Failed to retrieve geojson data." });
+    }
+  });
+};
+
 exports.findManagementData = (req) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -114,14 +166,27 @@ exports.findManagementData = (req) => {
       console.log(req.query);
 
       let whereClause = {};
-      if (year) {
-        whereClause.Period = year;
-      }
-      if (month) {
+
+      if (year && month) {
+        // Calculate the last day of the given month
+        const lastDay = getLastDayOfMonth(year, month);
+
+        // Filter by specific year and month
         whereClause.Period = {
-          [Op.like]: `${year}-${String(month).padStart(2, "0")}%`,
+          [Op.between]: [
+            `${year}-${String(month).padStart(2, "0")}-01`,
+            `${year}-${String(month).padStart(2, "0")}-${String(
+              lastDay
+            ).padStart(2, "0")}`,
+          ],
+        };
+      } else if (year) {
+        // Filter by specific year only
+        whereClause.Period = {
+          [Op.between]: [`${year}-01-01`, `${year}-12-31`],
         };
       }
+
       if (search) {
         whereClause = {
           ...whereClause,
@@ -130,7 +195,9 @@ exports.findManagementData = (req) => {
             { OldAcc: { [Op.iLike]: `%${search}%` } },
             { Acc_No: { [Op.iLike]: `%${search}%` } },
             { Bill_No: { [Op.iLike]: `%${search}%` } },
-            { Period: { [Op.iLike]: `%${search}%` } },
+            {
+              [Op.and]: Sequelize.literal(`"Period"::TEXT LIKE '%${search}%'`),
+            },
             { Due_Date: { [Op.iLike]: `%${search}%` } },
           ],
         };
@@ -154,6 +221,11 @@ exports.findManagementData = (req) => {
   });
 };
 
+
+  const getLastDayOfMonth = (year, month) => {
+    return new Date(year, month, 0).getDate();
+  };
+  
 exports.findCustomersPagnitedSearch = (value, column, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
