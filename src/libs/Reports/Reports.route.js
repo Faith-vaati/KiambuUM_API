@@ -11,7 +11,15 @@ exports.ReportsRoutes = function (app) {
 
   app.get("/reports/all/stats/:start/:end", [ReportsController.getStats]);
 
-  app.get("/reports/:ID", [ReportsController.findReportByID]);
+  app.get("/reports/stats", [ReportsController.findStats]);
+
+  app.get("/reports/charts/status/:type", [
+    ReportsController.findStatusCountByType,
+  ]);
+
+  app.get("/reports/charts/monthly/:type", [
+    ReportsController.findMonthlyCountByType,
+  ]);
 
   app.get("/reports/all/charts/:start/:end", [ReportsController.findCharts]);
 
@@ -30,8 +38,6 @@ exports.ReportsRoutes = function (app) {
   ]);
 
   app.get("/reports/monthly", [ReportsController.findMonthly]);
-
-  app.get("/reports/stats", [ReportsController.findStats]);
 
   app.get("/reports/type/count/:type/all", [ReportsController.countEachType]);
 
@@ -63,10 +69,7 @@ exports.ReportsRoutes = function (app) {
     ReportsController.findAllReportsPaginated,
   ]);
 
-    app.get("/reports/geojson/:type", [
-      ReportsController.findGeojson,
-    ]);
-
+  app.get("/reports/geojson/:type", [ReportsController.findGeojson]);
 
   app.get("/reportsntasks/paginated/:offset", [
     ReportsController.findReportsnTasksPaginated,
@@ -79,7 +82,7 @@ exports.ReportsRoutes = function (app) {
   ]);
 
   app.get("/facilities/search/:value", [ReportsController.searchFacility]);
-  
+
   app.get("/reports/filterall/:column/:operator/:value", [
     ReportsController.filterReports,
   ]);

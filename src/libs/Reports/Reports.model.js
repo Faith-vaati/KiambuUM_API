@@ -481,29 +481,74 @@ exports.findStats = () => {
   return new Promise((resolve, reject) => {
     Reports.findAll({}).then(
       async (result) => {
-        const count = await Reports.count({});
-        const clients = await Reports.count({
-          col: "Client",
-          distinct: true,
+        const Total = await Reports.count({});
+        const Received = await Reports.count({ where: { Status: "Received" } });
+        const Assigned = await Reports.count({
+          where: { Status: "In Progress" },
         });
-        const type = await Reports.count({
-          col: "Type",
-          distinct: true,
+        const Resolved = await Reports.count({ where: { Status: "Resolved" } });
+        const NotResolved = await Reports.count({
+          where: { Status: "Not Resolved" },
         });
-        const typeSum = await sequelize.query(
-          `SELECT "Reports"."Type", COUNT(*) AS count FROM "Reports" GROUP BY "Reports"."Type"`
-        );
+
         resolve({
-          total: count,
-          clients: clients,
-          type: type,
-          sum: typeSum,
+          Total,
+          Received,
+          Assigned,
+          Resolved,
+          NotResolved,
         });
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Retrieve failed" });
       }
     );
+  });
+};
+
+// Get Status Count for a Specific Type
+exports.findStatusCountByType = (type) => {
+  return new Promise((resolve, reject) => {
+    sequelize
+      .query(
+        `SELECT "Status" AS label, COUNT(*) AS value FROM "Reports" WHERE "Type" = :type GROUP BY "Status"`,
+        {
+          replacements: { type },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      )
+      .then(
+        (result) => resolve(result),
+        (err) => {
+          console.log(err);
+
+          reject(null);
+        }
+      );
+  });
+};
+
+// Get Monthly Count for a Specific Type
+exports.findMonthlyCountByType = (type) => {
+  return new Promise((resolve, reject) => {
+    sequelize
+      .query(
+        `SELECT to_char("createdAt", 'Mon YYYY') AS name, COUNT(*) AS value FROM "Reports" WHERE "Type" = :type GROUP BY name ORDER BY name`,
+        {
+          replacements: { type },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      )
+      .then(
+        (result) => resolve(result),
+        (err) => {
+          console.log(err);
+
+          reject(null);
+        }
+      );
   });
 };
 
@@ -722,7 +767,7 @@ exports.findGeojson = (type) => {
       }
 
       const [result, metadata] = await sequelize.query(
-        `SELECT "ID", "SerialNo", "Type", "Longitude", "Latitude", "geom", "Image", "Name", "Phone", "Description", "Status", "NRWUserID", "UserID", "TaskResources", "TaskRemarks", "TaskDate" FROM "Reports" ${typeQuery}`
+        `SELECT * FROM "Reports" ${typeQuery}`
       );
 
       // Convert the result to GeoJSON format
@@ -745,6 +790,7 @@ exports.findGeojson = (type) => {
             TaskResources: report.TaskResources,
             TaskRemarks: report.TaskRemarks,
             TaskDate: report.TaskDate,
+            createdAt: report.createdAt,
           },
         })),
       };
