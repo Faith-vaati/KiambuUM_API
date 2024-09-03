@@ -16,7 +16,7 @@ exports.TanksRoutes = function (app) {
 
   app.get("/tanks/:ID", [TanksController.findTankById]);
 
-  app.get("/tanks/details/:ID", [TanksController.findTankByObjectId]);
+  app.get("/tanks/details/:value", [TanksController.findTankByName]);
 
   app.put("/tanks/:ID", [TanksController.updateTankById]);
 

@@ -27,7 +27,7 @@ exports.createTank = (TanksData) => {
       },
       (err) => {
         console.log(err);
-        
+
         reject({ error: "Tank creation failed" });
       }
     );
@@ -50,20 +50,18 @@ exports.TankById = (id) => {
   });
 };
 
-exports.findTankByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Tanks.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findTankByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Tanks" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(err);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
@@ -79,6 +77,8 @@ exports.updateTankById = (TanksData, id) => {
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Retrieve failed" });
       }
     );
