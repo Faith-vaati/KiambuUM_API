@@ -127,7 +127,7 @@ exports.findAssignedReportsPaginated = (nrwId, offset) => {
         `SELECT "Reports".* FROM "Reports"
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar
         WHERE "Reports"."NRWUserID" = '${nrwId}'
-        AND "Reports"."Status" = 'In Progress'
+        AND "Reports"."Status" = 'Assigned'
         ORDER BY "Reports"."createdAt" DESC
         LIMIT 12 OFFSET ${offset}`
       );
@@ -143,7 +143,7 @@ exports.findAssignedReportsPaginated = (nrwId, offset) => {
         `SELECT COUNT(*) FROM "Reports"
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar
         WHERE "Reports"."NRWUserID" = '${nrwId}'
-        AND "Reports"."Status" = 'In Progress'`
+        AND "Reports"."Status" = 'Assigned'`
       );
       const [countR, metacountP] = await sequelize.query(
         `SELECT COUNT(*) FROM "Reports"
