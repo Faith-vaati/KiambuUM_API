@@ -103,7 +103,7 @@ exports.findMapData = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-  CustomerBillingModel.findCharts().then(
+  CustomerBillingModel.findCharts(req.params.year).then(
     (result) => {
       res.status(200).send(result);
     },

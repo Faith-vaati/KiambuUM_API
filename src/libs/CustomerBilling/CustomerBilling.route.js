@@ -26,7 +26,7 @@ exports.CustomerBillingRoutes = function (app) {
     CustomerBillingController.findCustomersPagnitedSearch,
   ]);
 
-  app.get("/customerbilling/all/charts", [
+  app.get("/customerbilling/all/charts/:year", [
     CustomerBillingController.findCharts,
   ]);
 

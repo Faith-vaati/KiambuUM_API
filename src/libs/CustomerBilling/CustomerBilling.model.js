@@ -266,65 +266,116 @@ exports.filterBilling = (column, operator, value, offset) => {
   });
 };
 
-exports.findCharts = () => {
+exports.findCharts = (year) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [znOther, znCrdmeta] = await sequelize.query(
-        `SELECT "Zone" AS name, SUM("CurrentBalance")::int AS "CurrentBalance",
-         SUM("PreviousBalance")::int AS "PreviousBalance",
-         SUM("Amount")::int AS "InvoiceAmount"
-      FROM "CustomerBillings"   GROUP BY "Zone";`
+      const [Month, mndmeta] = await sequelize.query(
+        `SELECT
+            to_char("Period", 'Mon') AS month,
+            SUM("m_Total")::float AS "TotalAmount",
+            SUM("Arrears")::float AS "TotalArrears"
+        FROM
+            "CustomerBillings"
+        WHERE
+            EXTRACT(YEAR FROM "Period") = ${year}
+        GROUP BY
+            to_char("Period", 'Mon'),
+            EXTRACT(MONTH FROM "Period")
+        ORDER BY
+            EXTRACT(MONTH FROM "Period");
+        `
       );
-      const [scOther, scCrdmeta] = await sequelize.query(
-        `SELECT "Scheme" AS name, SUM("CurrentBalance")::int AS "CurrentBalance",
-         SUM("PreviousBalance")::int AS "PreviousBalance",
-         SUM("Amount")::int AS "InvoiceAmount"
-      FROM "CustomerBillings"   GROUP BY "Scheme";`
+      const [Water, wrmeta] = await sequelize.query(
+        `SELECT
+            to_char("Period", 'Mon') AS month,
+            SUM("Water")::float AS "Water",
+            SUM("Sewer")::float AS "Sewer"
+        FROM
+            "CustomerBillings"
+        WHERE
+            EXTRACT(YEAR FROM "Period") = ${year}
+        GROUP BY
+            to_char("Period", 'Mon'),
+            EXTRACT(MONTH FROM "Period")
+        ORDER BY
+            EXTRACT(MONTH FROM "Period");
+        `
+      );
+      const [ZoneWater, zwrmeta] = await sequelize.query(
+        `SELECT
+          "Zone" AS name,
+          SUM("Water")::float AS "Water"
+      FROM
+          "CustomerBillings"
+      WHERE
+          EXTRACT(YEAR FROM "Period") = ${year}
+      GROUP BY "Zone"
+      ORDER BY "Zone"::int ASC; 
+      `
+      );
+      const [ZoneSewer, swrmeta] = await sequelize.query(
+        `SELECT
+          "Zone" AS name,
+          SUM("Sewer")::float AS "Sewer"
+      FROM
+          "CustomerBillings"
+      WHERE
+          EXTRACT(YEAR FROM "Period") = ${year}
+      GROUP BY "Zone"
+      ORDER BY "Zone"::int ASC; 
+      `
       );
 
-      const [msOther, msCrdmeta] = await sequelize.query(
-        `SELECT "MeterStatus" AS name, SUM("CurrentBalance")::int AS "CurrentBalance",
-         SUM("PreviousBalance")::int AS "PreviousBalance",
-         SUM("Amount")::int AS "InvoiceAmount"
-      FROM "CustomerBillings"   GROUP BY "MeterStatus";`
+      const [SubZoneWater, szwrmeta] = await sequelize.query(
+        `SELECT
+          "Sub_Zone" AS name,
+          SUM("Water")::float AS "Water"
+      FROM
+          "CustomerBillings"
+      WHERE
+          EXTRACT(YEAR FROM "Period") = ${year}
+      GROUP BY "Sub_Zone"
+      ORDER BY "Sub_Zone" ASC; 
+      `
       );
-
-      const [asOther, asCrdmeta] = await sequelize.query(
-        `SELECT "AccountStatus" AS name, SUM("CurrentBalance")::int AS "CurrentBalance",
-         SUM("PreviousBalance")::int AS "PreviousBalance",
-         SUM("Amount")::int AS "InvoiceAmount"
-      FROM "CustomerBillings"   GROUP BY "AccountStatus";`
+      const [SubZoneSewer, sswrmeta] = await sequelize.query(
+        `SELECT
+          "Sub_Zone" AS name,
+          SUM("Sewer")::float AS "Sewer"
+      FROM
+          "CustomerBillings"
+      WHERE
+          EXTRACT(YEAR FROM "Period") = ${year}
+      GROUP BY "Sub_Zone"
+      ORDER BY "Sub_Zone" ASC; 
+      `
       );
-
-      const [rtOther, rtCrdmeta] = await sequelize.query(
-        `SELECT r."DMA" AS name, SUM(b."CurrentBalance")::int AS "CurrentBalance",
-         SUM(b."PreviousBalance")::int AS "PreviousBalance",
-         SUM(b."Amount")::int AS "InvoiceAmount"
-      FROM "CustomerBillings" AS b INNER JOIN "CustomerMeters" AS r ON b."Account" = r."AccountNo"   GROUP BY r."DMA";`
-      );
-
-      const [atOther, atCrdmeta] = await sequelize.query(
-        `SELECT r."AccountType" AS name, SUM(b."CurrentBalance")::int AS "CurrentBalance",
-         SUM(b."PreviousBalance")::int AS "PreviousBalance",
-         SUM(b."Amount")::int AS "InvoiceAmount"
-      FROM "CustomerBillings" AS b INNER JOIN "CustomerMeters" AS r ON b."Account" = r."AccountNo"   GROUP BY r."AccountType";`
-      );
-
-      const [updatedAt, upddmeta] = await sequelize.query(
-        `SELECT "updatedAt" FROM "CustomerBillings" ORDER BY "updatedAt" DESC OFFSET 0 LIMIT 1`
-      );
+       const [Estimate, ewrmeta] = await sequelize.query(
+         `SELECT
+          "Est" AS label,
+          SUM("m_Total")::float AS value
+      FROM
+          "CustomerBillings"
+      WHERE
+          EXTRACT(YEAR FROM "Period") = ${year}
+      GROUP BY "Est"
+      ORDER BY "Est" ASC; 
+      `
+       );
 
       resolve({
-        znOther: znOther,
-        rtOther: rtOther,
-        scOther: scOther,
-        msOther: msOther,
-        asOther: asOther,
-        atOther: atOther,
-        updatedAt: updatedAt[0]?.updatedAt,
+        Month,
+        Water,
+        ZoneWater,
+        ZoneSewer,
+        SubZoneWater,
+        SubZoneSewer,
+        Estimate,
       });
     } catch (error) {
-      reject({ error: "failed" });
+      console.log(error);
+
+      reject(null);
     }
   });
 };
