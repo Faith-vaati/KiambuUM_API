@@ -4,10 +4,11 @@ module.exports = (sequelize) => {
   const CustomerBilling = sequelize.define("CustomerBilling", {
     ID: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4, 
       allowNull: false,
       primaryKey: true,
     },
+    
     OldAcc: {
       type: DataTypes.STRING,
       allowNull: true,
