@@ -221,11 +221,10 @@ exports.findManagementData = (req) => {
   });
 };
 
+const getLastDayOfMonth = (year, month) => {
+  return new Date(year, month, 0).getDate();
+};
 
-  const getLastDayOfMonth = (year, month) => {
-    return new Date(year, month, 0).getDate();
-  };
-  
 exports.findCustomersPagnitedSearch = (value, column, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -333,23 +332,36 @@ exports.findCharts = () => {
 exports.findStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [customers, metadata] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "CustomerBillings"`
+      const [Total, metadata] = await sequelize.query(
+        `SELECT Sum("m_Total")::float AS total FROM "CustomerBillings"`
       );
-      const [cbalance, cbmetadata] = await sequelize.query(
-        `SELECT Sum("CurrentBalance")::int as total FROM "CustomerBillings"`
+      const [Sewer, swmetadata] = await sequelize.query(
+        `SELECT Sum("Sewer")::float AS total FROM "CustomerBillings"`
       );
-      const [pbalance, pbmetadata] = await sequelize.query(
-        `SELECT Sum("PreviousBalance")::int as total FROM "CustomerBillings"`
+      const [Water, wrmeta] = await sequelize.query(
+        `SELECT Sum("Water")::float AS total FROM "CustomerBillings"`
       );
-      const [amount, ametadata] = await sequelize.query(
-        `SELECT Sum("Amount")::int as total FROM "CustomerBillings"`
+      const [Customers, csmeta] = await sequelize.query(
+        `SELECT Count(DISTINCT "Acc_No")::float AS total FROM "CustomerBillings"`
       );
+      const [Arrears, armeta] = await sequelize.query(
+        `SELECT SUM(cb."Arrears")::float AS total
+            FROM "CustomerBillings" cb
+            INNER JOIN (
+                SELECT "Acc_No", MAX("Period") AS latest_period
+                FROM "CustomerBillings"
+                GROUP BY "Acc_No"
+            ) latest_cb
+            ON cb."Acc_No" = latest_cb."Acc_No" AND cb."Period" = latest_cb."latest_period";
+            `
+      );
+
       resolve({
-        Customers: customers[0].total,
-        CurrentBalance: cbalance[0].total,
-        PreviousBalance: pbalance[0].total,
-        InvoiceAmount: amount[0].total,
+        Total: Total[0].total,
+        Sewer: Sewer[0].total,
+        Water: Water[0].total,
+        Customers: Customers[0].total,
+        Arrears: Arrears[0].total,
       });
     } catch (error) {
       reject({ error: "Retrieve failed!" });
