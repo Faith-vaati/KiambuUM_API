@@ -1,41 +1,38 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const ConnectionChamber = require("../../models/ConnectionChamber")(sequelize, Sequelize);
+const ConnectionChamber = require("../../models/ConnectionChamber")(
+  sequelize,
+  Sequelize
+);
 
 ConnectionChamber.sync({ force: false });
 exports.createConnectionChamber = (ConnectionChamberData) => {
   return new Promise(async (resolve, reject) => {
-    ConnectionChamber.findAll({
-      where: {
-        AccountNo: ConnectionChamberData.AccountNo,
-      },
-    }).then(
-      (result) => {
-        if (result?.length === 0) {
-            ConnectionChamber.create(ConnectionChamberData).then(
-            async (result) => {
-              try {
-                const id = result.dataValues.ID;
-                const [data, dmeta] = await sequelize.query(
-                  `UPDATE public."ConnectionChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
-                );
-                resolve({
-                  success: "ConnectionChamber Created successfully",
-                  token: result.dataValues.ID,
-                });
-              } catch (error) {
-                reject({ success: "Data saved without geometry" });
-              }
-            },
-            (err) => {
-              reject({ error: "ConnectionChamber creation failed" });
-            }
+    if (
+      ConnectionChamberData.Longitude === undefined ||
+      ConnectionChamberData.Latitude === undefined
+    ) {
+      reject({ error: "Location is required" });
+    }
+
+    ConnectionChamber.create(ConnectionChamberData).then(
+      async (result) => {
+        try {
+          const id = result.dataValues.ID;
+          const [data, dmeta] = await sequelize.query(
+            `UPDATE public."ConnectionChamber" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
-        } else {
-          reject({ error: "This account number exists" });
+          resolve({
+            success: "ConnectionChamber Created successfully",
+            token: result.dataValues.ID,
+          });
+        } catch (error) {
+          reject({ success: "Data saved without geometry" });
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "ConnectionChamber creation failed" });
       }
     );
@@ -76,7 +73,7 @@ exports.findConnectionChamberByAccount = (id) => {
 };
 
 exports.updateConnectionChamberById = (ConnectionChamberData, id) => {
-    ConnectionChamberData.id = id;
+  ConnectionChamberData.id = id;
   return new Promise((resolve, reject) => {
     ConnectionChamber.update(ConnectionChamberData, {
       where: {

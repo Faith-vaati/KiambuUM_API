@@ -17,7 +17,7 @@ exports.WaterPipesRoutes = function (app) {
   app.get("/waterpipes/details/:ID", [
     WaterPipesController.findWaterPipeByObjectId,
   ]);
-
+ 
   app.put("/waterpipes/:ID", [WaterPipesController.updateWaterPipeById]);
 
   app.delete("/waterpipes/:ID", [WaterPipesController.deleteWaterPipeById]);
