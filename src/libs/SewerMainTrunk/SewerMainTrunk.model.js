@@ -9,6 +9,8 @@ SewerMainTrunk.sync({ force: false });
 
 exports.createSewerMainTrunk = (SewerMainTrunkData) => {
   return new Promise(async (resolve, reject) => {
+    console.log(SewerMainTrunkData);
+    
     try {
       const coordinates = SewerMainTrunkData.Coordinates;
       SewerMainTrunkData.Coordinates = null;

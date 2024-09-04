@@ -1,8 +1,8 @@
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 const DataTypes = Sequelize.DataTypes;
 
 module.exports = (sequelize) => {
-  const SewerLines = sequelize.define('SewerLines', {
+  const SewerLines = sequelize.define("SewerLines", {
     ID: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
       primaryKey: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY('LineStringZ', 4326),
+      type: DataTypes.GEOMETRY("LineStringZ", 4326),
       allowNull: true,
     },
     Name: {
@@ -97,7 +97,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-  }, );
+  });
 
   return SewerLines;
 };

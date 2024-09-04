@@ -47,6 +47,8 @@ exports.createWaterPipe = (WaterPipesData) => {
         });
       }
     } catch (err) {
+      console.log(err);
+      
       reject({ error: "WaterPipes creation failed", details: err.message });
     }
   });

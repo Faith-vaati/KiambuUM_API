@@ -22,8 +22,8 @@ exports.findSewerlineById = (req, res) => {
   );
 };
 
-exports.findSewerlineByObjectId = (req, res) => {
-  SewerlinesModel.findSewerlineByObjectId(req.params.ID).then(
+exports.findSewerlineByName = (req, res) => {
+  SewerlinesModel.findSewerlineByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

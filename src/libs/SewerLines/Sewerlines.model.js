@@ -66,20 +66,18 @@ exports.findSewerlineById = (id) => {
   });
 };
 
-exports.findSewerlineByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Sewerlines.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findSewerlineByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "SewerLines" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
