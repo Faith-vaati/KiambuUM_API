@@ -49,9 +49,9 @@ exports.createCustomer = (CustomerData) => {
             (error) => {
               if (error instanceof Sequelize.UniqueConstraintError) {
                 const detailMessage = error.errors[0].message;
-                res.status(400).json({ error: detailMessage });
+                reject({ error: detailMessage });
               } else {
-                res.status(500).json({ error: "An unexpected error occurred" });
+                reject({ error: "An unexpected error occurred" });
               }
             }
           );
