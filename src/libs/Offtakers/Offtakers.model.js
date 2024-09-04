@@ -3,8 +3,19 @@ const sequelize = require("../../configs/connection");
 const Offtakers = require("../../models/Offtakers")(sequelize, Sequelize);
 
 Offtakers.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createOfftakers = (OfftakersData) => {
   return new Promise(async (resolve, reject) => {
+    OfftakersData = cleanData(OfftakersData);
     Offtakers.create(OfftakersData).then(
       async (result) => {
         try {
@@ -17,13 +28,41 @@ exports.createOfftakers = (OfftakersData) => {
             token: result.dataValues.ID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        console.log(err);
-
-        reject({ error: "Offtakers creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
