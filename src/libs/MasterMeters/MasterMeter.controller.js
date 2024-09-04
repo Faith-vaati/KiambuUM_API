@@ -26,8 +26,8 @@ exports.findMasterMeterById = (req, res) => {
 
 
 
-exports.findMasterMeterByObjectId = (req, res) => {
-  MasterMetersModel.findMasterMeterByObjectId(req.params.ID).then(
+exports.findMasterMeterByName = (req, res) => {
+  MasterMetersModel.findMasterMeterByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

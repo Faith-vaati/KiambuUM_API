@@ -5,36 +5,19 @@ const Offtakers = require("../../models/Offtakers")(sequelize, Sequelize);
 Offtakers.sync({ force: false });
 exports.createOfftakers = (OfftakersData) => {
   return new Promise(async (resolve, reject) => {
-    Offtakers.findAll({
-      where: {
-        AccountNo: OfftakersData.AccountNo,
-      },
-    }).then(
-      (result) => {
-        if (result?.length === 0) {
-          Offtakers.create(OfftakersData).then(
-            async (result) => {
-              try {
-                const id = result.dataValues.ID;
-                const [data, dmeta] = await sequelize.query(
-                  `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
-                );
-                resolve({
-                  success: "Offtakers Created successfully",
-                  token: result.dataValues.ID,
-                });
-              } catch (error) {
-                reject({ success: "Data saved without geometry" });
-              }
-            },
-            (err) => {
-              console.log(err);
-
-              reject({ error: "Offtakers creation failed" });
-            }
+    Offtakers.create(OfftakersData).then(
+      async (result) => {
+        try {
+          const id = result.dataValues.ID;
+          const [data, dmeta] = await sequelize.query(
+            `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
           );
-        } else {
-          reject({ error: "This account number exists" });
+          resolve({
+            success: "Offtakers Created successfully",
+            token: result.dataValues.ID,
+          });
+        } catch (error) {
+          reject({ success: "Data saved without geometry" });
         }
       },
       (err) => {
@@ -62,20 +45,18 @@ exports.findOfftakersById = (id) => {
   });
 };
 
-exports.findOfftakersByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    Offtakers.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findOfftakersByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Offtakers" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 

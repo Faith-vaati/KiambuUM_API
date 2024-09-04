@@ -32,8 +32,8 @@ exports.OfftakersRoutes = function (app) {
 
   app.get("/offtakers/all/charts", [OfftakersController.findCharts]);
 
-  app.get("/offtakers/details/:Account", [
-    OfftakersController.findOfftakersByAccount,
+  app.get("/offtakers/details/:value", [
+    OfftakersController.findOfftakersByName,
   ]);
 
   app.get("/offtakers/:ID", [OfftakersController.findOfftakersById]);

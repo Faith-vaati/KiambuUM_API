@@ -22,8 +22,8 @@ exports.findCustomerChamberById = (req, res) => {
   );
 };
 
-exports.findCustomerChamberByAccount = (req, res) => {
-    CustomerChamberModel.findCustomerChamberByAccount(req.params.Account).then(
+exports.findCustomerChamberByName = (req, res) => {
+  CustomerChamberModel.findCustomerChamberByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

@@ -22,8 +22,8 @@ exports.findOfftakersById = (req, res) => {
   );
 };
 
-exports.findOfftakersByAccount = (req, res) => {
-  OfftakersModel.findOfftakersByAccount(req.params.Account).then(
+exports.findOfftakersByName = (req, res) => {
+  OfftakersModel.findOfftakersByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

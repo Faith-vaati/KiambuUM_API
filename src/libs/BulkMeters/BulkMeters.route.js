@@ -32,8 +32,8 @@ exports.BulkMetersRoutes = function (app) {
 
   app.get("/bulkmeters/all/charts", [BulkMetersController.findCharts]);
 
-  app.get("/bulkmeters/details/:Account", [
-    BulkMetersController.findBulkMetersByAccount,
+  app.get("/bulkmeters/details/:meterno", [
+    BulkMetersController.findBulkMetersByMeterNo,
   ]);
 
   app.get("/bulkmeters/:ID", [BulkMetersController.findBulkMetersById]);

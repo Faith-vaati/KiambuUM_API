@@ -28,6 +28,8 @@ exports.createManhole = (ManholesData) => {
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Manhole creation failed" });
       }
     );
@@ -85,20 +87,18 @@ exports.deleteManholeById = (id) => {
   });
 };
 
-exports.findManholeByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Manholes.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findManholeByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Manholes" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 

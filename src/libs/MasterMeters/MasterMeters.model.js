@@ -78,20 +78,18 @@ exports.deleteMasterMeterById = (id) => {
   });
 };
 
-exports.findMasterMeterByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    MasterMeters.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findMasterMeterByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "MasterMeters" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 

@@ -22,8 +22,8 @@ exports.findManholeById = (req, res) => {
   );
 };
 
-exports.findManholeByObjectId = (req, res) => {
-  ManholesModel.findManholeByObjectId(req.params.ID).then(
+exports.findManholeByName = (req, res) => {
+  ManholesModel.findManholeByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

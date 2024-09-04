@@ -55,25 +55,23 @@ exports.findCustomerChamberById = (id) => {
   });
 };
 
-exports.findCustomerChamberByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    CustomerChamber.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findCustomerChamberByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "CustomerChambers" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateCustomerChamberById = (CustomerChamberData, id) => {
-  OfftakersData.id = id;
+  CustomerChamberData.id = id;
   return new Promise((resolve, reject) => {
     CustomerChamber.update(CustomerChamberData, {
       where: {

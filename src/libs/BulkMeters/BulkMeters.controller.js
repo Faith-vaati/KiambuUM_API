@@ -22,8 +22,8 @@ exports.findBulkMetersById = (req, res) => {
   );
 };
 
-exports.findBulkMetersByAccount = (req, res) => {
-  BulkMetersModel.findBulkMetersByAccount(req.params.Account).then(
+exports.findBulkMetersByMeterNo = (req, res) => {
+  BulkMetersModel.findBulkMetersByMeterNo(req.params.meterno).then(
     (result) => {
       res.status(200).send(result);
     },

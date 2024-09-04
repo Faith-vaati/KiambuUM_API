@@ -14,7 +14,7 @@ exports.ManholeRoutes = function (app) {
 
   app.get("/manholes/:ID", [ManholesController.findManholeById]);
 
-  app.get("/manholes/details/:ID", [ManholesController.findManholeByObjectId]);
+  app.get("/manholes/details/:value", [ManholesController.findManholeByName]);
 
   app.put("/manholes/:id", [ManholesController.updateManholeById]);
 

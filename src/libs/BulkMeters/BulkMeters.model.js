@@ -49,11 +49,11 @@ exports.findBulkMetersById = (id) => {
   });
 };
 
-exports.findBulkMetersByAccount = (id) => {
+exports.findBulkMetersByMeterNo = (meterno) => {
   return new Promise((resolve, reject) => {
     BulkMeters.findAll({
       where: {
-        AccountNo: id,
+        MeterNo: meterno,
       },
     }).then(
       (result) => {
