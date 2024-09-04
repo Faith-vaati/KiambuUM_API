@@ -63,6 +63,8 @@ exports.createWaterPipe = (WaterPipesData) => {
         error instanceof Sequelize.ValidationError ||
         error instanceof Sequelize.UniqueConstraintError
       ) {
+      console.log(err);
+      
         const detailMessages = error.errors.map((err) => err.message);
         reject({
           error:

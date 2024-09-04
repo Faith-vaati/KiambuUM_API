@@ -14,7 +14,9 @@ exports.SewerlinesRoutes = function (app) {
 
   app.get("/sewerlines/:ID", [SewerlinesController.findSewerlineById]);
 
-  app.get("/sewerlines/details/:ID", [SewerlinesController.findSewerlineByObjectId]);
+  app.get("/sewerlines/details/:value", [
+    SewerlinesController.findSewerlineByName,
+  ]);
 
   app.put("/sewerlines/:ID", [SewerlinesController.updateSewerlineById]);
 
