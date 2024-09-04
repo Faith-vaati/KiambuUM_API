@@ -55,20 +55,18 @@ exports.findConnectionChamberById = (id) => {
   });
 };
 
-exports.findConnectionChamberByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    ConnectionChamber.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findConnectionChamberByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "ConnectionChambers" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 

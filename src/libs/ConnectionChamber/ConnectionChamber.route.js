@@ -32,8 +32,8 @@ exports.ConnectionChamberRoutes = function (app) {
 
   app.get("/connectionchamber/all/charts", [ConnectionChamberController.findCharts]);
 
-  app.get("/connectionchamber/details/:Account", [
-    ConnectionChamberController.findConnectionChamberByAccount,
+  app.get("/connectionchamber/details/:value", [
+    ConnectionChamberController.findConnectionChamberByName,
   ]);
 
   app.get("/connectionchamber/:ID", [ConnectionChamberController.findConnectionChamberById]);

@@ -22,8 +22,8 @@ exports.findConnectionChamberById = (req, res) => {
   );
 };
 
-exports.findConnectionChamberByAccount = (req, res) => {
-    ConnectionChamberModel.findConnectionChamberByAccount(req.params.Account).then(
+exports.findConnectionChamberByName = (req, res) => {
+  ConnectionChamberModel.findConnectionChamberByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
