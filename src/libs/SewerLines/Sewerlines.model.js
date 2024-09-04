@@ -4,8 +4,20 @@ const Sewerlines = require("../../models/Sewerlines")(sequelize, Sequelize);
 
 Sewerlines.sync({ force: false });
 
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createSewerline = (SewerlinesData) => {
   return new Promise(async (resolve, reject) => {
+    console.log(SewerlinesData);
+
+    SewerlinesData = cleanData(SewerlinesData);
     try {
       const coordinates = SewerlinesData.Coordinates;
       SewerlinesData.Coordinates = null;
@@ -23,32 +35,58 @@ exports.createSewerline = (SewerlinesData) => {
             .join(",\n    ");
           // Construct the SQL query
           const sqlQuery = `
-            WITH geom AS (
-              SELECT ST_Multi(ST_MakeLine(ARRAY[
-                ${points}
-              ])) AS geom
-            )
-            UPDATE "SewerLines"
-            SET "geom" = geom.geom
-            FROM geom
-            WHERE "ID" = '${id}';
+             WITH geom AS (
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "SewerLines"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
             `;
           const [results, metadata] = await sequelize.query(sqlQuery);
           resolve({
             success: "Created successfully",
           });
         } catch (error) {
-          reject({
-            error: error.message,
-          });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       } else {
         reject({
           error: "Invalid coordinates",
         });
       }
-    } catch (err) {
-      reject({ error: "Sewer Lines creation failed" ?? err.message });
+    } catch (error) {
+      if (
+        error instanceof Sequelize.ValidationError ||
+        error instanceof Sequelize.UniqueConstraintError
+      ) {
+        const detailMessages = error.errors.map((err) => err.message);
+        reject({
+          error:
+            detailMessages.length > 0 ? detailMessages[0] : "Unexpected error!",
+        });
+      } else {
+        reject({
+          error: error.message,
+        });
+      }
     }
   });
 };
