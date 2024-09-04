@@ -85,13 +85,13 @@ exports.updateSewerlineById = (SewerlinesData, id) => {
   return new Promise((resolve, reject) => {
     Sewerlines.update(SewerlinesData, {
       where: {
-        ObjectID: id,
+        ID: id,
       },
     }).then(
       async (result) => {
         const coordinates = await Sewerlines.findAll({
           where: {
-            ObjectID: id,
+            ID: id,
           },
         });
 
@@ -107,7 +107,7 @@ exports.updateSewerlineById = (SewerlinesData, id) => {
           `WITH geom AS (
               SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
             )
-          UPDATE "SewerLines" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
+          UPDATE "SewerLines" SET "geom" = geom.geom FROM geom WHERE "ID" = '${id}'`
         );
 
         resolve({
@@ -116,6 +116,8 @@ exports.updateSewerlineById = (SewerlinesData, id) => {
         });
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Update failed" });
       }
     );
