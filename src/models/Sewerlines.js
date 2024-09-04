@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
       primaryKey: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY("LineStringZ", 4326),
+      type: DataTypes.GEOMETRY("LINESTRING", 4326),
       allowNull: true,
     },
     Name: {
