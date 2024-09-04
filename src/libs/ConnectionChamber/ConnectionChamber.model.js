@@ -110,14 +110,24 @@ exports.findConnectionChamberByName = (value) => {
 };
 
 exports.updateConnectionChamberById = (ConnectionChamberData, id) => {
-  ConnectionChamberData.id = id;
+  ConnectionChamberData = cleanData(ConnectionChamberData);
   return new Promise((resolve, reject) => {
     ConnectionChamber.update(ConnectionChamberData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (
+            ConnectionChamberData.Latitude &&
+            ConnectionChamberData.Longitude
+          ) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."ConnectionChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

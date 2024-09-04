@@ -18,8 +18,6 @@ function cleanData(obj) {
 
 exports.createSewerMainTrunk = (SewerMainTrunkData) => {
   return new Promise(async (resolve, reject) => {
-    console.log(SewerMainTrunkData);
-
     SewerMainTrunkData = cleanData(SewerMainTrunkData);
     try {
       const coordinates = SewerMainTrunkData.Coordinates;
@@ -124,40 +122,42 @@ exports.findSewerMainTrunkByName = (value) => {
 
 exports.updateSewerMainTrunkById = (SewerMainTrunkData, id) => {
   return new Promise((resolve, reject) => {
+    SewerMainTrunkData = cleanData(SewerMainTrunkData);
     SewerMainTrunk.update(SewerMainTrunkData, {
       where: {
         ID: id,
       },
     }).then(
       async (result) => {
-        const coordinates = await SewerMainTrunk.findAll({
-          where: {
-            ID: id,
-          },
-        });
-
-        let q = `LINESTRING(`;
-        coordinates[0]?.Coordinates?.map((item) => {
-          q = q + `${item[0]} ${item[1]}, `;
-        });
-
-        q = q.trim().slice(0, -1);
-        q = q + ")";
-
-        const [results, metadata] = await sequelize.query(
-          `WITH geom AS (
-              SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
-            )
-          UPDATE "SewerMainTrunks" SET "geom" = geom.geom FROM geom WHERE "ID" = '${id}'`
-        );
-
+        try {
+          if (
+            SewerMainTrunkData.Coordinates &&
+            SewerMainTrunkData.Coordinates?.length > 0
+          ) {
+            const points = SewerMainTrunkData.Coordinates.map(
+              (coord) =>
+                `ST_SetSRID(ST_MakePoint(${coord.longitude}, ${coord.latitude}), 4326)`
+            ).join(",\n    ");
+            // Construct the SQL query
+            const sqlQuery = `
+             WITH geom AS (
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "SewerMainTrunks"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
+            `;
+            const [results, metadata] = await sequelize.query(sqlQuery);
+          }
+        } catch (error) {}
         resolve({
           success: "Updated successfully",
-          coordinates: coordinates.length > 0 ? coordinates[0].Coordinates : [],
         });
       },
       (err) => {
-        console.log(err);
         reject({ error: "Update failed" });
       }
     );

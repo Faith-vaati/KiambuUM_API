@@ -109,14 +109,21 @@ exports.findBulkMetersByMeterNo = (meterno) => {
 };
 
 exports.updateBulkMetersById = (BulkMetersData, id) => {
-  BulkMetersData.id = id;
+  BulkMetersData = cleanData(BulkMetersData);
   return new Promise((resolve, reject) => {
     BulkMeters.update(BulkMetersData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (BulkMetersData.Latitude && BulkMetersData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."BulkMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

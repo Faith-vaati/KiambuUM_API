@@ -86,13 +86,21 @@ exports.findMasterMeterById = (id) => {
 
 exports.updateMasterMeterById = (MasterMeterData, id) => {
   return new Promise((resolve, reject) => {
+    MasterMeterData = cleanData(MasterMeterData);
     MasterMeters.update(MasterMeterData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
-        resolve({ success: "Updated successfully", token: id });
+      async (result) => {
+        try {
+          if (MasterMeterData.Latitude && MasterMeterData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."MasterMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
+        resolve({ success: "Updated successfully" });
       },
       (err) => {
         reject({ error: "Retrieve failed" });

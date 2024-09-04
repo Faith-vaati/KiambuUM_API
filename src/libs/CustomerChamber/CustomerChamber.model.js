@@ -110,14 +110,21 @@ exports.findCustomerChamberByName = (value) => {
 };
 
 exports.updateCustomerChamberById = (CustomerChamberData, id) => {
-  CustomerChamberData.id = id;
+  CustomerChamberData = cleanData(CustomerChamberData);
   return new Promise((resolve, reject) => {
     CustomerChamber.update(CustomerChamberData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (CustomerChamberData.Latitude && CustomerChamberData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."CustomerChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

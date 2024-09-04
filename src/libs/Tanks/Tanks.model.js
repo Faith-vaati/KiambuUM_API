@@ -105,14 +105,21 @@ exports.findTankByName = (value) => {
 };
 
 exports.updateTankById = (TanksData, id) => {
-  TanksData.id = id;
+  TanksData = cleanData(TanksData);
   return new Promise((resolve, reject) => {
     Tanks.update(TanksData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (TanksData.Latitude && TanksData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Tanks" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

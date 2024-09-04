@@ -100,14 +100,21 @@ exports.findOfftakersByName = (value) => {
 };
 
 exports.updateOfftakersById = (OfftakersData, id) => {
-  OfftakersData.id = id;
+  OfftakersData = cleanData(OfftakersData);
   return new Promise((resolve, reject) => {
     Offtakers.update(OfftakersData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (OfftakersData.Latitude && OfftakersData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

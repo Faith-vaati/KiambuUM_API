@@ -122,14 +122,21 @@ exports.findCustomerByAccount = (id) => {
 };
 
 exports.updateCustomerById = (CustomerData, id) => {
-  CustomerData.id = id;
+  CustomerData = cleanData(CustomerData);
   return new Promise((resolve, reject) => {
     CustomerMeters.update(CustomerData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (CustomerData.Longitude && CustomerData.Latitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."CustomerMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

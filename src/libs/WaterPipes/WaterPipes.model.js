@@ -63,8 +63,8 @@ exports.createWaterPipe = (WaterPipesData) => {
         error instanceof Sequelize.ValidationError ||
         error instanceof Sequelize.UniqueConstraintError
       ) {
-      console.log(err);
-      
+        console.log(err);
+
         const detailMessages = error.errors.map((err) => err.message);
         reject({
           error:
@@ -115,34 +115,40 @@ exports.findWaterPipeByObjectId = (id) => {
 
 exports.updateWaterPipeById = (WaterPipesData, id) => {
   return new Promise((resolve, reject) => {
+    WaterPipesData = cleanData(WaterPipesData);
     WaterPipes.update(WaterPipesData, {
       where: {
         ObjectID: id,
       },
     }).then(
       async (result) => {
-        const coordinates = await WaterPipes.findAll({
-          where: {
-            ObjectID: id,
-          },
-        });
-        let q = `LINESTRING(`;
-        coordinates[0]?.Coordinates?.map((item) => {
-          q = q + `${item[0]} ${item[1]}, `;
-        });
-
-        q = q.trim().slice(0, -1);
-        q = q + ")";
-
-        const [results, metadata] = await sequelize.query(
-          `WITH geom AS (
-              SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
-            )
-          UPDATE "WaterPipes" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
-        );
+        if (
+          WaterPipesData.Coordinates &&
+          WaterPipesData.Coordinates.length > 0
+        ) {
+          try {
+            // Generate the points in the required format
+            const points = WaterPipesData.Coordinates.map(
+              (coord) =>
+                `ST_SetSRID(ST_MakePoint(${coord.longitude}, ${coord.latitude}), 4326)`
+            ).join(",\n    ");
+            // Construct the SQL query
+            const sqlQuery = `
+            WITH geom AS (
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "WaterPipes"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
+            `;
+            const [results, metadata] = await sequelize.query(sqlQuery);
+          } catch (error) {}
+        }
         resolve({
           success: "Updated successfully",
-          coordinates: coordinates.length > 0 ? coordinates[0].Coordinates : [],
         });
       },
       (err) => {

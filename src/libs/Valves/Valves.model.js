@@ -100,14 +100,21 @@ exports.findValveByName = (value) => {
 };
 
 exports.updateValveById = (ValvesData, id) => {
-  ValvesData.id = id;
+  ValvesData = cleanData(ValvesData);
   return new Promise((resolve, reject) => {
     Valves.update(ValvesData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (ValvesData.Latitude && ValvesData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Valves" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
