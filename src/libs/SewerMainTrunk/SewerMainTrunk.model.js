@@ -1,6 +1,9 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const SewerMainTrunk = require("../../models/SewerMainTrunk")(sequelize, Sequelize);
+const SewerMainTrunk = require("../../models/SewerMainTrunk")(
+  sequelize,
+  Sequelize
+);
 
 SewerMainTrunk.sync({ force: false });
 
@@ -48,6 +51,7 @@ exports.createSewerMainTrunk = (SewerMainTrunkData) => {
         });
       }
     } catch (err) {
+      console.log(err);
       reject({ error: "SewerMainTrunk creation failed" ?? err.message });
     }
   });
@@ -66,20 +70,18 @@ exports.findSewerMainTrunkById = (id) => {
   });
 };
 
-exports.findSewerMainTrunkByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    SewerMainTrunk.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findSewerMainTrunkByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "SewerMainTrunks" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
@@ -87,13 +89,13 @@ exports.updateSewerMainTrunkById = (SewerMainTrunkData, id) => {
   return new Promise((resolve, reject) => {
     SewerMainTrunk.update(SewerMainTrunkData, {
       where: {
-        ObjectID: id,
+        ID: id,
       },
     }).then(
       async (result) => {
         const coordinates = await SewerMainTrunk.findAll({
           where: {
-            ObjectID: id,
+            ID: id,
           },
         });
 
@@ -109,7 +111,7 @@ exports.updateSewerMainTrunkById = (SewerMainTrunkData, id) => {
           `WITH geom AS (
               SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
             )
-          UPDATE "SewerMainTrunk" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
+          UPDATE "SewerMainTrunks" SET "geom" = geom.geom FROM geom WHERE "ID" = '${id}'`
         );
 
         resolve({
@@ -118,6 +120,7 @@ exports.updateSewerMainTrunkById = (SewerMainTrunkData, id) => {
         });
       },
       (err) => {
+        console.log(err);
         reject({ error: "Update failed" });
       }
     );
