@@ -14,10 +14,10 @@ exports.WaterPipesRoutes = function (app) {
 
   app.get("/waterpipes/:ID", [WaterPipesController.findWaterPipeById]);
 
-  app.get("/waterpipes/details/:ID", [
-    WaterPipesController.findWaterPipeByObjectId,
+  app.get("/waterpipes/details/:value", [
+    WaterPipesController.findWaterPipeByName,
   ]);
- 
+
   app.put("/waterpipes/:ID", [WaterPipesController.updateWaterPipeById]);
 
   app.delete("/waterpipes/:ID", [WaterPipesController.deleteWaterPipeById]);

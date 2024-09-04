@@ -22,8 +22,8 @@ exports.findWaterPipeById = (req, res) => {
   );
 };
 
-exports.findWaterPipeByObjectId = (req, res) => {
-  WaterPipesModel.findWaterPipeByObjectId(req.params.ID).then(
+exports.findWaterPipeByName = (req, res) => {
+  WaterPipesModel.findWaterPipeByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

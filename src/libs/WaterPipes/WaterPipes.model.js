@@ -15,6 +15,7 @@ function cleanData(obj) {
 
 exports.createWaterPipe = (WaterPipesData) => {
   WaterPipesData = cleanData(WaterPipesData);
+  console.log(WaterPipesData);
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -96,20 +97,18 @@ exports.findWaterPipeById = (id) => {
   });
 };
 
-exports.findWaterPipeByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    WaterPipes.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findWaterPipeByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "WaterPipes" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
@@ -118,7 +117,7 @@ exports.updateWaterPipeById = (WaterPipesData, id) => {
     WaterPipesData = cleanData(WaterPipesData);
     WaterPipes.update(WaterPipesData, {
       where: {
-        ObjectID: id,
+        ID: id,
       },
     }).then(
       async (result) => {
@@ -152,6 +151,8 @@ exports.updateWaterPipeById = (WaterPipesData, id) => {
         });
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Retrieve failed" });
       }
     );
