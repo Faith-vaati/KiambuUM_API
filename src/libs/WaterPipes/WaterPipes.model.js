@@ -15,6 +15,7 @@ function cleanData(obj) {
 
 exports.createWaterPipe = (WaterPipesData) => {
   WaterPipesData = cleanData(WaterPipesData);
+  console.log(WaterPipesData);
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -63,8 +64,8 @@ exports.createWaterPipe = (WaterPipesData) => {
         error instanceof Sequelize.ValidationError ||
         error instanceof Sequelize.UniqueConstraintError
       ) {
-      console.log(err);
-      
+        console.log(err);
+
         const detailMessages = error.errors.map((err) => err.message);
         reject({
           error:
@@ -115,13 +116,13 @@ exports.updateWaterPipeById = (WaterPipesData, id) => {
   return new Promise((resolve, reject) => {
     WaterPipes.update(WaterPipesData, {
       where: {
-        ObjectID: id,
+        ID: id,
       },
     }).then(
       async (result) => {
         const coordinates = await WaterPipes.findAll({
           where: {
-            ObjectID: id,
+            ID: id,
           },
         });
         let q = `LINESTRING(`;
@@ -136,7 +137,7 @@ exports.updateWaterPipeById = (WaterPipesData, id) => {
           `WITH geom AS (
               SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
             )
-          UPDATE "WaterPipes" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
+          UPDATE "WaterPipes" SET "geom" = geom.geom FROM geom WHERE "ID" = '${id}'`
         );
         resolve({
           success: "Updated successfully",
@@ -144,6 +145,8 @@ exports.updateWaterPipeById = (WaterPipesData, id) => {
         });
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Retrieve failed" });
       }
     );
