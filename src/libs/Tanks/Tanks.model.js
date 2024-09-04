@@ -4,8 +4,19 @@ const Tanks = require("../../models/Tanks")(sequelize, Sequelize);
 const Path = require("path");
 
 Tanks.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createTank = (TanksData) => {
   return new Promise(async (resolve, reject) => {
+    TanksData = cleanData(TanksData);
     if (TanksData.Longitude === undefined || TanksData.Latitude === undefined) {
       reject({ error: "Location is required" });
     }
@@ -22,20 +33,40 @@ exports.createTank = (TanksData) => {
             token: result.dataValues.ID,
           });
         } catch (error) {
-          if (error instanceof Sequelize.UniqueConstraintError) {
-            const detailMessage = error.errors[0].message;
-            reject({ error: detailMessage });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
           } else {
-            reject({ error: "An unexpected error occurred" });
+            reject({
+              error: error.message,
+            });
           }
         }
       },
       (error) => {
-        if (error instanceof Sequelize.UniqueConstraintError) {
-          const detailMessage = error.errors[0].message;
-          res.status(400).json({ error: detailMessage });
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
         } else {
-          res.status(500).json({ error: "An unexpected error occurred" });
+          reject({
+            error: error.message,
+          });
         }
       }
     );

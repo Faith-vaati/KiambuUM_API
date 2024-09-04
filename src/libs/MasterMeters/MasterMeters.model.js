@@ -3,8 +3,19 @@ const sequelize = require("../../configs/connection");
 const MasterMeters = require("../../models/MasterMeters")(sequelize, Sequelize);
 
 MasterMeters.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createMasterMeter = (MasterMetersData) => {
   return new Promise(async (resolve, reject) => {
+    MasterMetersData = cleanData(MasterMetersData);
     MasterMeters.create(MasterMetersData).then(
       async (result) => {
         try {
@@ -17,11 +28,41 @@ exports.createMasterMeter = (MasterMetersData) => {
             token: result.dataValues.ObjectID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        reject({ error: "MasterMeter creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });

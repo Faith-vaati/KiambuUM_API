@@ -15,7 +15,6 @@ function cleanData(obj) {
 
 exports.createWaterPipe = (WaterPipesData) => {
   WaterPipesData = cleanData(WaterPipesData);
-  console.log(WaterPipesData);
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -60,13 +59,21 @@ exports.createWaterPipe = (WaterPipesData) => {
         });
       }
     } catch (error) {
-      if (error instanceof Sequelize.UniqueConstraintError) {
+      if (
+        error instanceof Sequelize.ValidationError ||
+        error instanceof Sequelize.UniqueConstraintError
+      ) {
       console.log(err);
       
-        const detailMessage = error.errors[0].message;
-       reject({ error: detailMessage });
+        const detailMessages = error.errors.map((err) => err.message);
+        reject({
+          error:
+            detailMessages.length > 0 ? detailMessages[0] : "Unexpected error!",
+        });
       } else {
-        reject({ error: "An unexpected error occurred" });
+        reject({
+          error: error.message,
+        });
       }
     }
   });
