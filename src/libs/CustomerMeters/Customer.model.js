@@ -6,8 +6,19 @@ const CustomerMeters = require("../../models/CustomerMeters")(
 );
 
 CustomerMeters.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createCustomer = (CustomerData) => {
   return new Promise(async (resolve, reject) => {
+    CustomerData = cleanData(CustomerData);
     CustomerMeters.findAll({
       where: {
         AccountNo: CustomerData.AccountNo,
@@ -27,13 +38,21 @@ exports.createCustomer = (CustomerData) => {
                   token: result.dataValues.ID,
                 });
               } catch (error) {
-                reject({ success: "Data saved without geometry" });
+                if (error instanceof Sequelize.UniqueConstraintError) {
+                  const detailMessage = error.errors[0].message;
+                  reject({ error: detailMessage });
+                } else {
+                  reject({ error: "An unexpected error occurred" });
+                }
               }
             },
-            (err) => {
-              console.log(err);
-
-              reject({ error: "Customer creation failed" });
+            (error) => {
+              if (error instanceof Sequelize.UniqueConstraintError) {
+                const detailMessage = error.errors[0].message;
+                res.status(400).json({ error: detailMessage });
+              } else {
+                res.status(500).json({ error: "An unexpected error occurred" });
+              }
             }
           );
         } else {
