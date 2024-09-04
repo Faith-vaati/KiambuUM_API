@@ -3,7 +3,20 @@ const sequelize = require("../../configs/connection");
 const WaterPipes = require("../../models/WaterPipes")(sequelize, Sequelize);
 
 WaterPipes.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createWaterPipe = (WaterPipesData) => {
+  WaterPipesData = cleanData(WaterPipesData);
+  console.log(WaterPipesData);
+
   return new Promise(async (resolve, reject) => {
     try {
       const coordinates = WaterPipesData.Coordinates;
@@ -23,14 +36,14 @@ exports.createWaterPipe = (WaterPipesData) => {
           // Construct the SQL query
           const sqlQuery = `
             WITH geom AS (
-              SELECT ST_Multi(ST_MakeLine(ARRAY[
-                ${points}
-              ])) AS geom
-            )
-            UPDATE "WaterPipes"
-            SET "geom" = geom.geom
-            FROM geom
-            WHERE "ID" = '${id}';
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "WaterPipes"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
             `;
           const [results, metadata] = await sequelize.query(sqlQuery);
           resolve({
@@ -46,10 +59,15 @@ exports.createWaterPipe = (WaterPipesData) => {
           error: "Invalid coordinates",
         });
       }
-    } catch (err) {
+    } catch (error) {
+      if (error instanceof Sequelize.UniqueConstraintError) {
       console.log(err);
       
-      reject({ error: "WaterPipes creation failed", details: err.message });
+        const detailMessage = error.errors[0].message;
+       reject({ error: detailMessage });
+      } else {
+        reject({ error: "An unexpected error occurred" });
+      }
     }
   });
 };
@@ -61,7 +79,7 @@ exports.findWaterPipeById = (id) => {
         if (result == null) {
           reject({ error: "WaterPipe not found" });
         }
-       
+
         resolve(result);
       },
       (err) => {
@@ -149,7 +167,6 @@ exports.findAllWaterPipes = () => {
   return new Promise((resolve, reject) => {
     WaterPipes.findAll({}).then(
       (result) => {
-
         resolve(result);
       },
       (err) => {
