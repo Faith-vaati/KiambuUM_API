@@ -105,19 +105,17 @@ exports.findCustomerById = (id) => {
 };
 
 exports.findCustomerByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    CustomerMeters.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "CustomerMeters" WHERE "AccountNo"::text ILIKE '%${id}%'::text LIMIT 2 OFFSET 0`
+      );
+      console.log(data);
+
+      resolve(data);
+    } catch (error) {
+      reject([]);
+    }
   });
 };
 
