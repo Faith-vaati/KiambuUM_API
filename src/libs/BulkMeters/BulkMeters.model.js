@@ -1,5 +1,6 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
+const { errorMonitor } = require("nodemailer/lib/xoauth2");
 const BulkMeters = require("../../models/BulkMeters")(sequelize, Sequelize);
 
 BulkMeters.sync({ force: false });
@@ -92,19 +93,18 @@ exports.findBulkMetersById = (id) => {
 };
 
 exports.findBulkMetersByMeterNo = (meterno) => {
-  return new Promise((resolve, reject) => {
-    BulkMeters.findAll({
-      where: {
-        MeterNo: meterno,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "BulkMeters" WHERE "MeterNo"::text ILIKE '%${meterno}%'::text LIMIT 2 OFFSET 0`
+      );
+
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject([]);
+    }
   });
 };
 
