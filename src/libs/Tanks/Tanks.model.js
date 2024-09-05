@@ -97,7 +97,6 @@ exports.findTankByName = (value) => {
       );
       resolve(data);
     } catch (error) {
-      console.log(err);
 
       reject({ error: "Retrieve Failed" });
     }
@@ -123,7 +122,6 @@ exports.updateTankById = (TanksData, id) => {
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
-        console.log(err);
 
         reject({ error: "Retrieve failed" });
       }

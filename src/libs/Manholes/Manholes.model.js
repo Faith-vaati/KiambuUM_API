@@ -142,7 +142,6 @@ exports.findManholeByName = (value) => {
       );
       resolve(data);
     } catch (error) {
-      console.log(error);
 
       reject({ error: "Retrieve Failed" });
     }

@@ -163,8 +163,6 @@ exports.findManagementData = (req) => {
     try {
       const { offset = 0, search = "", year, month } = req.query;
 
-      console.log(req.query);
-
       let whereClause = {};
 
       if (year && month) {
@@ -373,7 +371,6 @@ exports.findCharts = (year) => {
         Estimate,
       });
     } catch (error) {
-      console.log(error);
 
       reject(null);
     }

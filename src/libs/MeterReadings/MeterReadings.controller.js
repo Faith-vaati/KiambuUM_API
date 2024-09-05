@@ -33,7 +33,7 @@ exports.updateMeterReadingsById = (req, res) => {
   );
 };
 exports.deleteMeterReadingById = (req, res) => {
-  console.log(req.params.id);
+
   MeterReadingsModel.deleteMeterReadingById(req.params.id).then(
     (result) => {
       res.status(200).send(result);

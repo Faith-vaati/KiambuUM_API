@@ -53,7 +53,6 @@ exports.Login = (res, MobileData) => {
       raw: true,
     }).then(
       async (result) => {
-        console.log(result);
 
         if (result.length === 0)
           return reject({ error: "This user does not exist!" });

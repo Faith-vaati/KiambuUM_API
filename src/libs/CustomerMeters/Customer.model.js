@@ -80,7 +80,6 @@ exports.createCustomer = (CustomerData) => {
         }
       },
       (err) => {
-        console.log(err);
 
         reject({ error: "Customer creation failed" });
       }
@@ -110,7 +109,6 @@ exports.findCustomerByAccount = (id) => {
       const [data, meta] = await sequelize.query(
         `SELECT * FROM "CustomerMeters" WHERE "AccountNo"::text ILIKE '%${id}%'::text LIMIT 2 OFFSET 0`
       );
-      console.log(data);
 
       resolve(data);
     } catch (error) {
@@ -358,8 +356,6 @@ exports.findCharts = () => {
         Tanks,
       });
     } catch (error) {
-      console.log(error);
-
       reject({ error: "failed" });
     }
   });

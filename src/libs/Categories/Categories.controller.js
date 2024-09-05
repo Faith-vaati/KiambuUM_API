@@ -34,7 +34,7 @@ exports.updateCategoriesById = (req, res) => {
   );
 };
 exports.deleteCategoryById = (req, res) => {
-  console.log(req.params.id);
+
   CategoriesModel.deleteCategoryById(req.params.id).then(
     (result) => {
       res.status(200).send(result);

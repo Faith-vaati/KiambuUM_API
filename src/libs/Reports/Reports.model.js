@@ -97,7 +97,6 @@ exports.findAllReports = () => {
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar ORDER BY "DateReported"`);
       resolve({ data: data });
     } catch (error) {
-      console.log(error);
       reject({ error: "Retrieve Failed!" });
     }
   });
@@ -392,8 +391,6 @@ exports.findReportByID = (id) => {
 };
 
 exports.updateReportByID = (ReportsData, id) => {
-  console.log(ReportsData);
-
   return new Promise(async (resolve, reject) => {
     try {
       const Images = `${ReportsData.Type}-${Date.now()}.png`;
@@ -500,7 +497,6 @@ exports.findStats = () => {
         });
       },
       (err) => {
-        console.log(err);
 
         reject({ error: "Retrieve failed" });
       }
@@ -521,8 +517,7 @@ exports.findStatusCountByType = (type) => {
       )
       .then(
         (result) => resolve(result),
-        (err) => {
-          console.log(err);
+        (err) => {         
 
           reject(null);
         }
@@ -544,7 +539,6 @@ exports.findMonthlyCountByType = (type) => {
       .then(
         (result) => resolve(result),
         (err) => {
-          console.log(err);
 
           reject(null);
         }
@@ -822,7 +816,6 @@ exports.searchReports = (col, val) => {
         total: count[0].count,
       });
     } catch (error) {
-      console.log(error);
       reject({ error: "Retrieve failed!" });
     }
   });

@@ -15,7 +15,7 @@ function cleanData(obj) {
 
 exports.createWaterPipe = (WaterPipesData) => {
   WaterPipesData = cleanData(WaterPipesData);
-  console.log(WaterPipesData);
+
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -64,7 +64,6 @@ exports.createWaterPipe = (WaterPipesData) => {
         error instanceof Sequelize.ValidationError ||
         error instanceof Sequelize.UniqueConstraintError
       ) {
-        console.log(err);
 
         const detailMessages = error.errors.map((err) => err.message);
         reject({
@@ -105,7 +104,6 @@ exports.findWaterPipeByName = (value) => {
       );
       resolve(data);
     } catch (error) {
-      console.log(error);
 
       reject({ error: "Retrieve Failed" });
     }
@@ -151,7 +149,6 @@ exports.updateWaterPipeById = (WaterPipesData, id) => {
         });
       },
       (err) => {
-        console.log(err);
 
         reject({ error: "Retrieve failed" });
       }
