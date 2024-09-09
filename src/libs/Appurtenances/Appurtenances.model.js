@@ -1,9 +1,9 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
-const Connectors = require("../../models/Connectors")(sequelize, Sequelize);
+const Appurtenances = require("../../models/Appurtenances")(sequelize, Sequelize);
 
-Connectors.sync({ force: false });
+Appurtenances.sync({ force: false });
 
 function cleanData(obj) {
   for (const key in obj) {
@@ -14,25 +14,25 @@ function cleanData(obj) {
   return obj;
 }
 
-exports.createConnectors = (ConnectorsData) => {
+exports.createAppurtenances = (AppurtenancesData) => {
   return new Promise(async (resolve, reject) => {
-    ConnectorsData = cleanData(ConnectorsData);
+    AppurtenancesData = cleanData(AppurtenancesData);
     if (
-        ConnectorsData.Longitude === undefined ||
-        ConnectorsData.Latitude === undefined
+      AppurtenancesData.Longitude === undefined ||
+      AppurtenancesData.Latitude === undefined
     ) {
       reject({ error: "Location is required" });
     }
 
-    Connectors.create(ConnectorsData).then(
+    Appurtenances.create(AppurtenancesData).then(
       async (result) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."Connectors" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE public."Appurtenances" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
-            success: "Connectors Created successfully",
+            success: "Appurtenances Created successfully",
             token: result.dataValues.ID,
           });
         } catch (error) {
@@ -76,12 +76,12 @@ exports.createConnectors = (ConnectorsData) => {
   });
 };
 
-exports.findConnectorsById = (id) => {
+exports.findAppurtenancesById = (id) => {
   return new Promise((resolve, reject) => {
-    Connectors.findByPk(id).then(
+    Appurtenances.findByPk(id).then(
       (result) => {
         if (result == null) {
-          reject({ status: 404, error: "Connectors not found" });
+          reject({ status: 404, error: "Appurtenances not found" });
         }
         resolve(result);
       },
@@ -92,19 +92,19 @@ exports.findConnectorsById = (id) => {
   });
 };
 
-exports.updateConnectorsById = (ConnectorsData, id) => {
-    ConnectorsData = cleanData(ConnectorsData);
+exports.updateAppurtenancesById = (AppurtenancesData, id) => {
+  AppurtenancesData = cleanData(AppurtenancesData);
   return new Promise((resolve, reject) => {
-    Connectors.update(ConnectorsData, {
+    Appurtenances.update(AppurtenancesData, {
       where: {
         ID: id,
       },
     }).then(
       async (result) => {
         try {
-          if (ConnectorsData.Latitude && ConnectorsData.Longitude) {
+          if (AppurtenancesData.Latitude && AppurtenancesData.Longitude) {
             const [data, dmeta] = await sequelize.query(
-              `UPDATE public."Connectors" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+              `UPDATE public."Appurtenances" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
             );
           }
         } catch (error) {}
@@ -117,16 +117,16 @@ exports.updateConnectorsById = (ConnectorsData, id) => {
   });
 };
 
-exports.deleteConnectorsById = (id) => {
+exports.deleteAppurtenancesById = (id) => {
   return new Promise((resolve, reject) => {
-    Connectors.destroy({
+    Appurtenances.destroy({
       where: {
         ID: id,
       },
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "Connectors does not exist!!!" });
+        else reject({ error: "Appurtenances does not exist!!!" });
       },
       (err) => {
         reject({ error: "Retrieve failed" });
@@ -135,9 +135,9 @@ exports.deleteConnectorsById = (id) => {
   });
 };
 
-exports.findAllConnectors = () => {
+exports.findAllAppurtenances = () => {
   return new Promise((resolve, reject) => {
-    Connectors.findAll({}).then(
+    Appurtenances.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -148,14 +148,14 @@ exports.findAllConnectors = () => {
   });
 };
 
-exports.findConnectorsPagnited = (offset) => {
+exports.findAppurtenancesPagnited = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "Connectors" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
+        `SELECT * FROM "Appurtenances" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "Connectors"`
+        `SELECT COUNT(*) FROM "Appurtenances"`
       );
       resolve({
         data: result,
@@ -167,14 +167,14 @@ exports.findConnectorsPagnited = (offset) => {
   });
 };
 
-exports.findConnectorsPagnitedSearch = (column, value, offset) => {
+exports.findAppurtenancesPagnitedSearch = (column, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "Connectors" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Appurtenances" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "Connectors" WHERE "${column}" ILIKE '%${value}%'`
+        `SELECT COUNT(*) FROM "Appurtenances" WHERE "${column}" ILIKE '%${value}%'`
       );
       resolve({
         data: result,
@@ -186,11 +186,11 @@ exports.findConnectorsPagnitedSearch = (column, value, offset) => {
   });
 };
 
-exports.searchOneConnectors = (value) => {
+exports.searchOneAppurtenances = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "Connectors" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "Appurtenances" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
@@ -212,15 +212,15 @@ exports.searchOthers = (table, value) => {
   });
 };
 
-exports.filterConnectors = (column, operator, value, offset) => {
+exports.filterAppurtenances = (column, operator, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "Connectors" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Appurtenances" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
       );
 
       const [count, cmetadata] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "Connectors" WHERE "${column}" ${operator} '${value}'`
+        `SELECT Count(*)::int AS total FROM "Appurtenances" WHERE "${column}" ${operator} '${value}'`
       );
 
       resolve({
@@ -235,9 +235,9 @@ exports.filterConnectors = (column, operator, value, offset) => {
 
 exports.totalMapped = (offset) => {
   return new Promise((resolve, reject) => {
-    Connectors.findAll({}).then(
+    Appurtenances.findAll({}).then(
       async (result) => {
-        const count = await Connectors.count();
+        const count = await Appurtenances.count();
         resolve({
           success: count,
         });
@@ -253,7 +253,7 @@ exports.getGeoJSON = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const users = await sequelize.query(
-        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."Connectors"`,
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."Appurtenances"`,
         { type: QueryTypes.SELECT }
       );
       resolve(users);
@@ -267,13 +267,13 @@ exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [cs, smeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."Connectors"`
+        `SELECT Count(*)::FLOAT as total FROM public."Appurtenances"`
       );
       const [dm, hmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."Connectors"`
+        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."Appurtenances"`
       );
       const [zn, dmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."Connectors"`
+        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."Appurtenances"`
       );
       const [tnk, fmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
@@ -285,10 +285,10 @@ exports.getStats = () => {
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
       );
       const [cb, cbmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."ConnectorsBillings"`
+        `SELECT SUM("Amount") as total FROM public."AppurtenancesBillings"`
       );
       const [inv, invmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."ConnectorsBillings"`
+        `SELECT SUM("Amount") as total FROM public."AppurtenancesBillings"`
         // ROUND( AVG(some_column)::numeric, 2 )
       );
 
@@ -312,23 +312,23 @@ exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [accType, dmeta] = await sequelize.query(
-        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."Connectors" GROUP BY "AccountType"`
+        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."Appurtenances" GROUP BY "AccountType"`
       );
       const [accStatus, ameta] = await sequelize.query(
-        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."Connectors" GROUP BY "AccountStatus"`
+        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."Appurtenances" GROUP BY "AccountStatus"`
       );
 
       const [mtrStatus, mtrmeta] = await sequelize.query(
-        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."Connectors" GROUP BY "MeterStatus"`
+        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."Appurtenances" GROUP BY "MeterStatus"`
       );
       const [dma, dmameta] = await sequelize.query(
-        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."Connectors" GROUP BY "DMA"`
+        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."Appurtenances" GROUP BY "DMA"`
       );
       const [zone, znmeta] = await sequelize.query(
-        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."Connectors" GROUP BY "Zone"`
+        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."Appurtenances" GROUP BY "Zone"`
       );
       const [mtrclass, clmeta] = await sequelize.query(
-        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."Connectors" GROUP BY "Class"`
+        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."Appurtenances" GROUP BY "Class"`
       );
 
       resolve({

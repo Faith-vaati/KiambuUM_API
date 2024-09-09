@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  const Connectors = sequelize.define("Connectors", {
+  const Appurtenances = sequelize.define("Appurtenances", {
     ID: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
@@ -24,6 +24,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Diameter: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    UpperDiameter: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    LowerDiameter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -53,5 +61,5 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  return Connectors;
+  return Appurtenances;
 };

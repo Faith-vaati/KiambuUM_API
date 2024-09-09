@@ -1,7 +1,7 @@
-const ConnectorsModel = require("./Connectors.model");
+const AppurtenancesModel = require("./Appurtenances.model");
 
 exports.create = (req, res) => {
-  ConnectorsModel.createConnectors(req.body).then(
+  AppurtenancesModel.createAppurtenances(req.body).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -11,8 +11,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findConnectorsById = (req, res) => {
-  ConnectorsModel.findConnectorsById(req.params.ID).then(
+exports.findAppurtenancesById = (req, res) => {
+  AppurtenancesModel.findAppurtenancesById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -22,8 +22,8 @@ exports.findConnectorsById = (req, res) => {
   );
 };
 
-exports.updateConnectorsById = (req, res) => {
-  ConnectorsModel.updateConnectorsById(req.body, req.params.ID).then(
+exports.updateAppurtenancesById = (req, res) => {
+  AppurtenancesModel.updateAppurtenancesById(req.body, req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -34,8 +34,8 @@ exports.updateConnectorsById = (req, res) => {
   );
 };
 
-exports.deleteConnectorsById = (req, res) => {
-  ConnectorsModel.deleteConnectorsById(req.params.ID).then(
+exports.deleteAppurtenancesById = (req, res) => {
+  AppurtenancesModel.deleteAppurtenancesById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -45,8 +45,8 @@ exports.deleteConnectorsById = (req, res) => {
   );
 };
 
-exports.findAllConnectors = (req, res) => {
-  ConnectorsModel.findAllConnectors().then(
+exports.findAllAppurtenances = (req, res) => {
+  AppurtenancesModel.findAllAppurtenances().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -56,8 +56,8 @@ exports.findAllConnectors = (req, res) => {
   );
 };
 
-exports.findConnectorsPagnited = (req, res) => {
-  ConnectorsModel.findConnectorsPagnited(req.params.offset).then(
+exports.findAppurtenancesPagnited = (req, res) => {
+  AppurtenancesModel.findAppurtenancesPagnited(req.params.offset).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -67,8 +67,8 @@ exports.findConnectorsPagnited = (req, res) => {
   );
 };
 
-exports.findConnectorsPagnitedSearch = (req, res) => {
-  ConnectorsModel.findConnectorsPagnitedSearch(
+exports.findAppurtenancesPagnitedSearch = (req, res) => {
+  AppurtenancesModel.findAppurtenancesPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
@@ -82,8 +82,8 @@ exports.findConnectorsPagnitedSearch = (req, res) => {
   );
 };
 
-exports.searchOneConnecters = (req, res) => {
-  ConnectorsModel.searchOneConnectors(req.params.value).then(
+exports.searchOneAppurtenances = (req, res) => {
+  AppurtenancesModel.searchOneAppurtenances(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -94,7 +94,7 @@ exports.searchOneConnecters = (req, res) => {
 };
 
 exports.searchOthers = (req, res) => {
-  ConnectorsModel.searchOthers(req.params.table, req.params.value).then(
+  AppurtenancesModel.searchOthers(req.params.table, req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -104,8 +104,8 @@ exports.searchOthers = (req, res) => {
   );
 };
 
-exports.filterConnectors = (req, res) => {
-  ConnectorsModel.filterConnectors(
+exports.filterAppurtenances = (req, res) => {
+  AppurtenancesModel.filterAppurtenances(
     req.params.column,
     req.params.operator,
     req.params.value,
@@ -121,7 +121,7 @@ exports.filterConnectors = (req, res) => {
 };
 
 exports.totalMapped = (req, res) => {
-  ConnectorsModel.totalMapped().then(
+  AppurtenancesModel.totalMapped().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -132,7 +132,7 @@ exports.totalMapped = (req, res) => {
 };
 
 exports.getGeoJSON = (req, res) => {
-  ConnectorsModel.getGeoJSON().then(
+  AppurtenancesModel.getGeoJSON().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -143,7 +143,7 @@ exports.getGeoJSON = (req, res) => {
 };
 
 exports.getStats = (req, res) => {
-  ConnectorsModel.getStats().then(
+  AppurtenancesModel.getStats().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -154,7 +154,7 @@ exports.getStats = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-  ConnectorsModel.findCharts().then(
+  AppurtenancesModel.findCharts().then(
     (result) => {
       res.status(200).send(result);
     },
