@@ -5,11 +5,11 @@ exports.ConnectorsRoutes = function (app) {
   app.post("/connectors/create", [ConnectorsController.create]);
 
   app.get("/connectors/paginated/:offset", [
-    ConnectorsController.findBulkMetersPagnited,
+    ConnectorsController.findConnectorsPagnited,
   ]);
 
   app.get("/connectors/searchone/:value", [
-    ConnectorsController.searchOneBulkMeters,
+    ConnectorsController.searchOneConnectors,
   ]);
 
   app.get("/connectors/searchothers/:table/:value", [
@@ -17,11 +17,11 @@ exports.ConnectorsRoutes = function (app) {
   ]);
 
   app.get("/connectors/paginated/search/:column/:value/:offset", [
-    ConnectorsController.findBulkMetersPagnitedSearch,
+    ConnectorsController.findConnectorsPagnitedSearch,
   ]);
 
   app.get("/connectors/filter/:column/:operator/:value/:offset", [
-    ConnectorsController.filterBulkMeters,
+    ConnectorsController.filterConnectors,
   ]);
 
   app.get("/connectors/geojson", [ConnectorsController.getGeoJSON]);
@@ -32,9 +32,6 @@ exports.ConnectorsRoutes = function (app) {
 
   app.get("/connectors/all/charts", [ConnectorsController.findCharts]);
 
-  app.get("/connectors/details/:meterno", [
-    ConnectorsController.findConnectorsByMeterNo,
-  ]);
 
   app.get("/connectors/:ID", [ConnectorsController.findConnectorsById]);
 

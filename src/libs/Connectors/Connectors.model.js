@@ -92,22 +92,6 @@ exports.findConnectorsById = (id) => {
   });
 };
 
-exports.findConnectorsByMeterNo = (meterno) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const [data, meta] = await sequelize.query(
-        `SELECT * FROM "Connectors" WHERE "MeterNo"::text ILIKE '%${meterno}%'::text LIMIT 2 OFFSET 0`
-      );
-
-      resolve(data);
-    } catch (error) {
-      console.log(error);
-
-      reject([]);
-    }
-  });
-};
-
 exports.updateConnectorsById = (ConnectorsData, id) => {
     ConnectorsData = cleanData(ConnectorsData);
   return new Promise((resolve, reject) => {

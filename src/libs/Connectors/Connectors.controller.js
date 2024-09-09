@@ -22,17 +22,6 @@ exports.findConnectorsById = (req, res) => {
   );
 };
 
-exports.findConnectorsByMeterNo = (req, res) => {
-  ConnectorsModel.findConnectorsByMeterNo(req.params.meterno).then(
-    (result) => {
-      res.status(200).send(result);
-    },
-    (err) => {
-      res.status(203).send(err.message);
-    }
-  );
-};
-
 exports.updateConnectorsById = (req, res) => {
   ConnectorsModel.updateConnectorsById(req.body, req.params.ID).then(
     (result) => {
