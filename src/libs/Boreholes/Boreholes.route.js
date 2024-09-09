@@ -2,42 +2,42 @@ const BoreholesController = require("./Boreholes.controller");
 const verifyToken = require("../Auth/VerifyToken");
 
 exports.BoreholesRoutes = function (app) {
-  app.post("/connectors/create", [BoreholesController.create]);
+  app.post("/boreholes/create", [BoreholesController.create]);
 
-  app.get("/connectors/paginated/:offset", [
-    ConnectorsController.findBulkMetersPagnited,
+  app.get("/boreholes/paginated/:offset", [
+    BoreholesController.findBoreholesPagnited,
   ]);
 
-  app.get("/connectors/searchone/:value", [
-    ConnectorsController.searchOneBulkMeters,
+  app.get("/boreholes/searchone/:value", [
+    BoreholesController.searchOneBoreholes,
   ]);
 
-  app.get("/connectors/searchothers/:table/:value", [
-    ConnectorsController.searchOthers,
+  app.get("/boreholes/searchothers/:table/:value", [
+    BoreholesController.searchOthers,
   ]);
 
-  app.get("/connectors/paginated/search/:column/:value/:offset", [
-    ConnectorsController.findBulkMetersPagnitedSearch,
+  app.get("/boreholes/paginated/search/:column/:value/:offset", [
+    BoreholesController.findBoreholesPagnitedSearch,
   ]);
 
-  app.get("/connectors/filter/:column/:operator/:value/:offset", [
-    ConnectorsController.filterBulkMeters,
+  app.get("/boreholes/filter/:column/:operator/:value/:offset", [
+    BoreholesController.filterBoreholes,
   ]);
 
-  app.get("/connectors/geojson", [ConnectorsController.getGeoJSON]);
+  app.get("/boreholes/geojson", [BoreholesController.getGeoJSON]);
 
-  app.get("/connectors/totalmapped", [ConnectorsController.totalMapped]);
+  app.get("/boreholes/totalmapped", [BoreholesController.totalMapped]);
 
-  app.get("/connectors/all/stats", [ConnectorsController.getStats]);
+  app.get("/boreholes/all/stats", [BoreholesController.getStats]);
 
-  app.get("/connectors/all/charts", [ConnectorsController.findCharts]);
+  app.get("/boreholes/all/charts", [BoreholesController.findCharts]);
 
 
-  app.get("/connectors/:ID", [ConnectorsController.findConnectorsById]);
+  app.get("/boreholes/:ID", [BoreholesController.findBoreholesById]);
 
-  app.put("/connectors/:ID", [ConnectorsController.updateConnectorsById]);
+  app.put("/boreholes/:ID", [BoreholesController.updateBoreholesById]);
 
-  app.delete("/connectors/:ID", [ConnectorsController.deleteConnectorsById]);
+  app.delete("/boreholes/:ID", [BoreholesController.deleteBoreholesById]);
 
-  app.get("/connectors", [ConnectorsController.findAllConnectors]);
+  app.get("/boreholes", [BoreholesController.findAllBoreholes]);
 };
