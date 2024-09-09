@@ -1,7 +1,7 @@
-const BulkMetersModel = require("./BulkMeters.model");
+const ConnectorsModel = require("./Connectors.model");
 
 exports.create = (req, res) => {
-  BulkMetersModel.createBulkMeters(req.body).then(
+  ConnectorsModel.createConnectors(req.body).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -11,8 +11,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findBulkMetersById = (req, res) => {
-  BulkMetersModel.findBulkMetersById(req.params.ID).then(
+exports.findConnectorsById = (req, res) => {
+  ConnectorsModel.findConnectorsById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -22,8 +22,8 @@ exports.findBulkMetersById = (req, res) => {
   );
 };
 
-exports.findBulkMetersByMeterNo = (req, res) => {
-  BulkMetersModel.findBulkMetersByMeterNo(req.params.meterno).then(
+exports.findConnectorsByMeterNo = (req, res) => {
+  ConnectorsModel.findConnectorsByMeterNo(req.params.meterno).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -33,8 +33,8 @@ exports.findBulkMetersByMeterNo = (req, res) => {
   );
 };
 
-exports.updateBulkMetersById = (req, res) => {
-  BulkMetersModel.updateBulkMetersById(req.body, req.params.ID).then(
+exports.updateConnectorsById = (req, res) => {
+  ConnectorsModel.updateConnectorsById(req.body, req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -45,8 +45,8 @@ exports.updateBulkMetersById = (req, res) => {
   );
 };
 
-exports.deleteBulkMetersById = (req, res) => {
-  BulkMetersModel.deleteBulkMetersById(req.params.ID).then(
+exports.deleteConnectorsById = (req, res) => {
+  ConnectorsModel.deleteConnectorsById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -56,8 +56,8 @@ exports.deleteBulkMetersById = (req, res) => {
   );
 };
 
-exports.findAllBulkMeters = (req, res) => {
-  BulkMetersModel.findAllBulkMeters().then(
+exports.findAllConnectors = (req, res) => {
+  ConnectorsModel.findAllConnectors().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -67,8 +67,8 @@ exports.findAllBulkMeters = (req, res) => {
   );
 };
 
-exports.findBulkMetersPagnited = (req, res) => {
-  BulkMetersModel.findBulkMetersPagnited(req.params.offset).then(
+exports.findConnectorsPagnited = (req, res) => {
+  ConnectorsModel.findConnectorsPagnited(req.params.offset).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -78,8 +78,8 @@ exports.findBulkMetersPagnited = (req, res) => {
   );
 };
 
-exports.findBulkMetersPagnitedSearch = (req, res) => {
-  BulkMetersModel.findBulkMetersPagnitedSearch(
+exports.findConnectorsPagnitedSearch = (req, res) => {
+  ConnectorsModel.findConnectorsPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
@@ -93,8 +93,8 @@ exports.findBulkMetersPagnitedSearch = (req, res) => {
   );
 };
 
-exports.searchOneBulkMeters = (req, res) => {
-  BulkMetersModel.searchOneBulkMeters(req.params.value).then(
+exports.searchOneConnecters = (req, res) => {
+  ConnectorsModel.searchOneConnectors(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -105,7 +105,7 @@ exports.searchOneBulkMeters = (req, res) => {
 };
 
 exports.searchOthers = (req, res) => {
-  BulkMetersModel.searchOthers(req.params.table, req.params.value).then(
+  ConnectorsModel.searchOthers(req.params.table, req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -115,8 +115,8 @@ exports.searchOthers = (req, res) => {
   );
 };
 
-exports.filterBulkMeters = (req, res) => {
-  BulkMetersModel.filterBulkMeters(
+exports.filterConnectors = (req, res) => {
+  ConnectorsModel.filterConnectors(
     req.params.column,
     req.params.operator,
     req.params.value,
@@ -132,7 +132,7 @@ exports.filterBulkMeters = (req, res) => {
 };
 
 exports.totalMapped = (req, res) => {
-  BulkMetersModel.totalMapped().then(
+  ConnectorsModel.totalMapped().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -143,7 +143,7 @@ exports.totalMapped = (req, res) => {
 };
 
 exports.getGeoJSON = (req, res) => {
-  BulkMetersModel.getGeoJSON().then(
+  ConnectorsModel.getGeoJSON().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -154,7 +154,7 @@ exports.getGeoJSON = (req, res) => {
 };
 
 exports.getStats = (req, res) => {
-  BulkMetersModel.getStats().then(
+  ConnectorsModel.getStats().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -165,7 +165,7 @@ exports.getStats = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-  BulkMetersModel.findCharts().then(
+  ConnectorsModel.findCharts().then(
     (result) => {
       res.status(200).send(result);
     },
