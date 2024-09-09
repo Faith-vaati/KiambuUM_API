@@ -7,7 +7,6 @@ module.exports = (sequelize, Datatypes) => {
       allowNull: false,
       primaryKey: true,
     },
-
     Latitude: {
       type: Sequelize.DOUBLE,
       allowNull: false,
@@ -16,11 +15,7 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.DOUBLE,
       allowNull: false,
     },
-    Elevation: {
-      type: Sequelize.DOUBLE,
-      allowNull: true,
-    },
-    Name: {
+    BrandName: {
       type: Sequelize.STRING,
       allowNull: true,
     },
@@ -28,12 +23,23 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
-
-    Picture: {
+    Photo: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    Status: {
+    MeterSerial: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    MeterType: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    AccountName: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    AccountNumber: {
       type: Sequelize.STRING,
       allowNull: true,
     },
@@ -45,11 +51,15 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    RecTime: {
+    Zone: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    Year: {
+    Status: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    YearOfInstallation: {
       type: Sequelize.DOUBLE,
       allowNull: false,
     },
