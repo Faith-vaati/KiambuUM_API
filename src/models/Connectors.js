@@ -27,14 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Diameter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Diameter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Zone: {
       type: DataTypes.STRING,
       allowNull: true,
