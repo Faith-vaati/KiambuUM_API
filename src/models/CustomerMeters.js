@@ -19,11 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
-    CurrentZone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Location: {
+    MeterLocation: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -31,19 +27,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    MeterMaterial: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     AccountNo: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    SerialNo: {
+    MeterSerial: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    MeterSize: {
+    Size: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -51,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    InstallationType: {
+    InstallationMode: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -63,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    OtherMete: {
+    OtherMeter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -71,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    FRecTime: {
+    Material: {
       type: DataTypes.STRING,
       allowNull: true,
     },
