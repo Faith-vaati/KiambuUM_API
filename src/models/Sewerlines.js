@@ -14,27 +14,27 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     Name: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     LineType: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     Diameter: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     PipeMaterial: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     Status: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     OutfallingTrunk: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     YearOfInstallation: {
@@ -42,19 +42,19 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     Photo: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     Zone: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     SubZones: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
   });

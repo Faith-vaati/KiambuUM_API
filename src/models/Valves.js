@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       Latitude: {
-        type: DataTypes.DOUBLE,
+        type: DataTypes.FLOAT,
         allowNull: true,
       },
       Longitude: {
-        type: DataTypes.DOUBLE,
+        type: DataTypes.FLOAT,
         allowNull: true,
       },
       YearOfInstallation: {
@@ -24,39 +24,43 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       Zone: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      Subzone: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
       Type: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       Diameter: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       PipelineName: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       Status: {
-        type: DataTypes.STRING(254),
-        allowNull: true,
-      },
-      Photo: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       Name: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       Remarks: {
-        type: DataTypes.STRING(254),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       Depth: {
         type: DataTypes.DOUBLE,
+        allowNull: true,
+      },
+      Photo: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
       geom: {

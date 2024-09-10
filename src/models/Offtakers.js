@@ -8,11 +8,11 @@ module.exports = (sequelize, Datatypes) => {
       primaryKey: true,
     },
     Latitude: {
-      type: Sequelize.DOUBLE,
+      type: Sequelize.FLOAT,
       allowNull: false,
     },
     Longitude: {
-      type: Sequelize.DOUBLE,
+      type: Sequelize.FLOAT,
       allowNull: false,
     },
     BrandName: {
@@ -23,10 +23,7 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    Photo: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
+    
     MeterSerial: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -55,6 +52,10 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
+    Subzone: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     Status: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -62,6 +63,14 @@ module.exports = (sequelize, Datatypes) => {
     YearOfInstallation: {
       type: Sequelize.DOUBLE,
       allowNull: false,
+    },
+    Photo: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    geom: {
+      type: Datatypes.GEOMETRY('POINT', 4326),
+      allowNull: true,
     },
   });
 
