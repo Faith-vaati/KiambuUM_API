@@ -9,10 +9,6 @@ module.exports = (sequelize) => {
       allowNull: false,
       primaryKey: true,
     },
-    geom: {
-      type: DataTypes.GEOMETRY("LINESTRING", 4326),
-      allowNull: true,
-    },
     Name: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -45,16 +41,20 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Photo: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Zone: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    SubZones: {
+    Subzones: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Photo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY("LINESTRING", 4326),
       allowNull: true,
     },
   });
