@@ -21,10 +21,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    geom: {
-      type: DataTypes.GEOMETRY("POINTZM", 4326),
-      allowNull: true,
-    },
     Material: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -67,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     Photo: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY("POINTZM", 4326),
       allowNull: true,
     },
   });
