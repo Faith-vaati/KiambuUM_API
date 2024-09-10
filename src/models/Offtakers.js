@@ -23,7 +23,6 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    
     MeterSerial: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -38,10 +37,6 @@ module.exports = (sequelize, Datatypes) => {
     },
     AccountNumber: {
       type: Sequelize.STRING,
-      allowNull: true,
-    },
-    geom: {
-      type: Sequelize.GEOMETRY("POINT"),
       allowNull: true,
     },
     Remarks: {

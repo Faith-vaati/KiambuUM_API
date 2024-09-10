@@ -8,7 +8,15 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     Name: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    Zone: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    Subzone: {
+      type: Sequelize.STRING,
       allowNull: true,
     },
     Latitude: {
@@ -35,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    ConnectionType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Condition: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -43,11 +55,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    Route: {
+    Remarks: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Remarks: {
+    Status: {
       type: DataTypes.STRING,
       allowNull: true,
     },
