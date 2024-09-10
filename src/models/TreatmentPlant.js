@@ -14,15 +14,15 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
         Name: {
-            type: DataTypes.STRING(254),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         Remarks: {
-            type: DataTypes.STRING(254),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         RecTime: {
-            type: DataTypes.STRING(254), 
+            type: DataTypes.STRING, 
             allowNull: true,
           },
         Length: {
@@ -34,11 +34,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
         Type: {
-            type: DataTypes.STRING(254),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         Source: {
-            type: DataTypes.STRING(254),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         Year: {
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
           },
        
         BulkMeter: {
-            type: DataTypes.STRING(254),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         Design: {
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
           },
        
         Picture: {
-            type: DataTypes.STRING(254),
+            type: DataTypes.STRING,
             allowNull: true,
         },
        

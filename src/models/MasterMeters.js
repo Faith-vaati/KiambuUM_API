@@ -43,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
+    Remarks: {
+      type: DataTypes.STRING(254), 
+      allowNull: true,
+    },
     Photo: {
       type: DataTypes.STRING(254), 
       allowNull: true,
@@ -52,10 +56,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     
-    Remarks: {
-      type: DataTypes.STRING(254), 
-      allowNull: true,
-    },
+    
   
   },);
 
