@@ -43,10 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    Route: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Remarks: {
       type: DataTypes.STRING,
       allowNull: true,
