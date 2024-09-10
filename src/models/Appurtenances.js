@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  const CustomerMeters = sequelize.define("CustomerMeters", {
+  const Appurtenances = sequelize.define("Appurtenances", {
     ID: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
@@ -19,47 +19,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
-    MeterLocation: {
+    Type: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    BrandName: {
+    Diameter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    AccountNo: {
-      type: DataTypes.DOUBLE,
-      allowNull: true,
-    },
-    MeterSerial: {
+    UpperDiameter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Size: {
+    LowerDiameter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    MeterType: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    InstallationMode: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Status: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Sewered: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    OtherMeter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Picture: {
+    Zone: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -67,12 +43,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    YearOfInstallation: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Remarks: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    
+    Photo: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
   });
 
-  return CustomerMeters;
+  return Appurtenances;
 };

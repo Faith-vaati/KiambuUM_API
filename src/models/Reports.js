@@ -56,11 +56,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    TaskResources: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    TaskRemarks: {
+    TaskImage: {
       type: DataTypes.STRING,
       allowNull: true,
     },

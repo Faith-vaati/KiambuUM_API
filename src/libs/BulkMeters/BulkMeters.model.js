@@ -1,11 +1,26 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
+const { errorMonitor } = require("nodemailer/lib/xoauth2");
 const BulkMeters = require("../../models/BulkMeters")(sequelize, Sequelize);
 
 BulkMeters.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createBulkMeters = (BulkMetersData) => {
   return new Promise(async (resolve, reject) => {
-    if (BulkMetersData.Longitude === undefined || BulkMetersData.Latitude === undefined) {
+    BulkMetersData = cleanData(BulkMetersData);
+    if (
+      BulkMetersData.Longitude === undefined ||
+      BulkMetersData.Latitude === undefined
+    ) {
       reject({ error: "Location is required" });
     }
 
@@ -21,13 +36,41 @@ exports.createBulkMeters = (BulkMetersData) => {
             token: result.dataValues.ID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        console.log(err);
-        
-        reject({ error: "BulkMeters creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
@@ -49,32 +92,38 @@ exports.findBulkMetersById = (id) => {
   });
 };
 
-exports.findBulkMetersByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    BulkMeters.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findBulkMetersByMeterNo = (meterno) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "BulkMeters" WHERE "MeterNo"::text ILIKE '%${meterno}%'::text LIMIT 2 OFFSET 0`
+      );
+
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+
+      reject([]);
+    }
   });
 };
 
 exports.updateBulkMetersById = (BulkMetersData, id) => {
-  BulkMetersData.id = id;
+  BulkMetersData = cleanData(BulkMetersData);
   return new Promise((resolve, reject) => {
     BulkMeters.update(BulkMetersData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (BulkMetersData.Latitude && BulkMetersData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."BulkMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

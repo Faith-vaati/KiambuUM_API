@@ -26,27 +26,27 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY("POINTZM", 4326),
       allowNull: true,
     },
-    Elevation: {
-      type: DataTypes.DOUBLE,
-      allowNull: true,
-    },
     Material: {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
     Capacity: {
-      type: DataTypes.DOUBLE,
+      type: DataTypes.STRING(254),
       allowNull: true,
     },
     Status: {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-    Remarks: {
+    Zone: {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-    RecTime: {
+    SubZone: {
+      type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    Remarks: {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
@@ -62,11 +62,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(254),
       allowNull: true,
     },
-    Year: {
+    YearOfInstallation: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    Picture: {
+    Photo: {
       type: DataTypes.STRING(254),
       allowNull: true,
     },

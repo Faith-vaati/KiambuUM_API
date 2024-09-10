@@ -4,8 +4,18 @@ const Sewerlines = require("../../models/Sewerlines")(sequelize, Sequelize);
 
 Sewerlines.sync({ force: false });
 
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createSewerline = (SewerlinesData) => {
   return new Promise(async (resolve, reject) => {
+    SewerlinesData = cleanData(SewerlinesData);
     try {
       const coordinates = SewerlinesData.Coordinates;
       SewerlinesData.Coordinates = null;
@@ -23,32 +33,58 @@ exports.createSewerline = (SewerlinesData) => {
             .join(",\n    ");
           // Construct the SQL query
           const sqlQuery = `
-            WITH geom AS (
-              SELECT ST_Multi(ST_MakeLine(ARRAY[
-                ${points}
-              ])) AS geom
-            )
-            UPDATE "SewerLines"
-            SET "geom" = geom.geom
-            FROM geom
-            WHERE "ID" = '${id}';
+             WITH geom AS (
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "SewerLines"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
             `;
           const [results, metadata] = await sequelize.query(sqlQuery);
           resolve({
             success: "Created successfully",
           });
         } catch (error) {
-          reject({
-            error: error.message,
-          });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       } else {
         reject({
           error: "Invalid coordinates",
         });
       }
-    } catch (err) {
-      reject({ error: "Sewer Lines creation failed" ?? err.message });
+    } catch (error) {
+      if (
+        error instanceof Sequelize.ValidationError ||
+        error instanceof Sequelize.UniqueConstraintError
+      ) {
+        const detailMessages = error.errors.map((err) => err.message);
+        reject({
+          error:
+            detailMessages.length > 0 ? detailMessages[0] : "Unexpected error!",
+        });
+      } else {
+        reject({
+          error: error.message,
+        });
+      }
     }
   });
 };
@@ -66,55 +102,55 @@ exports.findSewerlineById = (id) => {
   });
 };
 
-exports.findSewerlineByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Sewerlines.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findSewerlineByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "SewerLines" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateSewerlineById = (SewerlinesData, id) => {
   return new Promise((resolve, reject) => {
+    SewerlinesData = cleanData(SewerlinesData);
     Sewerlines.update(SewerlinesData, {
       where: {
-        ObjectID: id,
+        ID: id,
       },
     }).then(
       async (result) => {
-        const coordinates = await Sewerlines.findAll({
-          where: {
-            ObjectID: id,
-          },
-        });
-
-        let q = `LINESTRING(`;
-        coordinates[0]?.Coordinates?.map((item) => {
-          q = q + `${item[0]} ${item[1]}, `;
-        });
-
-        q = q.trim().slice(0, -1);
-        q = q + ")";
-
-        const [results, metadata] = await sequelize.query(
-          `WITH geom AS (
-              SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
-            )
-          UPDATE "SewerLines" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
-        );
-
+        try {
+          if (
+            SewerlinesData.Coordinates &&
+            SewerlinesData.Coordinates.length > 0
+          ) {
+            const points = SewerlinesData.Coordinates.map(
+              (coord) =>
+                `ST_SetSRID(ST_MakePoint(${coord.longitude}, ${coord.latitude}), 4326)`
+            ).join(",\n    ");
+            // Construct the SQL query
+            const sqlQuery = `
+             WITH geom AS (
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "SewerLines"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
+            `;
+            const [results, metadata] = await sequelize.query(sqlQuery);
+          }
+        } catch (error) {}
         resolve({
           success: "Updated successfully",
-          coordinates: coordinates.length > 0 ? coordinates[0].Coordinates : [],
         });
       },
       (err) => {

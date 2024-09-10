@@ -7,13 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    RecTime: {
-      type: DataTypes.STRING, 
-      allowNull: true,
-    },
-    Length: {
-      type: DataTypes.DOUBLE, 
-    },
     Name: {
       type: DataTypes.STRING, 
       allowNull: true,
@@ -22,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Material: {
+    PipeMaterial: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
@@ -38,11 +31,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Year: {
+    YearOfInstallation: {
       type: DataTypes.DOUBLE, 
       allowNull: true,
     },
-    Layer: {
+    Zone: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    LineType: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
@@ -50,11 +47,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Picture: {
+    Photo: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Route: {
+    Zone: {
       type: DataTypes.STRING, 
       allowNull: true,
     },

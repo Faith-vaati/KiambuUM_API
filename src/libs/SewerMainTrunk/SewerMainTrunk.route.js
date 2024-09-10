@@ -18,8 +18,8 @@ exports.SewerMainTrunkRoutes = function (app) {
     SewerMainTrunkController.findSewerMainTrunkById,
   ]);
 
-  app.get("/sewermaintrunk/details/:ID", [
-    SewerMainTrunkController.findSewerMainTrunkByObjectId,
+  app.get("/sewermaintrunk/details/:value", [
+    SewerMainTrunkController.findSewerMainTrunkByName,
   ]);
 
   app.put("/sewermaintrunk/:ID", [

@@ -18,8 +18,8 @@ exports.MasterMetersRoutes = function (app) {
 
   app.get("/mastermeters/:ID", [MasterMetersController.findMasterMeterById]);
 
-  app.get("/mastermeters/details/:ID", [
-    MasterMetersController.findMasterMeterByObjectId,
+  app.get("/mastermeters/details/:value", [
+    MasterMetersController.findMasterMeterByName,
   ]);
 
   app.put("/mastermeters/:id", [MasterMetersController.updateMasterMeterById]);

@@ -7,10 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    RecTime: {
-      type: DataTypes.STRING(254), 
-      allowNull: true,
-    },
     Longitude: {
       type: DataTypes.DOUBLE, 
       allowNull: true,
@@ -18,16 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     Latitude: {
       type: DataTypes.DOUBLE, 
       allowNull: true,
-    },
-    Elevation: {
-      type: DataTypes.DOUBLE, 
-      allowNull: true,
-    },
-    OrthoHt: {
-      type: DataTypes.DOUBLE, 
-      allowNull: true,
-    },
-    Name: {
+    }, 
+    BrandName: {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
@@ -35,31 +23,27 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
-    MeterNo: {
+    MeterType: {
       type: DataTypes.DOUBLE, 
       allowNull: true,
     },
-    Type: {
+    MeterSerial: {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
-    Year: {
+    YearOfInstallation: {
       type: DataTypes.DOUBLE, 
       allowNull: true,
     },
-    Status: {
+    Zone: {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
-    Route: {
+    DMAName: {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },
-    DMA: {
-      type: DataTypes.STRING(254), 
-      allowNull: true,
-    },
-    Picture: {
+    Photo: {
       type: DataTypes.STRING(254), 
       allowNull: true,
     },

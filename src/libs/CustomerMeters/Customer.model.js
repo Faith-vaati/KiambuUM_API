@@ -6,8 +6,19 @@ const CustomerMeters = require("../../models/CustomerMeters")(
 );
 
 CustomerMeters.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createCustomer = (CustomerData) => {
   return new Promise(async (resolve, reject) => {
+    CustomerData = cleanData(CustomerData);
     CustomerMeters.findAll({
       where: {
         AccountNo: CustomerData.AccountNo,
@@ -27,13 +38,41 @@ exports.createCustomer = (CustomerData) => {
                   token: result.dataValues.ID,
                 });
               } catch (error) {
-                reject({ success: "Data saved without geometry" });
+                if (
+                  error instanceof Sequelize.ValidationError ||
+                  error instanceof Sequelize.UniqueConstraintError
+                ) {
+                  const detailMessages = error.errors.map((err) => err.message);
+                  reject({
+                    error:
+                      detailMessages.length > 0
+                        ? detailMessages[0]
+                        : "Unexpected error!",
+                  });
+                } else {
+                  reject({
+                    error: error.message,
+                  });
+                }
               }
             },
-            (err) => {
-              console.log(err);
-
-              reject({ error: "Customer creation failed" });
+            (error) => {
+              if (
+                error instanceof Sequelize.ValidationError ||
+                error instanceof Sequelize.UniqueConstraintError
+              ) {
+                const detailMessages = error.errors.map((err) => err.message);
+                reject({
+                  error:
+                    detailMessages.length > 0
+                      ? detailMessages[0]
+                      : "Unexpected error!",
+                });
+              } else {
+                reject({
+                  error: error.message,
+                });
+              }
             }
           );
         } else {
@@ -41,7 +80,6 @@ exports.createCustomer = (CustomerData) => {
         }
       },
       (err) => {
-        console.log(err);
 
         reject({ error: "Customer creation failed" });
       }
@@ -66,31 +104,35 @@ exports.findCustomerById = (id) => {
 };
 
 exports.findCustomerByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    CustomerMeters.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "CustomerMeters" WHERE "AccountNo"::text ILIKE '%${id}%'::text LIMIT 2 OFFSET 0`
+      );
+
+      resolve(data);
+    } catch (error) {
+      reject([]);
+    }
   });
 };
 
 exports.updateCustomerById = (CustomerData, id) => {
-  CustomerData.id = id;
+  CustomerData = cleanData(CustomerData);
   return new Promise((resolve, reject) => {
     CustomerMeters.update(CustomerData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (CustomerData.Longitude && CustomerData.Latitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."CustomerMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
@@ -314,8 +356,6 @@ exports.findCharts = () => {
         Tanks,
       });
     } catch (error) {
-      console.log(error);
-
       reject({ error: "failed" });
     }
   });

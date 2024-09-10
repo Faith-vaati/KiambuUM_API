@@ -40,8 +40,6 @@ exports.createAuth = (AuthData) => {
               resolve({ success: "User created successfully" });
             },
             (err) => {
-              console.log(err);
-
               reject({ error: "User creation failed" });
             }
           );

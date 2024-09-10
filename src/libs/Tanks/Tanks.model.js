@@ -4,8 +4,19 @@ const Tanks = require("../../models/Tanks")(sequelize, Sequelize);
 const Path = require("path");
 
 Tanks.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createTank = (TanksData) => {
   return new Promise(async (resolve, reject) => {
+    TanksData = cleanData(TanksData);
     if (TanksData.Longitude === undefined || TanksData.Latitude === undefined) {
       reject({ error: "Location is required" });
     }
@@ -22,13 +33,41 @@ exports.createTank = (TanksData) => {
             token: result.dataValues.ID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        console.log(err);
-        
-        reject({ error: "Tank creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
@@ -50,35 +89,40 @@ exports.TankById = (id) => {
   });
 };
 
-exports.findTankByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Tanks.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findTankByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Tanks" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateTankById = (TanksData, id) => {
-  TanksData.id = id;
+  TanksData = cleanData(TanksData);
   return new Promise((resolve, reject) => {
     Tanks.update(TanksData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (TanksData.Latitude && TanksData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Tanks" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
+
         reject({ error: "Retrieve failed" });
       }
     );

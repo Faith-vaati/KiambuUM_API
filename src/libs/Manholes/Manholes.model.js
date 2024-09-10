@@ -4,8 +4,19 @@ const Manholes = require("../../models/Manholes")(sequelize, Sequelize);
 const Path = require("path");
 
 Manholes.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createManhole = (ManholesData) => {
   return new Promise(async (resolve, reject) => {
+    ManholesData = cleanData(ManholesData);
     if (
       ManholesData.Latitude === undefined ||
       ManholesData.Longitude === undefined
@@ -24,11 +35,41 @@ exports.createManhole = (ManholesData) => {
             token: result.dataValues.ObjectID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        reject({ error: "Manhole creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
@@ -51,13 +92,21 @@ exports.findManholeById = (id) => {
 };
 
 exports.updateManholeById = (ManholeData, id) => {
+  ManholeData = cleanData(ManholeData);
   return new Promise((resolve, reject) => {
     Manholes.update(ManholeData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (ManholeData.Latitude && ManholeData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Manholes" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
@@ -85,20 +134,17 @@ exports.deleteManholeById = (id) => {
   });
 };
 
-exports.findManholeByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Manholes.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findManholeByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Manholes" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 

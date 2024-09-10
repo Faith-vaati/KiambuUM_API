@@ -1,11 +1,9 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const ConnectionChamber = require("../../models/ConnectionChamber")(
-  sequelize,
-  Sequelize
-);
+const { errorMonitor } = require("nodemailer/lib/xoauth2");
+const Boreholes = require("../../models/Boreholes")(sequelize, Sequelize);
 
-ConnectionChamber.sync({ force: false });
+Boreholes.sync({ force: false });
 
 function cleanData(obj) {
   for (const key in obj) {
@@ -16,25 +14,25 @@ function cleanData(obj) {
   return obj;
 }
 
-exports.createConnectionChamber = (ConnectionChamberData) => {
+exports.createBoreholes = (BoreholesData) => {
   return new Promise(async (resolve, reject) => {
-    ConnectionChamberData = cleanData(ConnectionChamberData);
+    BoreholesData = cleanData(BoreholesData);
     if (
-      ConnectionChamberData.Longitude === undefined ||
-      ConnectionChamberData.Latitude === undefined
+        BoreholesData.Longitude === undefined ||
+        BoreholesData.Latitude === undefined
     ) {
       reject({ error: "Location is required" });
     }
 
-    ConnectionChamber.create(ConnectionChamberData).then(
+    Boreholes.create(BoreholesData).then(
       async (result) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."ConnectionChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE public."Boreholes" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
-            success: "Connection Chamber Created successfully",
+            success: "Boreholes Created successfully",
             token: result.dataValues.ID,
           });
         } catch (error) {
@@ -78,12 +76,12 @@ exports.createConnectionChamber = (ConnectionChamberData) => {
   });
 };
 
-exports.findConnectionChamberById = (id) => {
+exports.findBoreholesById = (id) => {
   return new Promise((resolve, reject) => {
-    ConnectionChamber.findByPk(id).then(
+    Boreholes.findByPk(id).then(
       (result) => {
         if (result == null) {
-          reject({ status: 404, error: "ConnectionChamber not found" });
+          reject({ status: 404, error: "Boreholes not found" });
         }
         resolve(result);
       },
@@ -94,36 +92,19 @@ exports.findConnectionChamberById = (id) => {
   });
 };
 
-exports.findConnectionChamberByName = (value) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const [data, meta] = await sequelize.query(
-        `SELECT * FROM "ConnectionChambers" WHERE "Name" ILIKE '%${value}%'`
-      );
-      resolve(data);
-    } catch (error) {
-
-      reject({ error: "Retrieve Failed" });
-    }
-  });
-};
-
-exports.updateConnectionChamberById = (ConnectionChamberData, id) => {
-  ConnectionChamberData = cleanData(ConnectionChamberData);
+exports.updateBoreholesById = (BoreholesData, id) => {
+    BoreholesData = cleanData(BoreholesData);
   return new Promise((resolve, reject) => {
-    ConnectionChamber.update(ConnectionChamberData, {
+    Boreholes.update(BoreholesData, {
       where: {
         ID: id,
       },
     }).then(
       async (result) => {
         try {
-          if (
-            ConnectionChamberData.Latitude &&
-            ConnectionChamberData.Longitude
-          ) {
+          if (BoreholesData.Latitude && BoreholesData.Longitude) {
             const [data, dmeta] = await sequelize.query(
-              `UPDATE public."ConnectionChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+              `UPDATE public."Boreholes" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
             );
           }
         } catch (error) {}
@@ -136,16 +117,16 @@ exports.updateConnectionChamberById = (ConnectionChamberData, id) => {
   });
 };
 
-exports.deleteConnectionChamberById = (id) => {
+exports.deleteBoreholesById = (id) => {
   return new Promise((resolve, reject) => {
-    ConnectionChamber.destroy({
+    Boreholes.destroy({
       where: {
         ID: id,
       },
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "ConnectionChamber does not exist!!!" });
+        else reject({ error: "Boreholes does not exist!!!" });
       },
       (err) => {
         reject({ error: "Retrieve failed" });
@@ -154,9 +135,9 @@ exports.deleteConnectionChamberById = (id) => {
   });
 };
 
-exports.findAllConnectionChamber = () => {
+exports.findAllBoreholes = () => {
   return new Promise((resolve, reject) => {
-    ConnectionChamber.findAll({}).then(
+    Boreholes.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -167,14 +148,14 @@ exports.findAllConnectionChamber = () => {
   });
 };
 
-exports.findConnectionChamberPagnited = (offset) => {
+exports.findBoreholesPagnited = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "ConnectionChambers" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
+        `SELECT * FROM "Boreholes" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "ConnectionChambers"`
+        `SELECT COUNT(*) FROM "Boreholes"`
       );
       resolve({
         data: result,
@@ -186,14 +167,14 @@ exports.findConnectionChamberPagnited = (offset) => {
   });
 };
 
-exports.findConnectionChamberPagnitedSearch = (column, value, offset) => {
+exports.findBoreholesPagnitedSearch = (column, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "ConnectionChambers" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Boreholes" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "ConnectionChambers" WHERE "${column}" ILIKE '%${value}%'`
+        `SELECT COUNT(*) FROM "Boreholes" WHERE "${column}" ILIKE '%${value}%'`
       );
       resolve({
         data: result,
@@ -205,11 +186,11 @@ exports.findConnectionChamberPagnitedSearch = (column, value, offset) => {
   });
 };
 
-exports.searchOneConnectionChamber = (value) => {
+exports.searchOneBoreholes = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "ConnectionChambers" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "Boreholes" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
@@ -231,15 +212,15 @@ exports.searchOthers = (table, value) => {
   });
 };
 
-exports.filterConnectionChamber = (column, operator, value, offset) => {
+exports.filterBoreholes = (column, operator, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "ConnectionChambers" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Boreholes" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
       );
 
       const [count, cmetadata] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "ConnectionChambers" WHERE "${column}" ${operator} '${value}'`
+        `SELECT Count(*)::int AS total FROM "Boreholes" WHERE "${column}" ${operator} '${value}'`
       );
 
       resolve({
@@ -254,9 +235,9 @@ exports.filterConnectionChamber = (column, operator, value, offset) => {
 
 exports.totalMapped = (offset) => {
   return new Promise((resolve, reject) => {
-    ConnectionChamber.findAll({}).then(
+    Boreholes.findAll({}).then(
       async (result) => {
-        const count = await ConnectionChamber.count();
+        const count = await Boreholes.count();
         resolve({
           success: count,
         });
@@ -272,7 +253,7 @@ exports.getGeoJSON = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const users = await sequelize.query(
-        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."ConnectionChambers"`,
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."Boreholes"`,
         { type: QueryTypes.SELECT }
       );
       resolve(users);
@@ -286,13 +267,13 @@ exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [cs, smeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."ConnectionChambers"`
+        `SELECT Count(*)::FLOAT as total FROM public."Boreholes"`
       );
       const [dm, hmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."ConnectionChambers"`
+        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."Boreholes"`
       );
       const [zn, dmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."ConnectionChambers"`
+        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."Boreholes"`
       );
       const [tnk, fmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
@@ -304,10 +285,10 @@ exports.getStats = () => {
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
       );
       const [cb, cbmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."ConnectionChamberBillings"`
+        `SELECT SUM("Amount") as total FROM public."BoreholesBillings"`
       );
       const [inv, invmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."ConnectionChamberBillings"`
+        `SELECT SUM("Amount") as total FROM public."BoreholesBillings"`
         // ROUND( AVG(some_column)::numeric, 2 )
       );
 
@@ -331,23 +312,23 @@ exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [accType, dmeta] = await sequelize.query(
-        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."ConnectionChambers" GROUP BY "AccountType"`
+        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."Boreholes" GROUP BY "AccountType"`
       );
       const [accStatus, ameta] = await sequelize.query(
-        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."ConnectionChambers" GROUP BY "AccountStatus"`
+        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."Boreholes" GROUP BY "AccountStatus"`
       );
 
       const [mtrStatus, mtrmeta] = await sequelize.query(
-        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."ConnectionChambers" GROUP BY "MeterStatus"`
+        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."Boreholes" GROUP BY "MeterStatus"`
       );
       const [dma, dmameta] = await sequelize.query(
-        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."ConnectionChambers" GROUP BY "DMA"`
+        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."Boreholes" GROUP BY "DMA"`
       );
       const [zone, znmeta] = await sequelize.query(
-        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."ConnectionChambers" GROUP BY "Zone"`
+        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."Boreholes" GROUP BY "Zone"`
       );
       const [mtrclass, clmeta] = await sequelize.query(
-        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."ConnectionChambers" GROUP BY "Class"`
+        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."Boreholes" GROUP BY "Class"`
       );
 
       resolve({

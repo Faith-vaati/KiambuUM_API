@@ -22,8 +22,8 @@ exports.findSewerMainTrunkById = (req, res) => {
   );
 };
 
-exports.findSewerMainTrunkByObjectId = (req, res) => {
-  SewerMainTrunkModel.findSewerMainTrunkByObjectId(req.params.ID).then(
+exports.findSewerMainTrunkByName = (req, res) => {
+  SewerMainTrunkModel.findSewerMainTrunkByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

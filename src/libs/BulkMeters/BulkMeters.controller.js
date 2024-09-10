@@ -22,8 +22,8 @@ exports.findBulkMetersById = (req, res) => {
   );
 };
 
-exports.findBulkMetersByAccount = (req, res) => {
-  BulkMetersModel.findBulkMetersByAccount(req.params.Account).then(
+exports.findBulkMetersByMeterNo = (req, res) => {
+  BulkMetersModel.findBulkMetersByMeterNo(req.params.meterno).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -79,7 +79,7 @@ exports.findBulkMetersPagnited = (req, res) => {
 };
 
 exports.findBulkMetersPagnitedSearch = (req, res) => {
-  OfftakersModel.findBulkMetersPagnitedSearch(
+  BulkMetersModel.findBulkMetersPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset

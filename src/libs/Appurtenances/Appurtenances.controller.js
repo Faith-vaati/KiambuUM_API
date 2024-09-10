@@ -1,7 +1,7 @@
-const OfftakersModel = require("./Offtakers.model");
+const AppurtenancesModel = require("./Appurtenances.model");
 
 exports.create = (req, res) => {
-  OfftakersModel.createOfftakers(req.body).then(
+  AppurtenancesModel.createAppurtenances(req.body).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -11,8 +11,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findOfftakersById = (req, res) => {
-  OfftakersModel.findOfftakersById(req.params.ID).then(
+exports.findAppurtenancesById = (req, res) => {
+  AppurtenancesModel.findAppurtenancesById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -22,19 +22,8 @@ exports.findOfftakersById = (req, res) => {
   );
 };
 
-exports.findOfftakersByName = (req, res) => {
-  OfftakersModel.findOfftakersByName(req.params.value).then(
-    (result) => {
-      res.status(200).send(result);
-    },
-    (err) => {
-      res.status(203).send(err.message);
-    }
-  );
-};
-
-exports.updateOfftakersById = (req, res) => {
-  OfftakersModel.updateOfftakersById(req.body, req.params.ID).then(
+exports.updateAppurtenancesById = (req, res) => {
+  AppurtenancesModel.updateAppurtenancesById(req.body, req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -45,8 +34,8 @@ exports.updateOfftakersById = (req, res) => {
   );
 };
 
-exports.deleteOfftakersById = (req, res) => {
-  OfftakersModel.deleteOfftakersById(req.params.ID).then(
+exports.deleteAppurtenancesById = (req, res) => {
+  AppurtenancesModel.deleteAppurtenancesById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -56,8 +45,8 @@ exports.deleteOfftakersById = (req, res) => {
   );
 };
 
-exports.findAllOfftakers = (req, res) => {
-  OfftakersModel.findAllOfftakers().then(
+exports.findAllAppurtenances = (req, res) => {
+  AppurtenancesModel.findAllAppurtenances().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -67,8 +56,8 @@ exports.findAllOfftakers = (req, res) => {
   );
 };
 
-exports.findOfftakersPagnited = (req, res) => {
-  OfftakersModel.findOfftakersPagnited(req.params.offset).then(
+exports.findAppurtenancesPagnited = (req, res) => {
+  AppurtenancesModel.findAppurtenancesPagnited(req.params.offset).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -78,8 +67,8 @@ exports.findOfftakersPagnited = (req, res) => {
   );
 };
 
-exports.findOfftakersPagnitedSearch = (req, res) => {
-  OfftakersModel.findOfftakersPagnitedSearch(
+exports.findAppurtenancesPagnitedSearch = (req, res) => {
+  AppurtenancesModel.findAppurtenancesPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
@@ -93,8 +82,8 @@ exports.findOfftakersPagnitedSearch = (req, res) => {
   );
 };
 
-exports.searchOneOfftakers = (req, res) => {
-  OfftakersModel.searchOneOfftakers(req.params.value).then(
+exports.searchOneAppurtenances = (req, res) => {
+  AppurtenancesModel.searchOneAppurtenances(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -105,7 +94,7 @@ exports.searchOneOfftakers = (req, res) => {
 };
 
 exports.searchOthers = (req, res) => {
-  OfftakersModel.searchOthers(req.params.table, req.params.value).then(
+  AppurtenancesModel.searchOthers(req.params.table, req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -115,8 +104,8 @@ exports.searchOthers = (req, res) => {
   );
 };
 
-exports.filterOfftakers = (req, res) => {
-  OfftakersModel.filterOfftakers(
+exports.filterAppurtenances = (req, res) => {
+  AppurtenancesModel.filterAppurtenances(
     req.params.column,
     req.params.operator,
     req.params.value,
@@ -132,7 +121,7 @@ exports.filterOfftakers = (req, res) => {
 };
 
 exports.totalMapped = (req, res) => {
-  OfftakersModel.totalMapped().then(
+  AppurtenancesModel.totalMapped().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -143,7 +132,7 @@ exports.totalMapped = (req, res) => {
 };
 
 exports.getGeoJSON = (req, res) => {
-  OfftakersModel.getGeoJSON().then(
+  AppurtenancesModel.getGeoJSON().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -154,7 +143,7 @@ exports.getGeoJSON = (req, res) => {
 };
 
 exports.getStats = (req, res) => {
-  OfftakersModel.getStats().then(
+  AppurtenancesModel.getStats().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -165,7 +154,7 @@ exports.getStats = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-  OfftakersModel.findCharts().then(
+  AppurtenancesModel.findCharts().then(
     (result) => {
       res.status(200).send(result);
     },

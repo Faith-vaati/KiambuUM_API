@@ -7,7 +7,6 @@ exports.insert = (req, res) => {
       res.status(200).send({ success: "Report Submitted Successfully" });
     },
     (err) => {
-      console.log(err);
       res.status(203).send(err);
     }
   );

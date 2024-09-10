@@ -22,8 +22,8 @@ exports.findValveById = (req, res) => {
   );
 };
 
-exports.findValveByObjectId = (req, res) => {
-  ValvesModel.findValveByObjectId(req.params.ID).then(
+exports.findValveByName = (req, res) => {
+  ValvesModel.findValveByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

@@ -97,7 +97,6 @@ exports.findAllReports = () => {
         LEFT OUTER JOIN "PublicUsers" ON "Reports"."UserID"::varchar = "PublicUsers"."UserID"::varchar ORDER BY "DateReported"`);
       resolve({ data: data });
     } catch (error) {
-      console.log(error);
       reject({ error: "Retrieve Failed!" });
     }
   });
@@ -115,6 +114,8 @@ exports.findReportsPaginated = (type) => {
       );
       resolve(results);
     } catch (error) {
+      console.log(error);
+
       reject({ error: "Retrieve failed!" });
     }
   });
@@ -382,6 +383,7 @@ exports.findReportByID = (id) => {
         if (result == null) {
           reject({ status: 404, message: "Data not found" });
         }
+        print(result);
         resolve(result);
       },
       (err) => {
@@ -392,8 +394,6 @@ exports.findReportByID = (id) => {
 };
 
 exports.updateReportByID = (ReportsData, id) => {
-  console.log(ReportsData);
-
   return new Promise(async (resolve, reject) => {
     try {
       const Images = `${ReportsData.Type}-${Date.now()}.png`;
@@ -402,6 +402,8 @@ exports.updateReportByID = (ReportsData, id) => {
       Reports.update(ReportsData, {
         where: { ID: id },
       });
+
+      console.log(ReportsData);
 
       resolve({
         success: "Updated Successfully",
@@ -500,8 +502,6 @@ exports.findStats = () => {
         });
       },
       (err) => {
-        console.log(err);
-
         reject({ error: "Retrieve failed" });
       }
     );
@@ -522,8 +522,6 @@ exports.findStatusCountByType = (type) => {
       .then(
         (result) => resolve(result),
         (err) => {
-          console.log(err);
-
           reject(null);
         }
       );
@@ -544,8 +542,6 @@ exports.findMonthlyCountByType = (type) => {
       .then(
         (result) => resolve(result),
         (err) => {
-          console.log(err);
-
           reject(null);
         }
       );
@@ -822,7 +818,6 @@ exports.searchReports = (col, val) => {
         total: count[0].count,
       });
     } catch (error) {
-      console.log(error);
       reject({ error: "Retrieve failed!" });
     }
   });

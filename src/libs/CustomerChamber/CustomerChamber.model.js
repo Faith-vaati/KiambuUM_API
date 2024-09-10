@@ -6,8 +6,19 @@ const CustomerChamber = require("../../models/CustomerChamber")(
 );
 
 CustomerChamber.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createCustomerChamber = (CustomerChamberData) => {
   return new Promise(async (resolve, reject) => {
+    CustomerChamberData = cleanData(CustomerChamberData);
     if (
       CustomerChamberData.Longitude === undefined ||
       CustomerChamberData.Latitude === undefined
@@ -20,20 +31,48 @@ exports.createCustomerChamber = (CustomerChamberData) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."CustomerChamber" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE public."CustomerChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
             success: "CustomerChamber Created successfully",
             token: result.dataValues.ID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        console.log(err);
-
-        reject({ error: "CustomerChamber creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
@@ -55,32 +94,36 @@ exports.findCustomerChamberById = (id) => {
   });
 };
 
-exports.findCustomerChamberByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    CustomerChamber.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findCustomerChamberByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "CustomerChambers" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateCustomerChamberById = (CustomerChamberData, id) => {
-  OfftakersData.id = id;
+  CustomerChamberData = cleanData(CustomerChamberData);
   return new Promise((resolve, reject) => {
     CustomerChamber.update(CustomerChamberData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (CustomerChamberData.Latitude && CustomerChamberData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."CustomerChambers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

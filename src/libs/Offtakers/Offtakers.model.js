@@ -3,44 +3,66 @@ const sequelize = require("../../configs/connection");
 const Offtakers = require("../../models/Offtakers")(sequelize, Sequelize);
 
 Offtakers.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createOfftakers = (OfftakersData) => {
   return new Promise(async (resolve, reject) => {
-    Offtakers.findAll({
-      where: {
-        AccountNo: OfftakersData.AccountNo,
-      },
-    }).then(
-      (result) => {
-        if (result?.length === 0) {
-          Offtakers.create(OfftakersData).then(
-            async (result) => {
-              try {
-                const id = result.dataValues.ID;
-                const [data, dmeta] = await sequelize.query(
-                  `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
-                );
-                resolve({
-                  success: "Offtakers Created successfully",
-                  token: result.dataValues.ID,
-                });
-              } catch (error) {
-                reject({ success: "Data saved without geometry" });
-              }
-            },
-            (err) => {
-              console.log(err);
-
-              reject({ error: "Offtakers creation failed" });
-            }
+    OfftakersData = cleanData(OfftakersData);
+    Offtakers.create(OfftakersData).then(
+      async (result) => {
+        try {
+          const id = result.dataValues.ID;
+          const [data, dmeta] = await sequelize.query(
+            `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
           );
-        } else {
-          reject({ error: "This account number exists" });
+          resolve({
+            success: "Offtakers Created successfully",
+            token: result.dataValues.ID,
+          });
+        } catch (error) {
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        console.log(err);
-
-        reject({ error: "Offtakers creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
@@ -62,32 +84,36 @@ exports.findOfftakersById = (id) => {
   });
 };
 
-exports.findOfftakersByAccount = (id) => {
-  return new Promise((resolve, reject) => {
-    Offtakers.findAll({
-      where: {
-        AccountNo: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findOfftakersByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Offtakers" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateOfftakersById = (OfftakersData, id) => {
-  OfftakersData.id = id;
+  OfftakersData = cleanData(OfftakersData);
   return new Promise((resolve, reject) => {
     Offtakers.update(OfftakersData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (OfftakersData.Latitude && OfftakersData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

@@ -11,32 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.STRING(254),
       allowNull: true,
     },
-    RecTime: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Latitude: {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
     Longitude: {
       type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    Elevation: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    OrthoHt: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    Manhole1: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    LineType: {
-      type: DataTypes.STRING,
       allowNull: true,
     },
     LineName: {
@@ -51,31 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    ConnectionType: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Infiltration: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Material: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Shape: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Status: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Installation: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Accessibility: {
+    NoOfConnections: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -83,31 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    WaterTight: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    LineMaterial: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    NoOfSt1: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    TypeOf1: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    NumberO1: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    Intersection: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    YearConnected: {
+    YearOfInstallation: {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
@@ -120,22 +52,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Picture: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    YearLaid: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
-    Manhole: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    PipeDiameter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    PipeMaterial: {
       type: DataTypes.STRING,
       allowNull: true,
     },

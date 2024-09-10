@@ -3,8 +3,19 @@ const sequelize = require("../../configs/connection");
 const Valves = require("../../models/Valves")(sequelize, Sequelize);
 
 Valves.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createValve = (ValvesData) => {
   return new Promise(async (resolve, reject) => {
+    ValvesData = cleanData(ValvesData);
     Valves.create(ValvesData).then(
       async (result) => {
         try {
@@ -17,11 +28,41 @@ exports.createValve = (ValvesData) => {
             token: result.dataValues.ID,
           });
         } catch (error) {
-          reject({ success: "Data saved without geometry" });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       },
-      (err) => {
-        reject({ error: "Valve creation failed" });
+      (error) => {
+        if (
+          error instanceof Sequelize.ValidationError ||
+          error instanceof Sequelize.UniqueConstraintError
+        ) {
+          const detailMessages = error.errors.map((err) => err.message);
+          reject({
+            error:
+              detailMessages.length > 0
+                ? detailMessages[0]
+                : "Unexpected error!",
+          });
+        } else {
+          reject({
+            error: error.message,
+          });
+        }
       }
     );
   });
@@ -43,32 +84,36 @@ exports.findValveById = (id) => {
   });
 };
 
-exports.findValveByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    Valves.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findValveByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Valves" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateValveById = (ValvesData, id) => {
-  ValvesData.id = id;
+  ValvesData = cleanData(ValvesData);
   return new Promise((resolve, reject) => {
     Valves.update(ValvesData, {
       where: {
         ID: id,
       },
     }).then(
-      (result) => {
+      async (result) => {
+        try {
+          if (ValvesData.Latitude && ValvesData.Longitude) {
+            const [data, dmeta] = await sequelize.query(
+              `UPDATE public."Valves" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            );
+          }
+        } catch (error) {}
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {

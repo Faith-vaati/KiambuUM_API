@@ -3,7 +3,20 @@ const sequelize = require("../../configs/connection");
 const WaterPipes = require("../../models/WaterPipes")(sequelize, Sequelize);
 
 WaterPipes.sync({ force: false });
+
+function cleanData(obj) {
+  for (const key in obj) {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
 exports.createWaterPipe = (WaterPipesData) => {
+  WaterPipesData = cleanData(WaterPipesData);
+
+
   return new Promise(async (resolve, reject) => {
     try {
       const coordinates = WaterPipesData.Coordinates;
@@ -23,14 +36,14 @@ exports.createWaterPipe = (WaterPipesData) => {
           // Construct the SQL query
           const sqlQuery = `
             WITH geom AS (
-              SELECT ST_Multi(ST_MakeLine(ARRAY[
-                ${points}
-              ])) AS geom
-            )
-            UPDATE "WaterPipes"
-            SET "geom" = geom.geom
-            FROM geom
-            WHERE "ID" = '${id}';
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "WaterPipes"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
             `;
           const [results, metadata] = await sequelize.query(sqlQuery);
           resolve({
@@ -46,8 +59,22 @@ exports.createWaterPipe = (WaterPipesData) => {
           error: "Invalid coordinates",
         });
       }
-    } catch (err) {
-      reject({ error: "WaterPipes creation failed", details: err.message });
+    } catch (error) {
+      if (
+        error instanceof Sequelize.ValidationError ||
+        error instanceof Sequelize.UniqueConstraintError
+      ) {
+
+        const detailMessages = error.errors.map((err) => err.message);
+        reject({
+          error:
+            detailMessages.length > 0 ? detailMessages[0] : "Unexpected error!",
+        });
+      } else {
+        reject({
+          error: error.message,
+        });
+      }
     }
   });
 };
@@ -59,7 +86,7 @@ exports.findWaterPipeById = (id) => {
         if (result == null) {
           reject({ error: "WaterPipe not found" });
         }
-       
+
         resolve(result);
       },
       (err) => {
@@ -69,56 +96,60 @@ exports.findWaterPipeById = (id) => {
   });
 };
 
-exports.findWaterPipeByObjectId = (id) => {
-  return new Promise((resolve, reject) => {
-    WaterPipes.findAll({
-      where: {
-        ObjectID: id,
-      },
-    }).then(
-      (result) => {
-        resolve(result);
-      },
-      (err) => {
-        reject({ error: "Retrieve failed" });
-      }
-    );
+exports.findWaterPipeByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "WaterPipes" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 
 exports.updateWaterPipeById = (WaterPipesData, id) => {
   return new Promise((resolve, reject) => {
+    WaterPipesData = cleanData(WaterPipesData);
     WaterPipes.update(WaterPipesData, {
       where: {
-        ObjectID: id,
+        ID: id,
       },
     }).then(
       async (result) => {
-        const coordinates = await WaterPipes.findAll({
-          where: {
-            ObjectID: id,
-          },
-        });
-        let q = `LINESTRING(`;
-        coordinates[0]?.Coordinates?.map((item) => {
-          q = q + `${item[0]} ${item[1]}, `;
-        });
-
-        q = q.trim().slice(0, -1);
-        q = q + ")";
-
-        const [results, metadata] = await sequelize.query(
-          `WITH geom AS (
-              SELECT ST_MakeLine(ST_GeomFromText('${q}',4326)) AS geom
-            )
-          UPDATE "WaterPipes" SET "geom" = geom.geom FROM geom WHERE "ObjectID" = '${id}'`
-        );
+        if (
+          WaterPipesData.Coordinates &&
+          WaterPipesData.Coordinates.length > 0
+        ) {
+          try {
+            // Generate the points in the required format
+            const points = WaterPipesData.Coordinates.map(
+              (coord) =>
+                `ST_SetSRID(ST_MakePoint(${coord.longitude}, ${coord.latitude}), 4326)`
+            ).join(",\n    ");
+            // Construct the SQL query
+            const sqlQuery = `
+            WITH geom AS (
+                SELECT ST_MakeLine(ARRAY[
+                  ${points}
+                ])::geometry(LineString, 4326) AS geom
+              )
+              UPDATE "WaterPipes"
+              SET "geom" = geom.geom
+              FROM geom
+              WHERE "ID" = '${id}';
+            `;
+            const [results, metadata] = await sequelize.query(sqlQuery);
+          } catch (error) {}
+        }
         resolve({
           success: "Updated successfully",
-          coordinates: coordinates.length > 0 ? coordinates[0].Coordinates : [],
         });
       },
       (err) => {
+
         reject({ error: "Retrieve failed" });
       }
     );
@@ -147,7 +178,6 @@ exports.findAllWaterPipes = () => {
   return new Promise((resolve, reject) => {
     WaterPipes.findAll({}).then(
       (result) => {
-
         resolve(result);
       },
       (err) => {

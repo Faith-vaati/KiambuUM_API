@@ -22,8 +22,8 @@ exports.findTankById = (req, res) => {
   );
 };
 
-exports.findTankByObjectId = (req, res) => {
-  TanksModel.findTankByObjectId(req.params.ID).then(
+exports.findTankByName = (req, res) => {
+  TanksModel.findTankByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },

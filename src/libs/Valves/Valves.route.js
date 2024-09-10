@@ -18,7 +18,7 @@ exports.ValvesRoutes = function (app) {
 
   app.get("/valves/:ID", [ValvesController.findValveById]);
 
-  app.get("/valves/details/:ID", [ValvesController.findValveByObjectId]);
+  app.get("/valves/details/:value", [ValvesController.findValveByName]);
 
   app.put("/valves/:ID", [ValvesController.updateValveById]);
 
