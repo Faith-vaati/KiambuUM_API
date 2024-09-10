@@ -9,10 +9,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        geom: {
-            type: Sequelize.GEOMETRY('POLYGON', 4326), 
-            allowNull: true,
-        },
         Name: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -61,6 +57,10 @@ module.exports = (sequelize, DataTypes) => {
        
         Picture: {
             type: DataTypes.STRING,
+            allowNull: true,
+        },
+        geom: {
+            type: Sequelize.GEOMETRY('POLYGON', 4326), 
             allowNull: true,
         },
        
