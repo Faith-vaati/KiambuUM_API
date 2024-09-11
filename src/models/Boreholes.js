@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
+    Name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Longitude: {
       type: DataTypes.FLOAT,
       allowNull: true,

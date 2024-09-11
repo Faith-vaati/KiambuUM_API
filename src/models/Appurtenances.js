@@ -15,10 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    geom: {
-      type: DataTypes.GEOMETRY("POINT", 4326),
-      allowNull: true,
-    },
+
     Type: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -57,6 +54,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     Photo: {
       type: DataTypes.STRING(254),
+      allowNull: true,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
   });

@@ -38,6 +38,8 @@ const Offtake = require("./libs/Offtakers/Offtakers.route");
 const SewerMainTrunk = require("./libs/SewerMainTrunk/SewerMainTrunk.route");
 const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
 const MeterReadings = require("./libs/MeterReadings/MeterReadings.route");
+const Boreholes = require("./libs/Boreholes/Boreholes.route");
+const Appurtenances = require("./libs/Appurtenances/Appurtenances.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -198,6 +200,8 @@ Offtake.OfftakersRoutes(app);
 SewerMainTrunk.SewerMainTrunkRoutes(app);
 TreatmentPlant.TreatmentPlantRoute(app);
 MeterReadings.MeterReadingsRoutes(app);
+Boreholes.BoreholesRoutes(app);
+Appurtenances.AppurtenancesRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(
