@@ -9,19 +9,19 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
         },
         Remarks: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         RecTime: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         Latitude: {
-            type: Sequelize.DOUBLE,
+            type: Sequelize.FLOAT,
             allowNull: false
         },
         Longitude: {
-            type: Sequelize.DOUBLE,
+            type: Sequelize.FLOAT,
             allowNull: false
         },
         Elevation: {
@@ -29,11 +29,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         MeterNo: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         Type: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         Year: {
@@ -41,24 +41,28 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         WaterPipe: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         DMA: {
-            type: Sequelize.STRING(254),
-            allowNull: true
-        },
-        Picture: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         Status: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: true
         },
         Diameter: {
-            type: Sequelize.STRING(254),
+            type: Sequelize.STRING,
             allowNull: false
+        },
+        User: {
+            type: DataTypes.STRING,
+            allowNull: true,
+          },
+        Photo: {
+            type: Sequelize.STRING,
+            allowNull: true
         },
         geom: {
             type: DataTypes.GEOMETRY("POINTZM", 4326),

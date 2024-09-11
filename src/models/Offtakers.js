@@ -59,6 +59,10 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.DOUBLE,
       allowNull: false,
     },
+    User: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     Photo: {
       type: Sequelize.STRING,
       allowNull: true,

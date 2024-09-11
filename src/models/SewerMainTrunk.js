@@ -9,16 +9,16 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     Name: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     Remarks: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
 
     RecTime: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     Length: {
@@ -26,31 +26,31 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     TrunkName: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     PipeDiameter: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     PipeMaterial: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     PipeStatus: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     Condition: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     Intersection: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     Outfall: {
-      type: Sequelize.STRING(254),
+      type: Sequelize.STRING,
       allowNull: true,
     },
 
@@ -58,11 +58,14 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.FLOAT,
       allowNull: true,
     },
-    Picture: {
-      type: Sequelize.STRING(254),
+    User: {
+      type: Sequelize.STRING,
       allowNull: true,
     },
-
+    Photo: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     geom: {
       type: Sequelize.GEOMETRY("LINESTRING", 4326),
       allowNull: true,
