@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: Sequelize.UUIDV4,
       allowNull: false,
       primaryKey: true,
+    }, 
+    LineType: {
+      type: DataTypes.STRING, 
+      allowNull: true,
     },
     Name: {
       type: DataTypes.STRING, 
@@ -15,7 +19,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
+    Zone: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    Subzone: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
     PipeMaterial: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    YearLaid: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
@@ -23,31 +39,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Status: {
-      type: DataTypes.STRING, 
-      allowNull: true,
-    },
     Distribution: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    YearOfInstallation: {
-      type: DataTypes.DOUBLE, 
-      allowNull: true,
-    },
-    Zone: {
-      type: DataTypes.STRING, 
-      allowNull: true,
-    },
-    LineType: {
+    Status: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING, 
-      allowNull: true,
-    },
-   Subzone: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
