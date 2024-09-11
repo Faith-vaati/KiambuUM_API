@@ -8,15 +8,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     Longitude: {
-      type: DataTypes.DOUBLE,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DOUBLE,
-      allowNull: true,
-    },
-    geom: {
-      type: DataTypes.GEOMETRY("POINT", 4326),
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     MeterLocation: {
@@ -59,16 +55,24 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Picture: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Material: {
       type: DataTypes.STRING,
       allowNull: true,
     },
     Remarks: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    User: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Photo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
     

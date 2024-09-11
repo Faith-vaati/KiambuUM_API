@@ -47,11 +47,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Photo: {
+   Subzone: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-   Subzone: {
+    Photo: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
