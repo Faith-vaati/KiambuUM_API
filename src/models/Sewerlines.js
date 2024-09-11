@@ -17,6 +17,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    LateralType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Diameter: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -33,19 +37,19 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    YearOfInstallation: {
+    YearLaid: {
       type: DataTypes.DOUBLE,
-      allowNull: true,
-    },
-    Remarks: {
-      type: DataTypes.STRING,
       allowNull: true,
     },
     Zone: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Subzones: {
+    Subzone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Remarks: {
       type: DataTypes.STRING,
       allowNull: true,
     },
