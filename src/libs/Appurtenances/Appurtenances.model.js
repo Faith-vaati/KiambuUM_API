@@ -1,7 +1,10 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
-const Appurtenances = require("../../models/Appurtenances")(sequelize, Sequelize);
+const Appurtenances = require("../../models/Appurtenances")(
+  sequelize,
+  Sequelize
+);
 
 Appurtenances.sync({ force: false });
 
@@ -89,6 +92,19 @@ exports.findAppurtenancesById = (id) => {
         reject({ error: "Retrieve failed" });
       }
     );
+  });
+};
+
+exports.findAppurtenancesByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Appurtenances" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      reject({ error: "Retrieve Failed" });
+    }
   });
 };
 

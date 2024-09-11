@@ -35,6 +35,11 @@ exports.AppurtenancesRoutes = function (app) {
 
   app.get("/appurtenances/:ID", [AppurtenancesController.findAppurtenancesById]);
 
+    app.get("/appurtenances/details/:value", [
+      AppurtenancesController.findAppurtenancesByName,
+    ]);
+
+
   app.put("/appurtenances/:ID", [AppurtenancesController.updateAppurtenancesById]);
 
   app.delete("/appurtenances/:ID", [AppurtenancesController.deleteAppurtenancesById]);

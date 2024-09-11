@@ -18,8 +18,8 @@ exports.createBoreholes = (BoreholesData) => {
   return new Promise(async (resolve, reject) => {
     BoreholesData = cleanData(BoreholesData);
     if (
-        BoreholesData.Longitude === undefined ||
-        BoreholesData.Latitude === undefined
+      BoreholesData.Longitude === undefined ||
+      BoreholesData.Latitude === undefined
     ) {
       reject({ error: "Location is required" });
     }
@@ -92,8 +92,21 @@ exports.findBoreholesById = (id) => {
   });
 };
 
+exports.findBoreholesByName = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, meta] = await sequelize.query(
+        `SELECT * FROM "Boreholes" WHERE "Name" ILIKE '%${value}%'`
+      );
+      resolve(data);
+    } catch (error) {
+      reject({ error: "Retrieve Failed" });
+    }
+  });
+};
+
 exports.updateBoreholesById = (BoreholesData, id) => {
-    BoreholesData = cleanData(BoreholesData);
+  BoreholesData = cleanData(BoreholesData);
   return new Promise((resolve, reject) => {
     Boreholes.update(BoreholesData, {
       where: {

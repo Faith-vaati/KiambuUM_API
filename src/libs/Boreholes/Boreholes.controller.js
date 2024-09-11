@@ -22,6 +22,17 @@ exports.findBoreholesById = (req, res) => {
   );
 };
 
+exports.findBoreholesByName = (req, res) => {
+  BoreholesModel.findBoreholesByName(req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
+    }
+  );
+};
+
 exports.updateBoreholesById = (req, res) => {
     BoreholesModel.updateBoreholesById(req.body, req.params.ID).then(
     (result) => {

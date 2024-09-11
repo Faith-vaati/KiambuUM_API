@@ -22,6 +22,18 @@ exports.findAppurtenancesById = (req, res) => {
   );
 };
 
+exports.findAppurtenancesByName = (req, res) => {
+  AppurtenancesModel.findAppurtenancesByName(req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err.message);
+    }
+  );
+};
+
+
 exports.updateAppurtenancesById = (req, res) => {
   AppurtenancesModel.updateAppurtenancesById(req.body, req.params.ID).then(
     (result) => {

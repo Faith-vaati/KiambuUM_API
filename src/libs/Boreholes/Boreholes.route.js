@@ -32,8 +32,11 @@ exports.BoreholesRoutes = function (app) {
 
   app.get("/boreholes/all/charts", [BoreholesController.findCharts]);
 
-
   app.get("/boreholes/:ID", [BoreholesController.findBoreholesById]);
+
+  app.get("/boreholes/details/:value", [
+    BoreholesController.findBoreholesByName,
+  ]);
 
   app.put("/boreholes/:ID", [BoreholesController.updateBoreholesById]);
 
