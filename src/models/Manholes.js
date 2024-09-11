@@ -39,15 +39,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    NoOfConnections: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     ConnectionType: {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    AccessCoverMaterial: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Condition: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    NoOfConnections: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -56,14 +64,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Remarks: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Status: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    User: {
       type: DataTypes.STRING,
       allowNull: true,
     },
