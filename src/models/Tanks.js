@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY("POINTZM", 4326),
+      type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
   });
