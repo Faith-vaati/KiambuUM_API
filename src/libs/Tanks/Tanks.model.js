@@ -26,7 +26,7 @@ exports.createTank = (TanksData) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."Tanks" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE public."Tanks" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude", 0, 0), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
             success: "Tank Created successfully",
