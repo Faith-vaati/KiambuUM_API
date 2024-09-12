@@ -32,8 +32,8 @@ exports.CustomerChamberRoutes = function (app) {
 
   app.get("/customerchamber/all/charts", [CustomerChamberController.findCharts]);
 
-  app.get("/customerchamber/details/:value", [
-    CustomerChamberController.findCustomerChamberByName,
+  app.get("/customerchamber/details/:account", [
+    CustomerChamberController.findCustomerChamberByAccountNo,
   ]);
 
   app.get("/customerchamber/:ID", [CustomerChamberController.findCustomerChamberById]);
