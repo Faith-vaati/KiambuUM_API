@@ -1,32 +1,31 @@
 const Sequelize = require("sequelize");
+const sequelize = require("../configs/connection");
+
 module.exports = (sequelize, DataTypes) => {
-  const ToolsList = sequelize.define("ToolsList", {
+  const CustomerMeterReadings = sequelize.define("CustomerMeterReadings", {
     ID: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       allowNull: false,
       primaryKey: true,
     },
-    ToolName: {
+    AccountNumber: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    County: {
+    Units: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    Description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    DataTableName: {
+    Date: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    Status: {
+    Image: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   });
-  return ToolsList;
+
+  return CustomerMeterReadings;
 };
