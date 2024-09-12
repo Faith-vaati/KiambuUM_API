@@ -35,10 +35,14 @@ exports.create = (CustomerMeterReadingsData) => {
       reject({ error: "Body is required" });
     }
     try {
-      const Images = `${CustomerMeterReadingsData.AccountNumber}-${Date.now()}.png`;
+      const Images = `${CustomerMeterReadingsData.AccountNumber}-${
+        CustomerMeterReadingsData.Date
+      }-${Date.now()}.png`;
       createFileFromBase64(CustomerMeterReadingsData.Image, Images);
       CustomerMeterReadingsData.Image = Images;
-      const createdMeter = await CustomerMeterReadings.create(CustomerMeterReadingsData);
+      const createdMeter = await CustomerMeterReadings.create(
+        CustomerMeterReadingsData
+      );
       const id = createdMeter.dataValues.ID;
 
       resolve({
