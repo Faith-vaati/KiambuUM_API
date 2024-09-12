@@ -27,7 +27,7 @@ const ConnectionChamber = require("./libs/ConnectionChamber/ConnectionChamber.ro
 const Offtake = require("./libs/Offtakes/Offtakes.route");
 const SewerMainTrunk = require("./libs/SewerMainTrunk/SewerMainTrunk.route");
 const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
-const MeterReadings = require("./libs/MeterReadings/MeterReadings.route");
+const CustomerMeterReadings = require("./libs/CustomerMeterReadings/CustomerMeterReadings.route");
 const Boreholes = require("./libs/Boreholes/Boreholes.route");
 const Appurtenances = require("./libs/Appurtenances/Appurtenances.route");
 
@@ -179,7 +179,7 @@ ConnectionChamber.ConnectionChamberRoutes(app);
 Offtake.OfftakesRoutes(app);
 SewerMainTrunk.SewerMainTrunkRoutes(app);
 TreatmentPlant.TreatmentPlantRoute(app);
-MeterReadings.MeterReadingsRoutes(app);
+CustomerMeterReadings.CustomerMeterReadingsRoutes(app);
 Boreholes.BoreholesRoutes(app);
 Appurtenances.AppurtenancesRoutes(app);
 

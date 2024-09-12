@@ -1,6 +1,6 @@
 const { Sequelize, Op } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const MeterReadings = require("../../models/MeterReadings")(
+const CustomerMeterReadings = require("../../models/CustomerMeterReadings")(
   sequelize,
   Sequelize
 );
@@ -8,7 +8,7 @@ const MeterReadings = require("../../models/MeterReadings")(
 const fs = require("fs");
 const Path = require("path");
 
-MeterReadings.sync({ force: false });
+CustomerMeterReadings.sync({ force: false });
 
 async function createFileFromBase64(base64Data, filePath) {
   if (filePath != null && base64Data != null) {
@@ -26,19 +26,19 @@ async function createFileFromBase64(base64Data, filePath) {
   }
 }
 
-exports.create = (MeterReadingsData) => {
+exports.create = (CustomerMeterReadingsData) => {
   return new Promise(async (resolve, reject) => {
     if (
-      MeterReadingsData.Units === undefined ||
-      MeterReadingsData.AccountNumber === undefined
+      CustomerMeterReadingsData.Units === undefined ||
+      CustomerMeterReadingsData.AccountNumber === undefined
     ) {
       reject({ error: "Body is required" });
     }
     try {
-      const Images = `${MeterReadingsData.AccountNumber}-${Date.now()}.png`;
-      createFileFromBase64(MeterReadingsData.Image, Images);
-      MeterReadingsData.Image = Images;
-      const createdMeter = await MeterReadings.create(MeterReadingsData);
+      const Images = `${CustomerMeterReadingsData.AccountNumber}-${Date.now()}.png`;
+      createFileFromBase64(CustomerMeterReadingsData.Image, Images);
+      CustomerMeterReadingsData.Image = Images;
+      const createdMeter = await CustomerMeterReadings.create(CustomerMeterReadingsData);
       const id = createdMeter.dataValues.ID;
 
       resolve({
@@ -51,9 +51,9 @@ exports.create = (MeterReadingsData) => {
   });
 };
 
-exports.findMeterReadingsById = (id) => {
+exports.findCustomerMeterReadingsById = (id) => {
   return new Promise((resolve, reject) => {
-    MeterReadings.findByPk(id).then(
+    CustomerMeterReadings.findByPk(id).then(
       (result) => {
         if (result == null) {
           reject({ error: "Not found" });
@@ -67,9 +67,9 @@ exports.findMeterReadingsById = (id) => {
   });
 };
 
-exports.updateMeterReadingsById = (MeterReadingsData, id) => {
+exports.updateCustomerMeterReadingsById = (CustomerMeterReadingsData, id) => {
   return new Promise((resolve, reject) => {
-    MeterReadings.update(MeterReadingsData, {
+    CustomerMeterReadings.update(CustomerMeterReadingsData, {
       where: {
         ID: id,
       },
@@ -84,16 +84,16 @@ exports.updateMeterReadingsById = (MeterReadingsData, id) => {
   });
 };
 
-exports.deleteMeterReadingById = (id) => {
+exports.deleteCustomerMeterReadingById = (id) => {
   return new Promise((resolve, reject) => {
-    MeterReadings.destroy({
+    CustomerMeterReadings.destroy({
       where: {
         ID: id,
       },
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "MeterReading does not exist!!!" });
+        else reject({ error: "CustomerMeterReading does not exist!!!" });
       },
       (err) => {
         reject({ error: err });
@@ -102,9 +102,9 @@ exports.deleteMeterReadingById = (id) => {
   });
 };
 
-exports.findAllMeterReadings = () => {
+exports.findAllCustomerMeterReadings = () => {
   return new Promise((resolve, reject) => {
-    MeterReadings.findAll({}).then(
+    CustomerMeterReadings.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -115,14 +115,14 @@ exports.findAllMeterReadings = () => {
   });
 };
 
-exports.findMeterReadingsPaginated = (offset) => {
+exports.findCustomerMeterReadingsPaginated = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [results, metadata] = await sequelize.query(
-        `SELECT * FROM "MeterReadings"  ORDER BY "createdAt" LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "CustomerMeterReadings"  ORDER BY "createdAt" LIMIT 12 OFFSET ${offset}`
       );
       const [count, cmeta] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "MeterReadings"`
+        `SELECT Count(*)::int AS total FROM "CustomerMeterReadings"`
       );
       resolve({
         data: results,
