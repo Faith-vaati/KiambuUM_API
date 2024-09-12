@@ -8,22 +8,66 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     Longitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
-    Name: {
+    MeterLocation: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Zone: {
+    BrandName: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Categorisation: {
+    AccountNo: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+    },
+    MeterSerial: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Size: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    MeterType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    InstallationMode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Sewered: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OtherMeter: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Material: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Remarks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    User: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Photo: {
       type: DataTypes.STRING,
       allowNull: true,
     },
