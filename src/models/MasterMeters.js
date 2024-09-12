@@ -15,16 +15,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT, 
       allowNull: true,
     }, 
-    BrandName: {
+    Zone: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    Subzone: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    DMAName: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
     Diameter: {
       type: DataTypes.STRING, 
-      allowNull: true,
-    },
-    MeterType: {
-      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     MeterSerial: {
@@ -35,12 +39,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DOUBLE, 
       allowNull: true,
     },
-    Zone: {
+    BrandName: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    DMAName: {
-      type: DataTypes.STRING, 
+    MeterType: {
+      type: DataTypes.DOUBLE, 
       allowNull: true,
     },
     Remarks: {
@@ -59,9 +63,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.GEOMETRY('POINT', 4326),
       allowNull: true,
     },
-    
-    
-  
   },);
 
   return MasterMeters;
