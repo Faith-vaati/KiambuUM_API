@@ -1,7 +1,10 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const NewWaterConnections = require("../../models/NewWaterConnections")(sequelize, Sequelize);
-NewWaterConnections.sync({ force: false });
+const NewWaterConnections = require("../../models/NewWaterConnections")(
+  sequelize,
+  Sequelize
+);
+NewWaterConnections.sync({ force: true });
 
 exports.createNewWaterConnection = (NewWaterConnectionsData) => {
   return new Promise(async (resolve, reject) => {
@@ -10,7 +13,7 @@ exports.createNewWaterConnection = (NewWaterConnectionsData) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."NewWaterConnections" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE "NewWaterConnections" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
             success: "Created successfully",
@@ -34,7 +37,6 @@ exports.findAllNewWaterConnections = () => {
         resolve(result);
       },
       (err) => {
-      
         reject({ error: "Retrieve failed" });
       }
     );

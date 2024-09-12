@@ -8,14 +8,13 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     Longitude: {
-      type: DataTypes.DOUBLE,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     Latitude: {
-      type: DataTypes.DOUBLE,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
-
     Type: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -53,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Photo: {
-      type: DataTypes.STRING(254),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     geom: {
@@ -61,6 +60,5 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   });
-
   return Appurtenances;
 };

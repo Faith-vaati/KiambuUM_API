@@ -9,28 +9,68 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
       },
-      Longitude: {
-        type: DataTypes.DECIMAL,
+      AccountNo: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       Latitude: {
-        type: DataTypes.DECIMAL,
-        allowNull: true,
+        type: Sequelize.FLOAT,
+        allowNull: false,
       },
-      Name: {
-        type: DataTypes.STRING,
+      Longitude: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      Type: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       Zone: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      Subzone: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      YearOfInstallation: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      PipeDiameter: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      Condition: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      WaterSource: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      Status: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      Size: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      Remarks: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      User: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      Categorisation: {
-        type: DataTypes.STRING,
+      Photo: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       geom: {
-        type: DataTypes.GEOMETRY("POINT", 4326),
+        type: Sequelize.GEOMETRY("POINTZM", 4326),
         allowNull: true,
       },
     }
