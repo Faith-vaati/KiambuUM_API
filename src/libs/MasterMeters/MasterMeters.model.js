@@ -131,11 +131,10 @@ exports.findMasterMeterByName = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "MasterMeters" WHERE "Name" ILIKE '%${value}%'`
+        `SELECT * FROM "MasterMeters" WHERE "DMAName" ILIKE '%${value}%'`
       );
       resolve(data);
     } catch (error) {
-
       reject({ error: "Retrieve Failed" });
     }
   });
