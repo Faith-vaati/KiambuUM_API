@@ -15,14 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    MeterLocation: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    BrandName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     AccountNo: {
       type: DataTypes.DOUBLE,
       allowNull: true,
@@ -31,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Size: {
+    BrandName: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -39,7 +31,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    Size: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Material: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     InstallationMode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    MeterLocation: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -52,10 +56,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     OtherMeter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Material: {
       type: DataTypes.STRING,
       allowNull: true,
     },
