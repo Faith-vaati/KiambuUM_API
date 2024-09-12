@@ -80,7 +80,6 @@ exports.createCustomer = (CustomerData) => {
         }
       },
       (err) => {
-
         reject({ error: "Customer creation failed" });
       }
     );
@@ -337,26 +336,28 @@ exports.findCharts = () => {
       const [MeterStatus, dmeta] = await sequelize.query(
         `SELECT "Status" AS name,Count(*)::int AS value FROM public."CustomerMeters" GROUP BY "Status"`
       );
-      const [MeterMaterial, ameta] = await sequelize.query(
-        `SELECT "MeterMaterial"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "MeterMaterial"`
+      const [Material, ameta] = await sequelize.query(
+        `SELECT "Material"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "Material"`
       );
 
-      const [MeterSize, mtrmeta] = await sequelize.query(
-        `SELECT "MeterSize"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "MeterSize"`
+      const [Size, mtrmeta] = await sequelize.query(
+        `SELECT "Size"  AS name,Count(*)::int  AS value FROM public."CustomerMeters" GROUP BY "Size"`
       );
 
       const [Tanks, dmameta] = await sequelize.query(
-        `SELECT "Name"  AS name,Sum("Capacity")::FLOAT  AS value FROM public."Tanks" GROUP BY "Name"`
+        `SELECT "Name"  AS name,Sum("Capacity"::FLOAT)::FLOAT  AS value FROM public."Tanks" GROUP BY "Name"`
       );
 
       resolve({
         MeterStatus,
-        MeterMaterial,
-        MeterSize,
+        Material,
+        Size,
         Tanks,
       });
     } catch (error) {
-      reject({ error: "failed" });
+      console.log(error);
+
+      reject(null);
     }
   });
 };
