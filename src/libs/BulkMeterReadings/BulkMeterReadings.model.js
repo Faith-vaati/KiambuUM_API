@@ -30,15 +30,19 @@ exports.create = (BulkMeterReadingsData) => {
   return new Promise(async (resolve, reject) => {
     if (
       BulkMeterReadingsData.Units === undefined ||
-      BulkMeterReadingsData.AccountNumber === undefined
+      BulkMeterReadingsData.DMAName === undefined
     ) {
       reject({ error: "Body is required" });
     }
     try {
-      const Images = `${BulkMeterReadingsData.AccountNumber}-${Date.now()}.png`;
+      const Images = `${BulkMeterReadingsData.DMAName}-${
+        BulkMeterReadingsData.Date
+      }-${Date.now()}.png`;
       createFileFromBase64(BulkMeterReadingsData.Image, Images);
       BulkMeterReadingsData.Image = Images;
-      const createdMeter = await BulkMeterReadings.create(BulkMeterReadingsData);
+      const createdMeter = await BulkMeterReadings.create(
+        BulkMeterReadingsData
+      );
       const id = createdMeter.dataValues.ID;
 
       resolve({
