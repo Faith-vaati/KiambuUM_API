@@ -1,7 +1,7 @@
-const OfftakersModel = require("./Offtakers.model");
+const OfftakesModel = require("./Offtakes.model");
 
 exports.create = (req, res) => {
-  OfftakersModel.createOfftakers(req.body).then(
+  OfftakesModel.createOfftakes(req.body).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -11,8 +11,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findOfftakersById = (req, res) => {
-  OfftakersModel.findOfftakersById(req.params.ID).then(
+exports.findOfftakesById = (req, res) => {
+  OfftakesModel.findOfftakesById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -22,8 +22,8 @@ exports.findOfftakersById = (req, res) => {
   );
 };
 
-exports.findOfftakersByName = (req, res) => {
-  OfftakersModel.findOfftakersByName(req.params.value).then(
+exports.findOfftakesByName = (req, res) => {
+  OfftakesModel.findOfftakesByName(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -33,8 +33,8 @@ exports.findOfftakersByName = (req, res) => {
   );
 };
 
-exports.updateOfftakersById = (req, res) => {
-  OfftakersModel.updateOfftakersById(req.body, req.params.ID).then(
+exports.updateOfftakesById = (req, res) => {
+  OfftakesModel.updateOfftakesById(req.body, req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -45,8 +45,8 @@ exports.updateOfftakersById = (req, res) => {
   );
 };
 
-exports.deleteOfftakersById = (req, res) => {
-  OfftakersModel.deleteOfftakersById(req.params.ID).then(
+exports.deleteOfftakesById = (req, res) => {
+  OfftakesModel.deleteOfftakesById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -56,8 +56,8 @@ exports.deleteOfftakersById = (req, res) => {
   );
 };
 
-exports.findAllOfftakers = (req, res) => {
-  OfftakersModel.findAllOfftakers().then(
+exports.findAllOfftakes = (req, res) => {
+  OfftakesModel.findAllOfftakes().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -67,8 +67,8 @@ exports.findAllOfftakers = (req, res) => {
   );
 };
 
-exports.findOfftakersPagnited = (req, res) => {
-  OfftakersModel.findOfftakersPagnited(req.params.offset).then(
+exports.findOfftakesPagnited = (req, res) => {
+  OfftakesModel.findOfftakesPagnited(req.params.offset).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -78,8 +78,8 @@ exports.findOfftakersPagnited = (req, res) => {
   );
 };
 
-exports.findOfftakersPagnitedSearch = (req, res) => {
-  OfftakersModel.findOfftakersPagnitedSearch(
+exports.findOfftakesPagnitedSearch = (req, res) => {
+  OfftakesModel.findOfftakesPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
@@ -93,8 +93,8 @@ exports.findOfftakersPagnitedSearch = (req, res) => {
   );
 };
 
-exports.searchOneOfftakers = (req, res) => {
-  OfftakersModel.searchOneOfftakers(req.params.value).then(
+exports.searchOneOfftakes = (req, res) => {
+  OfftakesModel.searchOneOfftakes(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -105,7 +105,7 @@ exports.searchOneOfftakers = (req, res) => {
 };
 
 exports.searchOthers = (req, res) => {
-  OfftakersModel.searchOthers(req.params.table, req.params.value).then(
+  OfftakesModel.searchOthers(req.params.table, req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -115,8 +115,8 @@ exports.searchOthers = (req, res) => {
   );
 };
 
-exports.filterOfftakers = (req, res) => {
-  OfftakersModel.filterOfftakers(
+exports.filterOfftakes = (req, res) => {
+  OfftakesModel.filterOfftakes(
     req.params.column,
     req.params.operator,
     req.params.value,
@@ -132,7 +132,7 @@ exports.filterOfftakers = (req, res) => {
 };
 
 exports.totalMapped = (req, res) => {
-  OfftakersModel.totalMapped().then(
+  OfftakesModel.totalMapped().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -143,7 +143,7 @@ exports.totalMapped = (req, res) => {
 };
 
 exports.getGeoJSON = (req, res) => {
-  OfftakersModel.getGeoJSON().then(
+  OfftakesModel.getGeoJSON().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -154,7 +154,7 @@ exports.getGeoJSON = (req, res) => {
 };
 
 exports.getStats = (req, res) => {
-  OfftakersModel.getStats().then(
+  OfftakesModel.getStats().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -165,7 +165,7 @@ exports.getStats = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-  OfftakersModel.findCharts().then(
+  OfftakesModel.findCharts().then(
     (result) => {
       res.status(200).send(result);
     },

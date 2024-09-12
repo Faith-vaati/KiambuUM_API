@@ -1,8 +1,8 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const Offtakers = require("../../models/Offtakers")(sequelize, Sequelize);
+const Offtakes = require("../../models/Offtakes")(sequelize, Sequelize);
 
-Offtakers.sync({ force: false });
+Offtakes.sync({ force: false });
 
 function cleanData(obj) {
   for (const key in obj) {
@@ -13,18 +13,18 @@ function cleanData(obj) {
   return obj;
 }
 
-exports.createOfftakers = (OfftakersData) => {
+exports.createOfftakes = (OfftakesData) => {
   return new Promise(async (resolve, reject) => {
-    OfftakersData = cleanData(OfftakersData);
-    Offtakers.create(OfftakersData).then(
+    OfftakesData = cleanData(OfftakesData);
+    Offtakes.create(OfftakesData).then(
       async (result) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE public."Offtakes" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
-            success: "Offtakers Created successfully",
+            success: "Offtakes Created successfully",
             token: result.dataValues.ID,
           });
         } catch (error) {
@@ -68,12 +68,12 @@ exports.createOfftakers = (OfftakersData) => {
   });
 };
 
-exports.findOfftakersById = (id) => {
+exports.findOfftakesById = (id) => {
   return new Promise((resolve, reject) => {
-    Offtakers.findByPk(id).then(
+    Offtakes.findByPk(id).then(
       (result) => {
         if (result == null) {
-          reject({ status: 404, error: "Offtakers not found" });
+          reject({ status: 404, error: "Offtakes not found" });
         }
         resolve(result);
       },
@@ -84,11 +84,11 @@ exports.findOfftakersById = (id) => {
   });
 };
 
-exports.findOfftakersByName = (value) => {
+exports.findOfftakesByName = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "Offtakers" WHERE "Name" ILIKE '%${value}%'`
+        `SELECT * FROM "Offtakes" WHERE "Name" ILIKE '%${value}%'`
       );
       resolve(data);
     } catch (error) {
@@ -98,19 +98,19 @@ exports.findOfftakersByName = (value) => {
   });
 };
 
-exports.updateOfftakersById = (OfftakersData, id) => {
-  OfftakersData = cleanData(OfftakersData);
+exports.updateOfftakesById = (OfftakesData, id) => {
+  OfftakesData = cleanData(OfftakesData);
   return new Promise((resolve, reject) => {
-    Offtakers.update(OfftakersData, {
+    Offtakes.update(OfftakesData, {
       where: {
         ID: id,
       },
     }).then(
       async (result) => {
         try {
-          if (OfftakersData.Latitude && OfftakersData.Longitude) {
+          if (OfftakesData.Latitude && OfftakesData.Longitude) {
             const [data, dmeta] = await sequelize.query(
-              `UPDATE public."Offtakers" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
+              `UPDATE public."Offtakes" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude"), 4326) WHERE "ID" = '${id}';`
             );
           }
         } catch (error) {}
@@ -123,16 +123,16 @@ exports.updateOfftakersById = (OfftakersData, id) => {
   });
 };
 
-exports.deleteOfftakersById = (id) => {
+exports.deleteOfftakesById = (id) => {
   return new Promise((resolve, reject) => {
-    Offtakers.destroy({
+    Offtakes.destroy({
       where: {
         ID: id,
       },
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "Offtakers does not exist!!!" });
+        else reject({ error: "Offtakes does not exist!!!" });
       },
       (err) => {
         reject({ error: "Retrieve failed" });
@@ -141,9 +141,9 @@ exports.deleteOfftakersById = (id) => {
   });
 };
 
-exports.findAllOfftakers = () => {
+exports.findAllOfftakes = () => {
   return new Promise((resolve, reject) => {
-    Offtakers.findAll({}).then(
+    Offtakes.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -154,14 +154,14 @@ exports.findAllOfftakers = () => {
   });
 };
 
-exports.findOfftakersPagnited = (offset) => {
+exports.findOfftakesPagnited = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "Offtakers" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
+        `SELECT * FROM "Offtakes" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "Offtakers"`
+        `SELECT COUNT(*) FROM "Offtakes"`
       );
       resolve({
         data: result,
@@ -173,14 +173,14 @@ exports.findOfftakersPagnited = (offset) => {
   });
 };
 
-exports.findOfftakersPagnitedSearch = (column, value, offset) => {
+exports.findOfftakesPagnitedSearch = (column, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "Offtakers" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Offtakes" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "Offtakers" WHERE "${column}" ILIKE '%${value}%'`
+        `SELECT COUNT(*) FROM "Offtakes" WHERE "${column}" ILIKE '%${value}%'`
       );
       resolve({
         data: result,
@@ -192,11 +192,11 @@ exports.findOfftakersPagnitedSearch = (column, value, offset) => {
   });
 };
 
-exports.searchOneOfftakers = (value) => {
+exports.searchOneOfftakes = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "Offtakers" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "Offtakes" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
@@ -218,15 +218,15 @@ exports.searchOthers = (table, value) => {
   });
 };
 
-exports.filterOfftakers = (column, operator, value, offset) => {
+exports.filterOfftakes = (column, operator, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "Offtakers" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "Offtakes" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
       );
 
       const [count, cmetadata] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "Offtakers" WHERE "${column}" ${operator} '${value}'`
+        `SELECT Count(*)::int AS total FROM "Offtakes" WHERE "${column}" ${operator} '${value}'`
       );
 
       resolve({
@@ -241,9 +241,9 @@ exports.filterOfftakers = (column, operator, value, offset) => {
 
 exports.totalMapped = (offset) => {
   return new Promise((resolve, reject) => {
-    Offtakers.findAll({}).then(
+    Offtakes.findAll({}).then(
       async (result) => {
-        const count = await Offtakers.count();
+        const count = await Offtakes.count();
         resolve({
           success: count,
         });
@@ -259,7 +259,7 @@ exports.getGeoJSON = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const users = await sequelize.query(
-        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."Offtakers"`,
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."Offtakes"`,
         { type: QueryTypes.SELECT }
       );
       resolve(users);
@@ -273,13 +273,13 @@ exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [cs, smeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."Offtakers"`
+        `SELECT Count(*)::FLOAT as total FROM public."Offtakes"`
       );
       const [dm, hmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."Offtakers"`
+        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."Offtakes"`
       );
       const [zn, dmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."Offtakers"`
+        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."Offtakes"`
       );
       const [tnk, fmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
@@ -291,15 +291,15 @@ exports.getStats = () => {
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
       );
       const [cb, cbmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."OfftakersBillings"`
+        `SELECT SUM("Amount") as total FROM public."OfftakesBillings"`
       );
       const [inv, invmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."OfftakersBillings"`
+        `SELECT SUM("Amount") as total FROM public."OfftakesBillings"`
         // ROUND( AVG(some_column)::numeric, 2 )
       );
 
       resolve({
-        Offtakers: cs,
+        Offtakes: cs,
         DMA: dm,
         Zone: zn,
         Tanks: tnk,
@@ -318,23 +318,23 @@ exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [accType, dmeta] = await sequelize.query(
-        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."Offtakers" GROUP BY "AccountType"`
+        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."Offtakes" GROUP BY "AccountType"`
       );
       const [accStatus, ameta] = await sequelize.query(
-        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."Offtakers" GROUP BY "AccountStatus"`
+        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."Offtakes" GROUP BY "AccountStatus"`
       );
 
       const [mtrStatus, mtrmeta] = await sequelize.query(
-        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."Offtakers" GROUP BY "MeterStatus"`
+        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."Offtakes" GROUP BY "MeterStatus"`
       );
       const [dma, dmameta] = await sequelize.query(
-        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."Offtakers" GROUP BY "DMA"`
+        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."Offtakes" GROUP BY "DMA"`
       );
       const [zone, znmeta] = await sequelize.query(
-        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."Offtakers" GROUP BY "Zone"`
+        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."Offtakes" GROUP BY "Zone"`
       );
       const [mtrclass, clmeta] = await sequelize.query(
-        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."Offtakers" GROUP BY "Class"`
+        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."Offtakes" GROUP BY "Class"`
       );
 
       resolve({

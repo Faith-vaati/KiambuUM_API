@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 module.exports = (sequelize, Datatypes) => {
-  const Offtake = sequelize.define("Offtakers", {
+  const Offtakes = sequelize.define("Offtakes", {
     ID: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
@@ -39,10 +39,6 @@ module.exports = (sequelize, Datatypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    Remarks: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
     Zone: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -57,9 +53,13 @@ module.exports = (sequelize, Datatypes) => {
     },
     YearOfInstallation: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     User: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    Remarks: {
       type: Sequelize.STRING,
       allowNull: true,
     },
@@ -73,5 +73,5 @@ module.exports = (sequelize, Datatypes) => {
     },
   });
 
-  return Offtake;
+  return Offtakes;
 };

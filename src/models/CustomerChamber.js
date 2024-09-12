@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.FLOAT,
       allowNull: false,
     },
-    Type: {
+    Shape: {
       type: Sequelize.STRING,
       allowNull: true,
     },
@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     YearOfInstallation: {
       type: Sequelize.DOUBLE,
+      allowNull: true,
+    },
+    PipeMaterial: {
+      type: Sequelize.STRING,
       allowNull: true,
     },
     PipeDiameter: {
@@ -69,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     geom: {
-      type: Sequelize.GEOMETRY("POINTZM", 4326),
+      type: Sequelize.GEOMETRY("POINT", 4326),
       allowNull: true,
     },
   });
