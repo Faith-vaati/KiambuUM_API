@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     MeterType: {
-      type: DataTypes.DOUBLE, 
+      type: DataTypes.STRING, 
       allowNull: true,
     },
     Remarks: {
