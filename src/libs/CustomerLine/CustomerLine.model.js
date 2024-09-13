@@ -38,7 +38,7 @@ exports.createCustomerLine = (CustomerLineData) => {
                   ${points}
                 ])::geometry(LineString, 4326) AS geom
               )
-              UPDATE "CustomerLine"
+              UPDATE "CustomerLines"
               SET "geom" = geom.geom
               FROM geom
               WHERE "ID" = '${id}';
