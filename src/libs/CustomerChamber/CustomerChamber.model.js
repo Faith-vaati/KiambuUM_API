@@ -94,15 +94,14 @@ exports.findCustomerChamberById = (id) => {
   });
 };
 
-exports.findCustomerChamberByName = (value) => {
+exports.findCustomerChamberByAccountNo = (account) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "CustomerChambers" WHERE "Name" ILIKE '%${value}%'`
+        `SELECT * FROM "CustomerChambers" WHERE "AccountNo" ILIKE '%${account}%'`
       );
       resolve(data);
     } catch (error) {
-
       reject({ error: "Retrieve Failed" });
     }
   });

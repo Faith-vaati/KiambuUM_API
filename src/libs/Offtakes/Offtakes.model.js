@@ -88,7 +88,7 @@ exports.findOfftakesByName = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "Offtakes" WHERE "Name" ILIKE '%${value}%'`
+        `SELECT * FROM "Offtakes" WHERE "AccountName" ILIKE '%${value}%'`
       );
       resolve(data);
     } catch (error) {
