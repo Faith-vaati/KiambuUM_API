@@ -14,9 +14,8 @@ function cleanData(obj) {
 }
 
 exports.createConsumerLine = (ConsumerLineData) => {
-  ConsumerLineData = cleanData(ConsumerLineData);
-
   return new Promise(async (resolve, reject) => {
+    ConsumerLineData = cleanData(ConsumerLineData);
     try {
       const coordinates = ConsumerLineData.Coordinates;
       ConsumerLineData.Coordinates = null;
@@ -34,12 +33,12 @@ exports.createConsumerLine = (ConsumerLineData) => {
             .join(",\n    ");
           // Construct the SQL query
           const sqlQuery = `
-            WITH geom AS (
+             WITH geom AS (
                 SELECT ST_MakeLine(ARRAY[
                   ${points}
                 ])::geometry(LineString, 4326) AS geom
               )
-              UPDATE "ConsumerLine"
+              UPDATE "ConsumerLines"
               SET "geom" = geom.geom
               FROM geom
               WHERE "ID" = '${id}';
@@ -49,9 +48,22 @@ exports.createConsumerLine = (ConsumerLineData) => {
             success: "Created successfully",
           });
         } catch (error) {
-          reject({
-            error: error.message,
-          });
+          if (
+            error instanceof Sequelize.ValidationError ||
+            error instanceof Sequelize.UniqueConstraintError
+          ) {
+            const detailMessages = error.errors.map((err) => err.message);
+            reject({
+              error:
+                detailMessages.length > 0
+                  ? detailMessages[0]
+                  : "Unexpected error!",
+            });
+          } else {
+            reject({
+              error: error.message,
+            });
+          }
         }
       } else {
         reject({
