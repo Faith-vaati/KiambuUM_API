@@ -4,7 +4,7 @@ const NewWaterConnections = require("../../models/NewWaterConnections")(
   sequelize,
   Sequelize
 );
-NewWaterConnections.sync({ force: true });
+NewWaterConnections.sync({ force: false });
 
 exports.createNewWaterConnection = (NewWaterConnectionsData) => {
   return new Promise(async (resolve, reject) => {

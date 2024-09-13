@@ -27,11 +27,13 @@ const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
 const CustomerMeterReadings = require("./libs/CustomerMeterReadings/CustomerMeterReadings.route");
 const Boreholes = require("./libs/Boreholes/Boreholes.route");
 const Appurtenances = require("./libs/Appurtenances/Appurtenances.route");
+const NewWaterConnections = require("./libs/NewWaterConnections/NewWaterConnections.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
 const app = express();
 const request = require("request");
+// const NewWaterConnections = require("./models/NewWaterConnections");
 
 // Dev Mode
 app.use(function (req, res, next) {
@@ -176,6 +178,7 @@ TreatmentPlant.TreatmentPlantRoute(app);
 CustomerMeterReadings.CustomerMeterReadingsRoutes(app);
 Boreholes.BoreholesRoutes(app);
 Appurtenances.AppurtenancesRoutes(app);
+NewWaterConnections.NewWaterConnectionsRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(
