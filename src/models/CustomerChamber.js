@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     AccountNo: {
-      type: Sequelize.STRING,
+      type: Sequelize.DOUBLE,
       allowNull: true,
     },
     Latitude: {
