@@ -51,14 +51,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    Photo: {
+    User: {
       type: DataTypes.STRING, 
       allowNull: true,
     },
-    geom: {
-      type: DataTypes.GEOMETRY("LineString", 4326), 
+    Photo: {
+      type: DataTypes.TEXT, 
       allowNull: true,
     },
+    geom: {
+      type: DataTypes.GEOMETRY("MULTILINESTRINGZM", 4326),  
+      allowNull: true,
+    },
+    
     
   },);
 
