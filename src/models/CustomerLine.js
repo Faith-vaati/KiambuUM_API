@@ -54,7 +54,7 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     Photo: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     geom: {
