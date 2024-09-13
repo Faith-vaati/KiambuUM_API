@@ -1,6 +1,7 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const NewSanitationConnections = require("../../models/NewSanitationConnections")(sequelize, Sequelize);
+const NewSanitationConnections =
+  require("../../models/NewSanitationConnections")(sequelize, Sequelize);
 NewSanitationConnections.sync({ force: false });
 
 exports.createNewSanitationConnection = (NewSanitationConnectionsData) => {
@@ -21,6 +22,8 @@ exports.createNewSanitationConnection = (NewSanitationConnectionsData) => {
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "NewSanitationConnection creation failed" });
       }
     );
@@ -34,7 +37,6 @@ exports.findAllNewSanitationConnections = () => {
         resolve(result);
       },
       (err) => {
-      
         reject({ error: "Retrieve failed" });
       }
     );
@@ -97,7 +99,10 @@ exports.findNewSanitationConnectionByID = (id) => {
   });
 };
 
-exports.updateNewSanitationConnectionByID = (NewSanitationConnectionsData, id) => {
+exports.updateNewSanitationConnectionByID = (
+  NewSanitationConnectionsData,
+  id
+) => {
   return new Promise((resolve, reject) => {
     NewSanitationConnections.update(NewSanitationConnectionsData, {
       where: {

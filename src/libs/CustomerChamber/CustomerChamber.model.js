@@ -98,7 +98,7 @@ exports.findCustomerChamberByAccountNo = (account) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "CustomerChambers" WHERE "AccountNo" ILIKE '%${account}%'`
+        `SELECT * FROM "CustomerChambers" WHERE "AccountNo"::text ILIKE '%${account}%'::text LIMIT 2 OFFSET 0`
       );
       resolve(data);
     } catch (error) {
