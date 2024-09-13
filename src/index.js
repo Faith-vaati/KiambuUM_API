@@ -29,6 +29,8 @@ const Boreholes = require("./libs/Boreholes/Boreholes.route");
 const Appurtenances = require("./libs/Appurtenances/Appurtenances.route");
 const NewWaterConnections = require("./libs/NewWaterConnections/NewWaterConnections.route");
 const NewSanitationConnections = require("./libs/NewSanitationConnections/NewSanitationConnections.route")
+const ConsumerLine = require("./libs/ConsumerLine/ConsumerLine.route")
+const CustomerLine = require("./libs/CustomerLine/CustomerLine.route")
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -181,6 +183,8 @@ Boreholes.BoreholesRoutes(app);
 Appurtenances.AppurtenancesRoutes(app);
 NewWaterConnections.NewWaterConnectionsRoutes(app);
 NewSanitationConnections.NewSanitationConnectionsRoutes(app);
+ConsumerLine.ConsumerLineRoutes(app)
+CustomerLine.CustomerLineRoutes(app)
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(

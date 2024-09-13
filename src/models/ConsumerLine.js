@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     Photo: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     geom: {
