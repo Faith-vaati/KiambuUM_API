@@ -15,7 +15,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
+    Name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Type: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Zone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Subzone: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -23,15 +35,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    UpperDiameter: {
+    InitialDiameter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    LowerDiameter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Zone: {
+    ReducedDiameter: {
       type: DataTypes.STRING,
       allowNull: true,
     },
