@@ -1,6 +1,6 @@
 const { Sequelize, Op } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const BulkMeterReadings = require("../../models/BulkMeterReadings")(
+const ProductionMeterReadings = require("../../models/ProductionMeterReadings")(
   sequelize,
   Sequelize
 );
@@ -8,7 +8,7 @@ const BulkMeterReadings = require("../../models/BulkMeterReadings")(
 const fs = require("fs");
 const Path = require("path");
 
-BulkMeterReadings.sync({ force: false });
+ProductionMeterReadings.sync({ force: false });
 
 async function createFileFromBase64(base64Data, filePath) {
   if (filePath != null && base64Data != null) {
@@ -26,22 +26,22 @@ async function createFileFromBase64(base64Data, filePath) {
   }
 }
 
-exports.create = (BulkMeterReadingsData) => {
+exports.create = (ProductionMeterReadingsData) => {
   return new Promise(async (resolve, reject) => {
     if (
-      BulkMeterReadingsData.Units === undefined ||
-      BulkMeterReadingsData.DMAName === undefined
+      ProductionMeterReadingsData.Units === undefined ||
+      ProductionMeterReadingsData.DMAName === undefined
     ) {
       reject({ error: "Body is required" });
     }
     try {
-      const Images = `${BulkMeterReadingsData.DMAName}-${
-        BulkMeterReadingsData.Date
+      const Images = `${ProductionMeterReadingsData.DMAName}-${
+        ProductionMeterReadingsData.Date
       }-${Date.now()}.png`;
-      createFileFromBase64(BulkMeterReadingsData.Image, Images);
-      BulkMeterReadingsData.Image = Images;
-      const createdMeter = await BulkMeterReadings.create(
-        BulkMeterReadingsData
+      createFileFromBase64(ProductionMeterReadingsData.Image, Images);
+      ProductionMeterReadingsData.Image = Images;
+      const createdMeter = await ProductionMeterReadings.create(
+        ProductionMeterReadingsData
       );
       const id = createdMeter.dataValues.ID;
 
@@ -55,9 +55,9 @@ exports.create = (BulkMeterReadingsData) => {
   });
 };
 
-exports.findBulkMeterReadingsById = (id) => {
+exports.findProductionMeterReadingsById = (id) => {
   return new Promise((resolve, reject) => {
-    BulkMeterReadings.findByPk(id).then(
+    ProductionMeterReadings.findByPk(id).then(
       (result) => {
         if (result == null) {
           reject({ error: "Not found" });
@@ -71,9 +71,9 @@ exports.findBulkMeterReadingsById = (id) => {
   });
 };
 
-exports.updateBulkMeterReadingsById = (BulkMeterReadingsData, id) => {
+exports.updateProductionMeterReadingsById = (ProductionMeterReadingsData, id) => {
   return new Promise((resolve, reject) => {
-    BulkMeterReadings.update(BulkMeterReadingsData, {
+    ProductionMeterReadings.update(ProductionMeterReadingsData, {
       where: {
         ID: id,
       },
@@ -90,7 +90,7 @@ exports.updateBulkMeterReadingsById = (BulkMeterReadingsData, id) => {
 
 exports.deleteCustomerMeterReadingById = (id) => {
   return new Promise((resolve, reject) => {
-    BulkMeterReadings.destroy({
+    ProductionMeterReadings.destroy({
       where: {
         ID: id,
       },
@@ -106,9 +106,9 @@ exports.deleteCustomerMeterReadingById = (id) => {
   });
 };
 
-exports.findAllBulkMeterReadings = () => {
+exports.findAllProductionMeterReadings = () => {
   return new Promise((resolve, reject) => {
-    BulkMeterReadings.findAll({}).then(
+    ProductionMeterReadings.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -119,14 +119,14 @@ exports.findAllBulkMeterReadings = () => {
   });
 };
 
-exports.findBulkMeterReadingsPaginated = (offset) => {
+exports.findProductionMeterReadingsPaginated = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [results, metadata] = await sequelize.query(
-        `SELECT * FROM "BulkMeterReadings"  ORDER BY "createdAt" LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "ProductionMeterReadings"  ORDER BY "createdAt" LIMIT 12 OFFSET ${offset}`
       );
       const [count, cmeta] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "BulkMeterReadings"`
+        `SELECT Count(*)::int AS total FROM "ProductionMeterReadings"`
       );
       resolve({
         data: results,

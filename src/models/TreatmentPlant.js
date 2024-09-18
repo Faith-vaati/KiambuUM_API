@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
           },
        
-        BulkMeter: {
+        ProductionMeter: {
             type: DataTypes.STRING,
             allowNull: true,
         },

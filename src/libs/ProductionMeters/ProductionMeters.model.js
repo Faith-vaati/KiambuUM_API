@@ -1,9 +1,9 @@
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = require("../../configs/connection");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
-const BulkMeters = require("../../models/BulkMeters")(sequelize, Sequelize);
+const ProductionMeters = require("../../models/ProductionMeters")(sequelize, Sequelize);
 
-BulkMeters.sync({ force: false });
+ProductionMeters.sync({ force: false });
 
 function cleanData(obj) {
   for (const key in obj) {
@@ -14,25 +14,25 @@ function cleanData(obj) {
   return obj;
 }
 
-exports.createBulkMeters = (BulkMetersData) => {
+exports.createProductionMeters = (ProductionMetersData) => {
   return new Promise(async (resolve, reject) => {
-    BulkMetersData = cleanData(BulkMetersData);
+    ProductionMetersData = cleanData(ProductionMetersData);
     if (
-      BulkMetersData.Longitude === undefined ||
-      BulkMetersData.Latitude === undefined
+      ProductionMetersData.Longitude === undefined ||
+      ProductionMetersData.Latitude === undefined
     ) {
       reject({ error: "Location is required" });
     }
 
-    BulkMeters.create(BulkMetersData).then(
+    ProductionMeters.create(ProductionMetersData).then(
       async (result) => {
         try {
           const id = result.dataValues.ID;
           const [data, dmeta] = await sequelize.query(
-            `UPDATE public."BulkMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+            `UPDATE public."ProductionMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
           );
           resolve({
-            success: "BulkMeters Created successfully",
+            success: "ProductionMeters Created successfully",
             token: result.dataValues.ID,
           });
         } catch (error) {
@@ -76,12 +76,12 @@ exports.createBulkMeters = (BulkMetersData) => {
   });
 };
 
-exports.findBulkMetersById = (id) => {
+exports.findProductionMetersById = (id) => {
   return new Promise((resolve, reject) => {
-    BulkMeters.findByPk(id).then(
+    ProductionMeters.findByPk(id).then(
       (result) => {
         if (result == null) {
-          reject({ status: 404, error: "BulkMeters not found" });
+          reject({ status: 404, error: "ProductionMeters not found" });
         }
         resolve(result);
       },
@@ -92,11 +92,11 @@ exports.findBulkMetersById = (id) => {
   });
 };
 
-exports.findBulkMetersByMeterNo = (meterno) => {
+exports.findProductionMetersByMeterNo = (meterno) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "BulkMeters" WHERE "MeterNo"::text ILIKE '%${meterno}%'::text LIMIT 2 OFFSET 0`
+        `SELECT * FROM "ProductionMeters" WHERE "MeterNo"::text ILIKE '%${meterno}%'::text LIMIT 2 OFFSET 0`
       );
 
       resolve(data);
@@ -108,19 +108,19 @@ exports.findBulkMetersByMeterNo = (meterno) => {
   });
 };
 
-exports.updateBulkMetersById = (BulkMetersData, id) => {
-  BulkMetersData = cleanData(BulkMetersData);
+exports.updateProductionMetersById = (ProductionMetersData, id) => {
+  ProductionMetersData = cleanData(ProductionMetersData);
   return new Promise((resolve, reject) => {
-    BulkMeters.update(BulkMetersData, {
+    ProductionMeters.update(ProductionMetersData, {
       where: {
         ID: id,
       },
     }).then(
       async (result) => {
         try {
-          if (BulkMetersData.Latitude && BulkMetersData.Longitude) {
+          if (ProductionMetersData.Latitude && ProductionMetersData.Longitude) {
             const [data, dmeta] = await sequelize.query(
-              `UPDATE public."BulkMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
+              `UPDATE public."ProductionMeters" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
             );
           }
         } catch (error) {}
@@ -133,16 +133,16 @@ exports.updateBulkMetersById = (BulkMetersData, id) => {
   });
 };
 
-exports.deleteBulkMetersById = (id) => {
+exports.deleteProductionMetersById = (id) => {
   return new Promise((resolve, reject) => {
-    BulkMeters.destroy({
+    ProductionMeters.destroy({
       where: {
         ID: id,
       },
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "BulkMeters does not exist!!!" });
+        else reject({ error: "ProductionMeters does not exist!!!" });
       },
       (err) => {
         reject({ error: "Retrieve failed" });
@@ -151,9 +151,9 @@ exports.deleteBulkMetersById = (id) => {
   });
 };
 
-exports.findAllBulkMeters = () => {
+exports.findAllProductionMeters = () => {
   return new Promise((resolve, reject) => {
-    BulkMeters.findAll({}).then(
+    ProductionMeters.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -164,14 +164,14 @@ exports.findAllBulkMeters = () => {
   });
 };
 
-exports.findBulkMetersPagnited = (offset) => {
+exports.findProductionMetersPagnited = (offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "BulkMeters" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
+        `SELECT * FROM "ProductionMeters" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "BulkMeters"`
+        `SELECT COUNT(*) FROM "ProductionMeters"`
       );
       resolve({
         data: result,
@@ -183,14 +183,14 @@ exports.findBulkMetersPagnited = (offset) => {
   });
 };
 
-exports.findBulkMetersPagnitedSearch = (column, value, offset) => {
+exports.findProductionMetersPagnitedSearch = (column, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "BulkMeters" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "ProductionMeters" WHERE "${column}" ILIKE '%${value}%' LIMIT 12 OFFSET ${offset}`
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "BulkMeters" WHERE "${column}" ILIKE '%${value}%'`
+        `SELECT COUNT(*) FROM "ProductionMeters" WHERE "${column}" ILIKE '%${value}%'`
       );
       resolve({
         data: result,
@@ -202,11 +202,11 @@ exports.findBulkMetersPagnitedSearch = (column, value, offset) => {
   });
 };
 
-exports.searchOneBulkMeters = (value) => {
+exports.searchOneProductionMeters = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "BulkMeters" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "Name","AccountNo", "Latitude", "Longitude" FROM "ProductionMeters" WHERE ("AccountNo" ILIKE '%${value}%' OR "Name" ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
@@ -228,15 +228,15 @@ exports.searchOthers = (table, value) => {
   });
 };
 
-exports.filterBulkMeters = (column, operator, value, offset) => {
+exports.filterProductionMeters = (column, operator, value, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT * FROM "BulkMeters" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "ProductionMeters" WHERE "${column}" ${operator} '${value}' LIMIT 12 OFFSET ${offset}`
       );
 
       const [count, cmetadata] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "BulkMeters" WHERE "${column}" ${operator} '${value}'`
+        `SELECT Count(*)::int AS total FROM "ProductionMeters" WHERE "${column}" ${operator} '${value}'`
       );
 
       resolve({
@@ -251,9 +251,9 @@ exports.filterBulkMeters = (column, operator, value, offset) => {
 
 exports.totalMapped = (offset) => {
   return new Promise((resolve, reject) => {
-    BulkMeters.findAll({}).then(
+    ProductionMeters.findAll({}).then(
       async (result) => {
-        const count = await BulkMeters.count();
+        const count = await ProductionMeters.count();
         resolve({
           success: count,
         });
@@ -269,7 +269,7 @@ exports.getGeoJSON = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const users = await sequelize.query(
-        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."BulkMeters"`,
+        `SELECT *,ST_MakePoint("Longitude","Latitude") AS point FROM public."ProductionMeters"`,
         { type: QueryTypes.SELECT }
       );
       resolve(users);
@@ -283,13 +283,13 @@ exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [cs, smeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."BulkMeters"`
+        `SELECT Count(*)::FLOAT as total FROM public."ProductionMeters"`
       );
       const [dm, hmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."BulkMeters"`
+        `SELECT Count(DISTINCT "DMA")::FLOAT as total FROM public."ProductionMeters"`
       );
       const [zn, dmeta] = await sequelize.query(
-        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."BulkMeters"`
+        `SELECT Count(DISTINCT "Zone")::FLOAT as total FROM public."ProductionMeters"`
       );
       const [tnk, fmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Tanks"`
@@ -301,10 +301,10 @@ exports.getStats = () => {
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
       );
       const [cb, cbmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."BulkMetersBillings"`
+        `SELECT SUM("Amount") as total FROM public."ProductionMetersBillings"`
       );
       const [inv, invmeta] = await sequelize.query(
-        `SELECT SUM("Amount") as total FROM public."BulkMetersBillings"`
+        `SELECT SUM("Amount") as total FROM public."ProductionMetersBillings"`
         // ROUND( AVG(some_column)::numeric, 2 )
       );
 
@@ -328,23 +328,23 @@ exports.findCharts = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const [accType, dmeta] = await sequelize.query(
-        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."BulkMeters" GROUP BY "AccountType"`
+        `SELECT "AccountType" AS name,Count(*)::int AS value FROM public."ProductionMeters" GROUP BY "AccountType"`
       );
       const [accStatus, ameta] = await sequelize.query(
-        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."BulkMeters" GROUP BY "AccountStatus"`
+        `SELECT "AccountStatus"  AS name,Count(*)::int  AS value FROM public."ProductionMeters" GROUP BY "AccountStatus"`
       );
 
       const [mtrStatus, mtrmeta] = await sequelize.query(
-        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."BulkMeters" GROUP BY "MeterStatus"`
+        `SELECT "MeterStatus"  AS name,Count(*)::int  AS value FROM public."ProductionMeters" GROUP BY "MeterStatus"`
       );
       const [dma, dmameta] = await sequelize.query(
-        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."BulkMeters" GROUP BY "DMA"`
+        `SELECT "DMA"  AS name,Count(*)::int  AS value FROM public."ProductionMeters" GROUP BY "DMA"`
       );
       const [zone, znmeta] = await sequelize.query(
-        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."BulkMeters" GROUP BY "Zone"`
+        `SELECT "Zone"  AS name,Count(*)::int  AS value FROM public."ProductionMeters" GROUP BY "Zone"`
       );
       const [mtrclass, clmeta] = await sequelize.query(
-        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."BulkMeters" GROUP BY "Class"`
+        `SELECT "Class"  AS name,Count(*)::int  AS value FROM public."ProductionMeters" GROUP BY "Class"`
       );
 
       resolve({

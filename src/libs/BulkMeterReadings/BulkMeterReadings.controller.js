@@ -1,7 +1,7 @@
-const BulkMeterReadingsModel = require("./BulkMeterReadings.model");
+const ProductionMeterReadingsModel = require("./ProductionMeterReadings.model");
 
 exports.create = (req, res) => {
-  BulkMeterReadingsModel.create(req.body).then(
+  ProductionMeterReadingsModel.create(req.body).then(
     (result) => {
       res
         .status(200)
@@ -13,8 +13,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findBulkMeterReadingsById = (req, res) => {
-  BulkMeterReadingsModel.findBulkMeterReadingsById(req.params.ID).then(
+exports.findProductionMeterReadingsById = (req, res) => {
+  ProductionMeterReadingsModel.findProductionMeterReadingsById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -24,8 +24,8 @@ exports.findBulkMeterReadingsById = (req, res) => {
   );
 };
 
-exports.updateBulkMeterReadingsById = (req, res) => {
-  BulkMeterReadingsModel.updateBulkMeterReadingsById(
+exports.updateProductionMeterReadingsById = (req, res) => {
+  ProductionMeterReadingsModel.updateProductionMeterReadingsById(
     req.body,
     req.params.id
   ).then(
@@ -38,7 +38,7 @@ exports.updateBulkMeterReadingsById = (req, res) => {
   );
 };
 exports.deleteCustomerMeterReadingById = (req, res) => {
-  BulkMeterReadingsModel.deleteCustomerMeterReadingById(req.params.id).then(
+  ProductionMeterReadingsModel.deleteCustomerMeterReadingById(req.params.id).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -47,8 +47,8 @@ exports.deleteCustomerMeterReadingById = (req, res) => {
     }
   );
 };
-exports.findAllBulkMeterReadings = (req, res) => {
-  BulkMeterReadingsModel.findAllBulkMeterReadings().then(
+exports.findAllProductionMeterReadings = (req, res) => {
+  ProductionMeterReadingsModel.findAllProductionMeterReadings().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -58,8 +58,8 @@ exports.findAllBulkMeterReadings = (req, res) => {
   );
 };
 
-exports.findBulkMeterReadingsPaginated = (req, res) => {
-  BulkMeterReadingsModel.findBulkMeterReadingsPaginated(
+exports.findProductionMeterReadingsPaginated = (req, res) => {
+  ProductionMeterReadingsModel.findProductionMeterReadingsPaginated(
     req.params.offset
   ).then(
     (result) => {

@@ -1,25 +1,25 @@
-const BulkMeterReadingsController = require("./BulkMeterReadings.controller");
+const ProductionMeterReadingsController = require("./ProductionMeterReadings.controller");
 
-exports.BulkMeterReadingsRoutes = function (app) {
-  app.post("/bulkreading/create", [BulkMeterReadingsController.create]);
+exports.ProductionMeterReadingsRoutes = function (app) {
+  app.post("/bulkreading/create", [ProductionMeterReadingsController.create]);
 
   app.get("/bulkreading/:ID", [
-    BulkMeterReadingsController.findBulkMeterReadingsById,
+    ProductionMeterReadingsController.findProductionMeterReadingsById,
   ]);
 
   app.get("/bulkreading", [
-    BulkMeterReadingsController.findAllBulkMeterReadings,
+    ProductionMeterReadingsController.findAllProductionMeterReadings,
   ]);
 
   app.get("/bulkreading/paginated/:offset", [
-    BulkMeterReadingsController.findBulkMeterReadingsPaginated,
+    ProductionMeterReadingsController.findProductionMeterReadingsPaginated,
   ]);
 
   app.delete("/bulkreading/:id", [
-    BulkMeterReadingsController.deleteCustomerMeterReadingById,
+    ProductionMeterReadingsController.deleteCustomerMeterReadingById,
   ]);
 
   app.put("/bulkreading/:id", [
-    BulkMeterReadingsController.updateBulkMeterReadingsById,
+    ProductionMeterReadingsController.updateProductionMeterReadingsById,
   ]);
 };

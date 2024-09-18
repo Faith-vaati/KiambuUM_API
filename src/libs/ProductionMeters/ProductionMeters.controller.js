@@ -1,7 +1,7 @@
-const BulkMetersModel = require("./BulkMeters.model");
+const ProductionMetersModel = require("./ProductionMeters.model");
 
 exports.create = (req, res) => {
-  BulkMetersModel.createBulkMeters(req.body).then(
+  ProductionMetersModel.createProductionMeters(req.body).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -11,8 +11,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findBulkMetersById = (req, res) => {
-  BulkMetersModel.findBulkMetersById(req.params.ID).then(
+exports.findProductionMetersById = (req, res) => {
+  ProductionMetersModel.findProductionMetersById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -22,8 +22,8 @@ exports.findBulkMetersById = (req, res) => {
   );
 };
 
-exports.findBulkMetersByMeterNo = (req, res) => {
-  BulkMetersModel.findBulkMetersByMeterNo(req.params.meterno).then(
+exports.findProductionMetersByMeterNo = (req, res) => {
+  ProductionMetersModel.findProductionMetersByMeterNo(req.params.meterno).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -33,8 +33,8 @@ exports.findBulkMetersByMeterNo = (req, res) => {
   );
 };
 
-exports.updateBulkMetersById = (req, res) => {
-  BulkMetersModel.updateBulkMetersById(req.body, req.params.ID).then(
+exports.updateProductionMetersById = (req, res) => {
+  ProductionMetersModel.updateProductionMetersById(req.body, req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -45,8 +45,8 @@ exports.updateBulkMetersById = (req, res) => {
   );
 };
 
-exports.deleteBulkMetersById = (req, res) => {
-  BulkMetersModel.deleteBulkMetersById(req.params.ID).then(
+exports.deleteProductionMetersById = (req, res) => {
+  ProductionMetersModel.deleteProductionMetersById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -56,8 +56,8 @@ exports.deleteBulkMetersById = (req, res) => {
   );
 };
 
-exports.findAllBulkMeters = (req, res) => {
-  BulkMetersModel.findAllBulkMeters().then(
+exports.findAllProductionMeters = (req, res) => {
+  ProductionMetersModel.findAllProductionMeters().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -67,8 +67,8 @@ exports.findAllBulkMeters = (req, res) => {
   );
 };
 
-exports.findBulkMetersPagnited = (req, res) => {
-  BulkMetersModel.findBulkMetersPagnited(req.params.offset).then(
+exports.findProductionMetersPagnited = (req, res) => {
+  ProductionMetersModel.findProductionMetersPagnited(req.params.offset).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -78,8 +78,8 @@ exports.findBulkMetersPagnited = (req, res) => {
   );
 };
 
-exports.findBulkMetersPagnitedSearch = (req, res) => {
-  BulkMetersModel.findBulkMetersPagnitedSearch(
+exports.findProductionMetersPagnitedSearch = (req, res) => {
+  ProductionMetersModel.findProductionMetersPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
@@ -93,8 +93,8 @@ exports.findBulkMetersPagnitedSearch = (req, res) => {
   );
 };
 
-exports.searchOneBulkMeters = (req, res) => {
-  BulkMetersModel.searchOneBulkMeters(req.params.value).then(
+exports.searchOneProductionMeters = (req, res) => {
+  ProductionMetersModel.searchOneProductionMeters(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -105,7 +105,7 @@ exports.searchOneBulkMeters = (req, res) => {
 };
 
 exports.searchOthers = (req, res) => {
-  BulkMetersModel.searchOthers(req.params.table, req.params.value).then(
+  ProductionMetersModel.searchOthers(req.params.table, req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -115,8 +115,8 @@ exports.searchOthers = (req, res) => {
   );
 };
 
-exports.filterBulkMeters = (req, res) => {
-  BulkMetersModel.filterBulkMeters(
+exports.filterProductionMeters = (req, res) => {
+  ProductionMetersModel.filterProductionMeters(
     req.params.column,
     req.params.operator,
     req.params.value,
@@ -132,7 +132,7 @@ exports.filterBulkMeters = (req, res) => {
 };
 
 exports.totalMapped = (req, res) => {
-  BulkMetersModel.totalMapped().then(
+  ProductionMetersModel.totalMapped().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -143,7 +143,7 @@ exports.totalMapped = (req, res) => {
 };
 
 exports.getGeoJSON = (req, res) => {
-  BulkMetersModel.getGeoJSON().then(
+  ProductionMetersModel.getGeoJSON().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -154,7 +154,7 @@ exports.getGeoJSON = (req, res) => {
 };
 
 exports.getStats = (req, res) => {
-  BulkMetersModel.getStats().then(
+  ProductionMetersModel.getStats().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -165,7 +165,7 @@ exports.getStats = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-  BulkMetersModel.findCharts().then(
+  ProductionMetersModel.findCharts().then(
     (result) => {
       res.status(200).send(result);
     },

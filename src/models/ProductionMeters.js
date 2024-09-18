@@ -1,20 +1,12 @@
 const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    const BulkMeters = sequelize.define("BulkMeters", {
+    const ProductionMeters = sequelize.define("ProductionMeters", {
         ID: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             allowNull: false,
             primaryKey: true,
-        },
-        Remarks: {
-            type: Sequelize.STRING,
-            allowNull: true
-        },
-        RecTime: {
-            type: Sequelize.STRING,
-            allowNull: true
         },
         Latitude: {
             type: Sequelize.FLOAT,
@@ -24,11 +16,15 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.FLOAT,
             allowNull: false
         },
-        Elevation: {
-            type: Sequelize.DOUBLE,
-            allowNull: false
+        Name: {
+            type: Sequelize.STRING,
+            allowNull: true
         },
-        MeterNo: {
+        AccountNumber: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        MeterSerial: {
             type: Sequelize.STRING,
             allowNull: true
         },
@@ -36,28 +32,24 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING,
             allowNull: true
         },
-        Year: {
-            type: Sequelize.DOUBLE,
+        YearOfInstallation: {
+            type: Sequelize.STRING,
             allowNull: false
-        },
-        WaterPipe: {
-            type: Sequelize.STRING,
-            allowNull: true
-        },
-        DMA: {
-            type: Sequelize.STRING,
-            allowNull: true
         },
         Status: {
             type: Sequelize.STRING,
             allowNull: true
         },
-        Diameter: {
+        MeterSize: {
             type: Sequelize.STRING,
             allowNull: false
         },
+        Remarks: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
         User: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             allowNull: true,
           },
         Photo: {
@@ -65,11 +57,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         geom: {
-            type: DataTypes.GEOMETRY("POINTZM", 4326),
+            type: DataTypes.GEOMETRY("POINT", 4326),
             allowNull: true,
           },
         
     }, );
 
-    return BulkMeters;
+    return ProductionMeters;
 };

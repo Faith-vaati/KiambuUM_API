@@ -299,8 +299,8 @@ exports.getStats = () => {
       const [MasterMeters, imeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."MasterMeters"`
       );
-      const [BulkMeters, pmeta] = await sequelize.query(
-        `SELECT Count(*)::FLOAT as total FROM public."BulkMeters"`
+      const [ProductionMeters, pmeta] = await sequelize.query(
+        `SELECT Count(*)::FLOAT as total FROM public."ProductionMeters"`
       );
       const [Manholes, cbmeta] = await sequelize.query(
         `SELECT Count(*)::FLOAT as total FROM public."Manholes"`
@@ -318,7 +318,7 @@ exports.getStats = () => {
         Customers: Customers[0].total,
         Tanks: Tanks[0].total,
         MasterMeters: MasterMeters[0].total,
-        BulkMeters: BulkMeters[0].total,
+        ProductionMeters: ProductionMeters[0].total,
         Manholes: Manholes[0].total,
         CustomerChambers: CustomerChambers[0].total,
         ConnectionChambers: ConnectionChambers[0].total,

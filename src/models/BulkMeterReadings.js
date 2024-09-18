@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const sequelize = require("../configs/connection");
 
 module.exports = (sequelize, DataTypes) => {
-  const BulkMeterReadings = sequelize.define("BulkMeterReadings", {
+  const ProductionMeterReadings = sequelize.define("ProductionMeterReadings", {
     ID: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
@@ -35,5 +35,5 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  return BulkMeterReadings;
+  return ProductionMeterReadings;
 };
