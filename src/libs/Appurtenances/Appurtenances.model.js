@@ -127,6 +127,8 @@ exports.updateAppurtenancesById = (AppurtenancesData, id) => {
         resolve({ success: "Updated successfully", token: id });
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Retrieve failed" });
       }
     );

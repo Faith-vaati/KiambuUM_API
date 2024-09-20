@@ -32,7 +32,7 @@ exports.ProductionMetersRoutes = function (app) {
 
   app.get("/productionmeters/all/charts", [ProductionMetersController.findCharts]);
 
-  app.get("/productionmeters/details/:meterno", [
+  app.get("/productionmeters/details/:accountno", [
     ProductionMetersController.findProductionMetersByMeterNo,
   ]);
 

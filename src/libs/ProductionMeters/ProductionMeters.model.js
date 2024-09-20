@@ -92,11 +92,11 @@ exports.findProductionMetersById = (id) => {
   });
 };
 
-exports.findProductionMetersByMeterNo = (meterno) => {
+exports.findProductionMetersByMeterNo = (accountno) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, meta] = await sequelize.query(
-        `SELECT * FROM "ProductionMeters" WHERE "MeterNo"::text ILIKE '%${meterno}%'::text LIMIT 2 OFFSET 0`
+        `SELECT * FROM "ProductionMeters" WHERE "AccountNumber"::text ILIKE '%${accountno}%'::text LIMIT 2 OFFSET 0`
       );
 
       resolve(data);

@@ -23,7 +23,9 @@ exports.findProductionMetersById = (req, res) => {
 };
 
 exports.findProductionMetersByMeterNo = (req, res) => {
-  ProductionMetersModel.findProductionMetersByMeterNo(req.params.meterno).then(
+  ProductionMetersModel.findProductionMetersByMeterNo(
+    req.params.accountno
+  ).then(
     (result) => {
       res.status(200).send(result);
     },

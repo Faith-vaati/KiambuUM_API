@@ -63,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    User: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     geom: {
       type: DataTypes.GEOMETRY("POINT", 4326),
       allowNull: true,
