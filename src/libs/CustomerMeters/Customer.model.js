@@ -214,7 +214,7 @@ exports.searchOneCustomer = (value) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, metadata] = await sequelize.query(
-        `SELECT "SerialNo","AccountNo", "Latitude", "Longitude" FROM "CustomerMeters" WHERE ("AccountNo"::text ILIKE '%${value}%' OR "SerialNo"::text ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+        `SELECT "MeterSerial","AccountNo", "Latitude", "Longitude" FROM "CustomerMeters" WHERE ("AccountNo"::text ILIKE '%${value}%' OR "SerialNo"::text ILIKE '%${value}%') LIMIT 1 OFFSET 0`
       );
       resolve(result);
     } catch (error) {
