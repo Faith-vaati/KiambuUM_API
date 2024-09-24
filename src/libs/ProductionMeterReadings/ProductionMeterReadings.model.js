@@ -35,12 +35,14 @@ exports.create = (ProductionMeterReadingsData) => {
       reject({ error: "Body is required" });
     }
     try {
-      const Images = `${ProductionMeterReadingsData.DMAName}-${
-        ProductionMeterReadingsData.Date
-      }-${Date.now()}.png`;
+      const Images = `${ProductionMeterReadingsData.Type}-${
+        ProductionMeterReadingsData.MeterName
+      }-${ProductionMeterReadingsData.Date}-${Date.now()}.png`;
       createFileFromBase64(ProductionMeterReadingsData.Image, Images);
       ProductionMeterReadingsData.Image = Images;
-      const createdMeter = await ProductionMeterReadings.create(ProductionMeterReadingsData);
+      const createdMeter = await ProductionMeterReadings.create(
+        ProductionMeterReadingsData
+      );
       const id = createdMeter.dataValues.ID;
 
       resolve({
@@ -69,7 +71,10 @@ exports.findProductionMeterReadingsById = (id) => {
   });
 };
 
-exports.updateProductionMeterReadingsById = (ProductionMeterReadingsData, id) => {
+exports.updateProductionMeterReadingsById = (
+  ProductionMeterReadingsData,
+  id
+) => {
   return new Promise((resolve, reject) => {
     ProductionMeterReadings.update(ProductionMeterReadingsData, {
       where: {

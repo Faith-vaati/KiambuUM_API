@@ -3,9 +3,7 @@ const ProductionMeterReadingsModel = require("./ProductionMeterReadings.model");
 exports.create = (req, res) => {
   ProductionMeterReadingsModel.create(req.body).then(
     (result) => {
-      res
-        .status(200)
-        .send({ success: "ProductionMeterReading Created Successfully" });
+      res.status(200).send({ success: "Submitted Successfully" });
     },
     (err) => {
       res.status(203).send(err);
@@ -14,7 +12,9 @@ exports.create = (req, res) => {
 };
 
 exports.findProductionMeterReadingsById = (req, res) => {
-  ProductionMeterReadingsModel.findProductionMeterReadingsById(req.params.ID).then(
+  ProductionMeterReadingsModel.findProductionMeterReadingsById(
+    req.params.ID
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -38,7 +38,9 @@ exports.updateProductionMeterReadingsById = (req, res) => {
   );
 };
 exports.deleteProductionMeterReadingById = (req, res) => {
-  ProductionMeterReadingsModel.deleteProductionMeterReadingById(req.params.id).then(
+  ProductionMeterReadingsModel.deleteProductionMeterReadingById(
+    req.params.id
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
