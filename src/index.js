@@ -33,6 +33,7 @@ const NewSanitationConnections = require("./libs/NewSanitationConnections/NewSan
 const ConsumerLine = require("./libs/ConsumerLine/ConsumerLine.route");
 const CustomerLine = require("./libs/CustomerLine/CustomerLine.route");
 const ProductionMeterReadings = require("./libs/ProductionMeterReadings/ProductionMeterReadings.route");
+const NRWInterventions = require("./libs//NRWInterventions/NRWInterventions.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -189,6 +190,7 @@ ConsumerLine.ConsumerLineRoutes(app);
 CustomerLine.CustomerLineRoutes(app);
 DMAMeterReadings.DMAMeterReadingsRoutes(app);
 ProductionMeterReadings.ProductionMeterReadingsRoutes(app);
+NRWInterventions.NRWInterventionRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(
