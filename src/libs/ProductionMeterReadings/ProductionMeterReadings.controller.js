@@ -5,7 +5,7 @@ exports.create = (req, res) => {
     (result) => {
       res
         .status(200)
-        .send({ success: "CustomerMeterReading Created Successfully" });
+        .send({ success: "ProductionMeterReading Created Successfully" });
     },
     (err) => {
       res.status(203).send(err);
@@ -37,8 +37,8 @@ exports.updateProductionMeterReadingsById = (req, res) => {
     }
   );
 };
-exports.deleteCustomerMeterReadingById = (req, res) => {
-  ProductionMeterReadingsModel.deleteCustomerMeterReadingById(req.params.id).then(
+exports.deleteProductionMeterReadingById = (req, res) => {
+  ProductionMeterReadingsModel.deleteProductionMeterReadingById(req.params.id).then(
     (result) => {
       res.status(200).send(result);
     },

@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const sequelize = require("../configs/connection");
 
 module.exports = (sequelize, DataTypes) => {
-  const ProductionMeterReadings = sequelize.define("ProductionMeterReadings", {
+  const DMAMeterReadings = sequelize.define("DMAMeterReadings", {
     ID: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
@@ -14,10 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     Units: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    Date: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -33,7 +29,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    Date: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   });
 
-  return ProductionMeterReadings;
+  return DMAMeterReadings;
 };

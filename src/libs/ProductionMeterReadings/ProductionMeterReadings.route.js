@@ -1,25 +1,27 @@
 const ProductionMeterReadingsController = require("./ProductionMeterReadings.controller");
 
 exports.ProductionMeterReadingsRoutes = function (app) {
-  app.post("/bulkreading/create", [ProductionMeterReadingsController.create]);
+  app.post("/productionreading/create", [
+    ProductionMeterReadingsController.create,
+  ]);
 
-  app.get("/bulkreading/:ID", [
+  app.get("/productionreading/:ID", [
     ProductionMeterReadingsController.findProductionMeterReadingsById,
   ]);
 
-  app.get("/bulkreading", [
+  app.get("/productionreading", [
     ProductionMeterReadingsController.findAllProductionMeterReadings,
   ]);
 
-  app.get("/bulkreading/paginated/:offset", [
+  app.get("/productionreading/paginated/:offset", [
     ProductionMeterReadingsController.findProductionMeterReadingsPaginated,
   ]);
 
-  app.delete("/bulkreading/:id", [
-    ProductionMeterReadingsController.deleteCustomerMeterReadingById,
+  app.delete("/productionreading/:id", [
+    ProductionMeterReadingsController.deleteProductionMeterReadingById,
   ]);
 
-  app.put("/bulkreading/:id", [
+  app.put("/productionreading/:id", [
     ProductionMeterReadingsController.updateProductionMeterReadingsById,
   ]);
 };

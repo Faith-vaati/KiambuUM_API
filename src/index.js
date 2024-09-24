@@ -21,6 +21,7 @@ const PublicUsers = require("./libs/PublicUsers/PublicUsers.route");
 const Categories = require("./libs/Categories/Categories.route");
 const ProductionMeters = require("./libs/ProductionMeters/ProductionMeters.route");
 const CustomerChamber = require("./libs/CustomerChamber/CustomerChamber.route");
+const DMAMeterReadings = require("./libs/DMAMeterReadings/DMAMeterReadings.route");
 const ConnectionChamber = require("./libs/ConnectionChamber/ConnectionChamber.route");
 const Offtake = require("./libs/Offtakes/Offtakes.route");
 const TreatmentPlant = require("./libs/TreatmentPlant/TreatmentPlant.route");
@@ -28,9 +29,10 @@ const CustomerMeterReadings = require("./libs/CustomerMeterReadings/CustomerMete
 const Boreholes = require("./libs/Boreholes/Boreholes.route");
 const Appurtenances = require("./libs/Appurtenances/Appurtenances.route");
 const NewWaterConnections = require("./libs/NewWaterConnections/NewWaterConnections.route");
-const NewSanitationConnections = require("./libs/NewSanitationConnections/NewSanitationConnections.route")
-const ConsumerLine = require("./libs/ConsumerLine/ConsumerLine.route")
-const CustomerLine = require("./libs/CustomerLine/CustomerLine.route")
+const NewSanitationConnections = require("./libs/NewSanitationConnections/NewSanitationConnections.route");
+const ConsumerLine = require("./libs/ConsumerLine/ConsumerLine.route");
+const CustomerLine = require("./libs/CustomerLine/CustomerLine.route");
+const ProductionMeterReadings = require("./libs/ProductionMeterReadings/ProductionMeterReadings.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -183,8 +185,10 @@ Boreholes.BoreholesRoutes(app);
 Appurtenances.AppurtenancesRoutes(app);
 NewWaterConnections.NewWaterConnectionsRoutes(app);
 NewSanitationConnections.NewSanitationConnectionsRoutes(app);
-ConsumerLine.ConsumerLineRoutes(app)
-CustomerLine.CustomerLineRoutes(app)
+ConsumerLine.ConsumerLineRoutes(app);
+CustomerLine.CustomerLineRoutes(app);
+DMAMeterReadings.DMAMeterReadingsRoutes(app);
+ProductionMeterReadings.ProductionMeterReadingsRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(

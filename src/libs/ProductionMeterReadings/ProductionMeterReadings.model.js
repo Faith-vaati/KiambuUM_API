@@ -30,7 +30,7 @@ exports.create = (ProductionMeterReadingsData) => {
   return new Promise(async (resolve, reject) => {
     if (
       ProductionMeterReadingsData.Units === undefined ||
-      ProductionMeterReadingsData.DMAName === undefined
+      ProductionMeterReadingsData.MeterName === undefined
     ) {
       reject({ error: "Body is required" });
     }
@@ -40,9 +40,7 @@ exports.create = (ProductionMeterReadingsData) => {
       }-${Date.now()}.png`;
       createFileFromBase64(ProductionMeterReadingsData.Image, Images);
       ProductionMeterReadingsData.Image = Images;
-      const createdMeter = await ProductionMeterReadings.create(
-        ProductionMeterReadingsData
-      );
+      const createdMeter = await ProductionMeterReadings.create(ProductionMeterReadingsData);
       const id = createdMeter.dataValues.ID;
 
       resolve({
@@ -88,7 +86,7 @@ exports.updateProductionMeterReadingsById = (ProductionMeterReadingsData, id) =>
   });
 };
 
-exports.deleteCustomerMeterReadingById = (id) => {
+exports.deleteProductionMeterReadingById = (id) => {
   return new Promise((resolve, reject) => {
     ProductionMeterReadings.destroy({
       where: {
@@ -97,7 +95,7 @@ exports.deleteCustomerMeterReadingById = (id) => {
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "CustomerMeterReading does not exist!!!" });
+        else reject({ error: "ProductionMeterReading does not exist!!!" });
       },
       (err) => {
         reject({ error: err });
