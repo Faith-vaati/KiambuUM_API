@@ -17,83 +17,87 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    Altitude: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
     Scope: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     AccountNo: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     MeterActivity: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     MeterModel: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    NewMeterModel: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     Reason: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    NewMeterModel: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     HighFlowResult: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     LowFlowResult: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     TestResult: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     MeterReadings: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     OldMeterReading: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     NewMeterReading: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    MeterSerial: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     NewMeterSerial: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     OldMeterSerial: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     ServiceReport: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     MeterPhotos: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     PhotoAfter: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     ActivityPhoto: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     Date: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    User: {
       type: DataTypes.STRING,
       allowNull: false,
     },
