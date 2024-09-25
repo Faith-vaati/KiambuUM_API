@@ -1,5 +1,4 @@
 const NRWInterventionController = require("./NRWInterventions.controller");
-const verifyToken = require("../Auth/VerifyToken");
 
 exports.NRWInterventionRoutes = function (app) {
   app.post("/intervention/create", [NRWInterventionController.create]);

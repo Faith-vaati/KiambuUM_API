@@ -81,16 +81,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    MeterPhotos: {
-      type: DataTypes.STRING,
+    NewOld_MeterPhotos: {
+      type: DataTypes.TEXT,
       allowNull: true,
     },
-    PhotoAfter: {
+    AfterRelocationPhoto: {
       type: DataTypes.STRING,
       allowNull: true,
     },
     ActivityPhoto: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     Date: {

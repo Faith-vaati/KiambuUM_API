@@ -16,65 +16,80 @@ function cleanData(obj) {
   return obj;
 }
 
-exports.createNRWIntervention = (NRWInterventionData) => {
+const fs = require("fs");
+const Path = require("path");
+
+async function createFileFromBase64(base64Data, filePath) {
+  if (filePath != null && base64Data != null) {
+    const base64DataWithoutHeader = base64Data.replace(
+      /^data:\w+\/\w+;base64,/,
+      ""
+    );
+    const buffer = Buffer.from(base64DataWithoutHeader, "base64");
+    const fullPath = Path.join(__dirname, "../../../uploads", filePath);
+    fs.writeFile(fullPath, buffer, (err) => {
+      if (err) {
+      } else {
+      }
+    });
+  }
+}
+
+exports.create = (NRWInterventionData) => {
+  console.log(NRWInterventionData);
+
   return new Promise(async (resolve, reject) => {
-    NRWInterventionData = cleanData(NRWInterventionData);
     if (
-      NRWInterventionData.Longitude === undefined ||
-      NRWInterventionData.Latitude === undefined
+      NRWInterventionData.Scope === undefined ||
+      NRWInterventionData.MeterActivity === undefined
     ) {
-      reject({ error: "Location is required" });
+      reject({ error: "Body is required" });
     }
 
-    NRWIntervention.create(NRWInterventionData).then(
-      async (result) => {
-        try {
-          const id = result.dataValues.ID;
-          const [data, dmeta] = await sequelize.query(
-            `UPDATE public."NRWInterventions" SET "geom" = ST_SetSRID(ST_MakePoint("Longitude","Latitude"), 4326) WHERE "ID" = '${id}';`
-          );
-          resolve({
-            success: "Connection Chamber Created successfully",
-            token: result.dataValues.ID,
-          });
-        } catch (error) {
-          if (
-            error instanceof Sequelize.ValidationError ||
-            error instanceof Sequelize.UniqueConstraintError
-          ) {
-            const detailMessages = error.errors.map((err) => err.message);
-            reject({
-              error:
-                detailMessages.length > 0
-                  ? detailMessages[0]
-                  : "Unexpected error!",
-            });
-          } else {
-            reject({
-              error: error.message,
-            });
-          }
-        }
-      },
-      (error) => {
-        if (
-          error instanceof Sequelize.ValidationError ||
-          error instanceof Sequelize.UniqueConstraintError
-        ) {
-          const detailMessages = error.errors.map((err) => err.message);
-          reject({
-            error:
-              detailMessages.length > 0
-                ? detailMessages[0]
-                : "Unexpected error!",
-          });
-        } else {
-          reject({
-            error: error.message,
-          });
-        }
+    try {
+      const currentDate =
+        NRWInterventionData.Date || new Date().toISOString().split("T")[0];
+
+      const Images = `${
+        NRWInterventionData.MeterActivity
+      }-${currentDate}-${Date.now()}.png`;
+      createFileFromBase64(NRWInterventionData.ActivityPhoto, Images);
+      NRWInterventionData.ActivityPhoto = Images;
+
+      if (NRWInterventionData.NewOld_MeterPhotos !== "") {
+        const Image2 = `${NRWInterventionData.MeterActivity}-${
+          NRWInterventionData.Reason
+        }-${currentDate}-${Date.now()}.png`;
+        createFileFromBase64(NRWInterventionData.NewOld_MeterPhotos, Image2);
+        NRWInterventionData.NewOld_MeterPhotos = Image2;
       }
-    );
+
+      const createdIntervention = await NRWIntervention.create(
+        NRWInterventionData
+      );
+      const id = createdIntervention.dataValues.ID;
+
+      const updateGeom = `
+        UPDATE public."NRWInterventions"
+        SET "geom" = ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)
+        WHERE "ID" = :id
+      `;
+
+      const [data, dmeta] = await sequelize.query(updateGeom, {
+        replacements: {
+          longitude: NRWInterventionData.Longitude,
+          latitude: NRWInterventionData.Latitude,
+          id: id,
+        },
+      });
+
+      resolve({
+        success: "Submitted successfully",
+        ID: id,
+      });
+    } catch (error) {
+      reject({ error: error.message ?? "Submission failed" });
+    }
   });
 };
 

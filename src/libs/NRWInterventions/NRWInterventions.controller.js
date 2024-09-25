@@ -1,7 +1,7 @@
 const NRWInterventionModel = require("./NRWInterventions.model");
 
 exports.create = (req, res) => {
-    NRWInterventionModel.createNRWIntervention(req.body).then(
+    NRWInterventionModel.create(req.body).then(
     (result) => {
       res.status(200).send(result);
     },

@@ -1,6 +1,4 @@
 const ReportsController = require("./Reports.controller");
-const ReportsModel = require("./Reports.model");
-const verifyToken = require("../Utils/VerifyToken");
 
 exports.ReportsRoutes = function (app) {
   app.post("/reports/create", [ReportsController.insert]);
