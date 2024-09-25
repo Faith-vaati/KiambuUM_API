@@ -56,12 +56,12 @@ exports.create = (NRWInterventionData) => {
       createFileFromBase64(NRWInterventionData.ActivityPhoto, Images);
       NRWInterventionData.ActivityPhoto = Images;
 
-      if (NRWInterventionData.NewOld_MeterPhotos !== "") {
+      if (NRWInterventionData.AfterPhoto !== "") {
         const Image2 = `${NRWInterventionData.MeterActivity}-${
           NRWInterventionData.Reason
         }-${currentDate}-${Date.now()}.png`;
-        createFileFromBase64(NRWInterventionData.NewOld_MeterPhotos, Image2);
-        NRWInterventionData.NewOld_MeterPhotos = Image2;
+        createFileFromBase64(NRWInterventionData.AfterPhoto, Image2);
+        NRWInterventionData.AfterPhoto = Image2;
       }
 
       const createdIntervention = await NRWIntervention.create(
