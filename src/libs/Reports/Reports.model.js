@@ -383,7 +383,6 @@ exports.findReportByID = (id) => {
         if (result == null) {
           reject({ status: 404, message: "Data not found" });
         }
-        print(result);
         resolve(result);
       },
       (err) => {

@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     geom: {
-      type: DataTypes.GEOMETRY("MULTILINESTRINGZM", 4326),  
+      type: DataTypes.GEOMETRY("MULTILINESTRING", 4326),  
       allowNull: true,
     },
     
