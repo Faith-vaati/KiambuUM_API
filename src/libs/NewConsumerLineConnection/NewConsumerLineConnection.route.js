@@ -1,7 +1,7 @@
 const ConsumerLineController = require("./NewConsumerLineConnection.controller");
 const verifyToken = require("../Auth/VerifyToken");
 
-exports.ConsumerLineRoutes = function (app) {
+exports.NewConsumerLineConnectionRoutes = function (app) {
   app.post("/consumerline/create", [ConsumerLineController.create]);
 
   app.get("/consumerline/paginated/:offset", [

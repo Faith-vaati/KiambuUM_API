@@ -1,7 +1,7 @@
 const CustomerLineController = require("./NewCustomerLineConnection.controller");
 const verifyToken = require("../Auth/VerifyToken");
 
-exports.CustomerLineRoutes = function (app) {
+exports.NewCustomerLineConnectionRoutes = function (app) {
   app.post("/customerline/create", [CustomerLineController.create]);
 
   app.get("/customerline/paginated/:offset", [
