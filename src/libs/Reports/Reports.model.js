@@ -485,7 +485,7 @@ exports.findStats = () => {
         const Total = await Reports.count({});
         const Received = await Reports.count({ where: { Status: "Received" } });
         const Assigned = await Reports.count({
-          where: { Status: "In Progress" },
+          where: { Status: "Assigned" },
         });
         const Resolved = await Reports.count({ where: { Status: "Resolved" } });
         const NotResolved = await Reports.count({
