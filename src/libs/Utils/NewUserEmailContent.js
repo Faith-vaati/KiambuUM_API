@@ -19,7 +19,7 @@ const getContent = (from, data) => {
             color: #a20c0c;
           "
         >
-          Mathira Water and Sanitation Company
+          Kiambu Water and Sewarage Company
         </h2>
         <h3
           style="
@@ -29,7 +29,7 @@ const getContent = (from, data) => {
             color: #fd5614;
           "
         >
-          MAWASCO Geospatial Portal
+          Utility Manager Solution
         </h3>
       </div>
 
@@ -58,9 +58,7 @@ const getContent = (from, data) => {
            <h4>
             <b>Role: </b> ${data.Role}
           </h4>
-            <h4>
-            <b>Default Password: </b> 123456
-          </h4>
+           
         </div>
         <div class="part2">
           <h4 style="text-align: center; color: #0e0e80">
@@ -77,7 +75,7 @@ const getContent = (from, data) => {
         style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3em"
       >
         <div class="section">
-          <h3 style="display: block">Mathira Water and Sanitation Company</h3>
+          <h3 style="display: block">Kiambu Water and Sewerage Company</h3>
           <p>
             Quality Water to All Always
           </p>
@@ -85,13 +83,13 @@ const getContent = (from, data) => {
         <div class="section">
           <h3 style="display: block">Contact Us</h3>
           <p style="display: inline-block; margin: 10px 1em 10px 1em">
-            info@mawasco.co.ke
+            info@kiambuwater.com
           </p>
           <p style="display: inline-block; margin: 10px 1em 10px 1em">
-            +254 716-80264
+            +254 716-452-238
           </p>
           <p style="display: inline-block; margin: 10px 1em 10px 1em">
-            +254 0773-855003
+            020-213-3977
           </p>
         </div>
       </div>

@@ -50,7 +50,7 @@ const getReported = (from, data) => {
             color: #a20c0c;
           "
         >
-          Mathira Water and Sanitation Company
+          Kiambu Water and Sewerage Company
         </h2>
         <h3
           style="
@@ -94,7 +94,7 @@ const getReported = (from, data) => {
             <b>Click on the link below to see a photo of the incident: </b>
           </h4>
           
-          <a href="https://api-utilitymanager.mawasco.co.ke/api/uploads/${
+          <a href="https://api-utilitymanagerkiambu.dat.co.ke/api/uploads/${
             data.Image
           }">
             <b>Image</b> 
@@ -114,21 +114,21 @@ const getReported = (from, data) => {
         style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3em"
       >
         <div class="section">
-          <h3 style="display: block">Mathira Water and Sanitation Company</h3>
+          <h3 style="display: block">Kiambu Water and Sewerage Company</h3>
           <p>
             Quality Water to All Always
           </p>
         </div>
-        <div class="section">
+       <div class="section">
           <h3 style="display: block">Contact Us</h3>
           <p style="display: inline-block; margin: 10px 1em 10px 1em">
-            info@mawasco.co.ke
+            info@kiambuwater.com
           </p>
           <p style="display: inline-block; margin: 10px 1em 10px 1em">
-            +254 716-802664
+            +254 716-452-238
           </p>
           <p style="display: inline-block; margin: 10px 1em 10px 1em">
-            +254 0773-855003
+            020-213-3977
           </p>
         </div>
       </div>

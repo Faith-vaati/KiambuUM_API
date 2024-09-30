@@ -23,16 +23,7 @@ transport.verify(function (error, success) {
 function sendMail(subject, email, content) {
   return transport.sendMail({
     from: process.env.user,
-    to: [
-      process.env.receiver,
-      process.env.receiver2,
-      process.env.receiver3,
-      process.env.receiver4,
-      process.env.receiver5,
-      process.env.receiver6,
-      process.env.receiver7,
-      process.env.receiver8,
-    ],
+    to: [process.env.receiver1, process.env.receiver2, process.env.receiver3],
     subject: subject,
     html: content,
   });
