@@ -121,7 +121,7 @@ exports.findDailyReadings = (start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}'`
+        `SELECT * FROM "DMAMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}' ORDER BY "Date" ASC`
       );
       resolve({
         data: data,
