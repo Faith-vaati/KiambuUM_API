@@ -117,18 +117,14 @@ exports.findAllDMAMeterReadings = () => {
   });
 };
 
-exports.findDMAMeterReadingsPaginated = (offset) => {
+exports.findDailyReadings = (start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [results, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings"  ORDER BY "createdAt" LIMIT 12 OFFSET ${offset}`
-      );
-      const [count, cmeta] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "DMAMeterReadings"`
+      const [data, metadata] = await sequelize.query(
+        `SELECT * FROM "DMAMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}'`
       );
       resolve({
-        data: results,
-        total: count[0].total,
+        data: data,
       });
     } catch (error) {
       reject({ error: "Retrieve failed" });

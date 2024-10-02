@@ -122,18 +122,14 @@ exports.findAllProductionMeterReadings = () => {
   });
 };
 
-exports.findProductionMeterReadingsPaginated = (offset) => {
+exports.findDailyReadings = (date) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [results, metadata] = await sequelize.query(
-        `SELECT * FROM "ProductionMeterReadings"  ORDER BY "createdAt" LIMIT 12 OFFSET ${offset}`
-      );
-      const [count, cmeta] = await sequelize.query(
-        `SELECT Count(*)::int AS total FROM "ProductionMeterReadings"`
+      const [data, metadata] = await sequelize.query(
+        `SELECT * FROM "ProductionMeterReadings"  WHERE "Date" = '${date}'`
       );
       resolve({
-        data: results,
-        total: count[0].total,
+        data: data,
       });
     } catch (error) {
       reject({ error: "Retrieve failed" });

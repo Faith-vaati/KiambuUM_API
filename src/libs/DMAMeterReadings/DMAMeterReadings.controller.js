@@ -56,8 +56,11 @@ exports.findAllDMAMeterReadings = (req, res) => {
   );
 };
 
-exports.findDMAMeterReadingsPaginated = (req, res) => {
-  DMAMeterReadingsModel.findDMAMeterReadingsPaginated(req.params.offset).then(
+exports.findDailyReadings = (req, res) => {
+  DMAMeterReadingsModel.findDailyReadings(
+    req.params.start,
+    req.params.end
+  ).then(
     (result) => {
       res.status(200).send(result);
     },

@@ -60,10 +60,8 @@ exports.findAllProductionMeterReadings = (req, res) => {
   );
 };
 
-exports.findProductionMeterReadingsPaginated = (req, res) => {
-  ProductionMeterReadingsModel.findProductionMeterReadingsPaginated(
-    req.params.offset
-  ).then(
+exports.findDailyReadings = (req, res) => {
+  ProductionMeterReadingsModel.findDailyReadings(req.params.date).then(
     (result) => {
       res.status(200).send(result);
     },

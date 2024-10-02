@@ -9,8 +9,8 @@ exports.DMAMeterReadingsRoutes = function (app) {
 
   app.get("/dmareading", [DMAMeterReadingsController.findAllDMAMeterReadings]);
 
-  app.get("/dmareading/paginated/:offset", [
-    DMAMeterReadingsController.findDMAMeterReadingsPaginated,
+  app.get("/dmareading/daily/:start/:end", [
+    DMAMeterReadingsController.findDailyReadings,
   ]);
 
   app.delete("/dmareading/:id", [

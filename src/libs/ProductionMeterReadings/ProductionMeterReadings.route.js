@@ -13,8 +13,8 @@ exports.ProductionMeterReadingsRoutes = function (app) {
     ProductionMeterReadingsController.findAllProductionMeterReadings,
   ]);
 
-  app.get("/productionreading/paginated/:offset", [
-    ProductionMeterReadingsController.findProductionMeterReadingsPaginated,
+  app.get("/productionreading/daily/:date", [
+    ProductionMeterReadingsController.findDailyReadings,
   ]);
 
   app.delete("/productionreading/:id", [
