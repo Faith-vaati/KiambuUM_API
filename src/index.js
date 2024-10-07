@@ -220,6 +220,89 @@ app.get("/insert/:scheme/:start", (req, res) => {
     .catch((err) => {});
 });
 
+async function getAccessToken() {
+  const url =
+    "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
+  const auth = Buffer.from(
+    `${process.env.DARAJA_CONSUMER_KEY}:${process.env.DARAJA_CONSUMER_SECRET}`
+  ).toString("base64");
+
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    });
+    console.log(`Token: ${response.data.access_token}`);
+    return response.data.access_token;
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+    throw new Error("Unable to fetch access token");
+  }
+}
+
+// Wallet top-up endpoint
+app.post("/processrequest", async (req, res) => {
+  const { phone_number, amount } = req.body;
+
+  // Ensure phone and amount are valid
+  if (!phone_number || !amount) {
+    return res
+      .status(400)
+      .json({ error: "Phone number and amount are required!" });
+  }
+
+  try {
+    const response = await stkPush(phone_number, amount);
+    res.json({
+      success: true,
+      message: "STK push initiated",
+      data: response,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error initiating STK push",
+    });
+  }
+});
+
+async function stkPush(phone, amount) {
+  try {
+    const accessToken = await getAccessToken();
+    const url =
+      "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+    const timestamp = moment().format("YYYYMMDDHHmmss");
+    const password = Buffer.from(
+      `${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`
+    ).toString("base64");
+
+    const payload = {
+      BusinessShortCode: process.env.MPESA_SHORTCODE,
+      Password: password,
+      Timestamp: timestamp,
+      TransactionType: "CustomerPayBillOnline",
+      Amount: amount,
+      PartyA: phone,
+      PartyB: process.env.MPESA_SHORTCODE,
+      PhoneNumber: phone,
+      CallBackURL: process.env.MPESA_CALLBACK_URL,
+      AccountReference: "WalletTopUp",
+      TransactionDesc: "Top up your wallet",
+    };
+
+    const response = await axios.post(url, payload, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    console.log("STK push initiated successfully.");
+    return response.data;
+  } catch (error) {
+    console.error("Error initiating STK push:", error);
+    throw new Error("STK Push request failed");
+  }
+}
+
 async function createNew(data) {
   let number = 0;
   for (var i = 0; i < data.length; i++) {
