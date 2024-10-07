@@ -9,6 +9,12 @@ exports.DMAMeterReadingsRoutes = function (app) {
 
   app.get("/dmareading", [DMAMeterReadingsController.findAllDMAMeterReadings]);
 
+  app.get("/dmareading/searchdma/:dma", [DMAMeterReadingsController.searchDMA]);
+
+  app.get("/dmareading/bydma/:dma", [
+    DMAMeterReadingsController.findDMAReadings,
+  ]);
+
   app.get("/dmareading/daily/:start/:end", [
     DMAMeterReadingsController.findDailyReadings,
   ]);

@@ -122,11 +122,41 @@ exports.findAllProductionMeterReadings = () => {
   });
 };
 
-exports.findDailyReadings = (date) => {
+exports.findDailyReadings = (start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "ProductionMeterReadings"  WHERE "Date" = '${date}'`
+        `SELECT * FROM "ProductionMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}' ORDER BY "Units" DESC`
+      );
+      resolve({
+        data: data,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
+exports.findDMAReadings = (dma) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, metadata] = await sequelize.query(
+        `SELECT * FROM "ProductionMeterReadings" WHERE "MeterName" = '${dma}' ORDER BY "Date" ASC`
+      );
+      resolve({
+        data: data,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
+exports.searchDMA = (dma) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, metadata] = await sequelize.query(
+        `SELECT * FROM "ProductionMeterReadings" WHERE "MeterName" ILIKE '%${dma}%' ORDER BY "Date" ASC`
       );
       resolve({
         data: data,

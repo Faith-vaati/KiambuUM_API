@@ -56,6 +56,28 @@ exports.findAllDMAMeterReadings = (req, res) => {
   );
 };
 
+exports.searchDMA = (req, res) => {
+  DMAMeterReadingsModel.searchDMA(req.params.dma).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findDMAReadings = (req, res) => {
+  DMAMeterReadingsModel.findDMAReadings(req.params.dma).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
 exports.findDailyReadings = (req, res) => {
   DMAMeterReadingsModel.findDailyReadings(
     req.params.start,

@@ -121,7 +121,7 @@ exports.findDailyReadings = (start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}' ORDER BY "Date" ASC`
+        `SELECT * FROM "DMAMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}' ORDER BY "Units" DESC`
       );
       resolve({
         data: data,
@@ -131,3 +131,34 @@ exports.findDailyReadings = (start, end) => {
     }
   });
 };
+
+exports.findDMAReadings = (dma) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, metadata] = await sequelize.query(
+        `SELECT * FROM "DMAMeterReadings" WHERE "DMAName" = '${dma}' ORDER BY "Date" ASC`
+      );
+      resolve({
+        data: data,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
+exports.searchDMA = (dma) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, metadata] = await sequelize.query(
+        `SELECT * FROM "DMAMeterReadings" WHERE "DMAName" ILIKE '%${dma}%' ORDER BY "Date" ASC`
+      );
+      resolve({
+        data: data,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
