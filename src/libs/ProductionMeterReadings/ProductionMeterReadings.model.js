@@ -141,7 +141,7 @@ exports.findDMAReadings = (dma) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "ProductionMeterReadings" WHERE "MeterName" = '${dma}' ORDER BY "Date" ASC`
+        `SELECT * FROM "ProductionMeterReadings" WHERE "MeterName" = '${dma}' ORDER BY "Date" DESC`
       );
       resolve({
         data: data,

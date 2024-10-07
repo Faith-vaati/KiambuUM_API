@@ -151,7 +151,7 @@ exports.searchDMA = (dma) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings" WHERE "DMAName" ILIKE '%${dma}%' ORDER BY "Date" ASC`
+        `SELECT * FROM "DMAMeterReadings" WHERE "DMAName" ILIKE '%${dma}%' ORDER BY "Date" DESC`
       );
       resolve({
         data: data,
@@ -161,4 +161,3 @@ exports.searchDMA = (dma) => {
     }
   });
 };
-
