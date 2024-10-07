@@ -13,13 +13,13 @@ exports.ProductionMeterReadingsRoutes = function (app) {
     ProductionMeterReadingsController.findAllProductionMeterReadings,
   ]);
 
-    app.get("/dmareading/searchdma/:dma", [
-      ProductionMeterReadingsController.searchDMA,
-    ]);
+  app.get("/productionreading/searchdma/:dma", [
+    ProductionMeterReadingsController.searchDMA,
+  ]);
 
-    app.get("/dmareading/bydma/:dma", [
-      ProductionMeterReadingsController.findDMAReadings,
-    ]);
+  app.get("/productionreading/bydma/:dma", [
+    ProductionMeterReadingsController.findDMAReadings,
+  ]);
 
   app.get("/productionreading/daily/:start/:end", [
     ProductionMeterReadingsController.findDailyReadings,
