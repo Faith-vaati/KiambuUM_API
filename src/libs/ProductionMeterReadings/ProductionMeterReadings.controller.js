@@ -60,8 +60,34 @@ exports.findAllProductionMeterReadings = (req, res) => {
   );
 };
 
+
+exports.searchDMA = (req, res) => {
+  ProductionMeterReadingsModel.searchDMA(req.params.dma).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findDMAReadings = (req, res) => {
+  ProductionMeterReadingsModel.findDMAReadings(req.params.dma).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
 exports.findDailyReadings = (req, res) => {
-  ProductionMeterReadingsModel.findDailyReadings(req.params.date).then(
+  ProductionMeterReadingsModel.findDailyReadings(
+    req.params.start,
+    req.params.end
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
