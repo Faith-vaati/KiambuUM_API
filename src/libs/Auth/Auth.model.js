@@ -108,7 +108,7 @@ exports.loginAuth = (res, AuthData) => {
 
           resolve({ token: token, success: "Login successful" });
         } else {
-          reject({ error: "Authentication failed" });
+          reject({ error: "Wrong Password" });
         }
       },
       (err) => {

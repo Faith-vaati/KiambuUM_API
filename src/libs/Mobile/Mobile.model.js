@@ -53,7 +53,6 @@ exports.Login = (res, MobileData) => {
       raw: true,
     }).then(
       async (result) => {
-
         if (result.length === 0)
           return reject({ error: "This user does not exist!" });
         if (
@@ -88,7 +87,7 @@ exports.Login = (res, MobileData) => {
 
           resolve({ token: token, success: "Login successful" });
         } else {
-          reject({ error: "User Authentication failed" });
+          reject({ error: "Wrong Password" });
         }
       },
       (err) => {

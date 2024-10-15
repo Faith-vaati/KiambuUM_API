@@ -84,7 +84,7 @@ exports.userlogin = (res, MobileData) => {
           });
           resolve({ token: token, success: "Login successful" });
         } else {
-          reject({ error: "User Authentication failed" });
+          reject({ error: "Wrong Password" });
         }
       },
       (err) => {

@@ -120,9 +120,36 @@ exports.findAllDMAMeterReadings = () => {
 exports.findDailyReadings = (start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
+      // Convert the start date to a Date object
+      const startDate = new Date(start);
+      // Subtract one day (24 hours) from the start date
+      const yesterdayDate = new Date(startDate);
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+
+      // Format the date back to YYYY-MM-DD format
+      const yesterday = yesterdayDate.toISOString().split("T")[0];
+
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings" WHERE "Date" >= '${start}' AND "Date" <= '${end}' ORDER BY "Units" DESC`
+        `SELECT 
+          A."DMAName", 
+          CAST(A."Units" AS FLOAT) AS "Units", 
+          A."MeterStatus", 
+          A."Image", 
+          A."Date", 
+          (CAST(A."Units" AS FLOAT) - COALESCE(CAST(B."Units" AS FLOAT), 0)) AS "Consumption",
+          A."createdAt",
+          A."updatedAt"
+        FROM 
+          "DMAMeterReadings" A
+        LEFT JOIN 
+          (SELECT "DMAName", "Units" 
+           FROM "DMAMeterReadings" 
+           WHERE "Date" = '${yesterday}') B 
+        ON A."DMAName" = B."DMAName"
+       WHERE "Date" >= '${start}' AND "Date" <= '${end}'
+        ORDER BY CAST(A."Units" AS FLOAT) DESC;`
       );
+
       resolve({
         data: data,
       });
@@ -136,7 +163,34 @@ exports.findDMAReadings = (dma) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings" WHERE "DMAName" = '${dma}' ORDER BY "Date" ASC`
+        `SELECT  
+    A."DMAName", 
+     
+    A."MeterStatus", 
+    A."Image", 
+    A."Date", 
+    A."createdAt",
+    CAST(A."Units" AS FLOAT) AS "Units",
+    (CAST(A."Units" AS FLOAT) - COALESCE(
+        (SELECT CAST(B."Units" AS FLOAT)
+         FROM "DMAMeterReadings" B 
+         WHERE B."DMAName" = A."DMAName" 
+           AND B."Date" = (
+                SELECT MAX("Date") 
+                FROM "DMAMeterReadings" 
+                WHERE "DMAName" = A."DMAName" 
+                  AND "Date" < A."Date"
+            )
+         ORDER BY B."Date" DESC
+         LIMIT 1
+        ), 0)
+    ) AS "Consumption"
+FROM 
+    "DMAMeterReadings" A
+WHERE 
+    A."DMAName" = '${dma}'
+ORDER BY 
+    CAST(A."Units" AS FLOAT) DESC;`
       );
       resolve({
         data: data,
