@@ -81,7 +81,8 @@ exports.findDMAReadings = (req, res) => {
 exports.findDailyReadings = (req, res) => {
   DMAMeterReadingsModel.findDailyReadings(
     req.params.start,
-    req.params.end
+    req.params.end,
+    req.params.offset
   ).then(
     (result) => {
       res.status(200).send(result);
