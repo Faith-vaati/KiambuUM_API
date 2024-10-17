@@ -163,7 +163,6 @@ exports.findDMAReadings = (dma) => {
       const [data, metadata] = await sequelize.query(
         `SELECT  
     A."DMAName", 
-     
     A."MeterStatus", 
     A."Image", 
     A."Date", 
@@ -187,8 +186,7 @@ FROM
     "DMAMeterReadings" A
 WHERE 
     A."DMAName" = '${dma}'
-ORDER BY 
-    CAST(A."Units" AS FLOAT) DESC;`
+ORDER BY "Date" DESC;`
       );
       resolve({
         data: data,
