@@ -117,41 +117,39 @@ exports.findAllDMAMeterReadings = () => {
   });
 };
 
-exports.findDailyReadings = (start, end) => {
+exports.findDailyReadings = (start, end, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // Convert the start date to a Date object
-      const startDate = new Date(start);
-      // Subtract one day (24 hours) from the start date
-      const yesterdayDate = new Date(startDate);
-      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-
-      // Format the date back to YYYY-MM-DD format
-      const yesterday = yesterdayDate.toISOString().split("T")[0];
-
       const [data, metadata] = await sequelize.query(
-        `SELECT 
-          A."DMAName", 
-          CAST(A."Units" AS FLOAT) AS "Units", 
-          A."MeterStatus", 
-          A."Image", 
-          A."Date", 
-          (CAST(A."Units" AS FLOAT) - COALESCE(CAST(B."Units" AS FLOAT), 0)) AS "Consumption",
-          A."createdAt",
-          A."updatedAt"
-        FROM 
-          "DMAMeterReadings" A
-        LEFT JOIN 
-          (SELECT "DMAName", "Units" 
-           FROM "DMAMeterReadings" 
-           WHERE "Date" = '${yesterday}') B 
-        ON A."DMAName" = B."DMAName"
-       WHERE "Date" >= '${start}' AND "Date" <= '${end}'
-        ORDER BY CAST(A."Units" AS FLOAT) DESC;`
+        `SELECT DISTINCT
+    A."DMAName",
+    CAST(A."Units" AS FLOAT) AS "Units",
+    A."MeterStatus",
+    A."Image",
+    A."Date",
+    (CAST(A."Units" AS FLOAT) - COALESCE(
+        (SELECT CAST(B."Units" AS FLOAT)
+         FROM "DMAMeterReadings" B
+         WHERE B."DMAName" = A."DMAName" 
+           AND CAST(B."Date" AS DATE) = CAST(A."Date" AS DATE) - INTERVAL '1 day'
+         LIMIT 1), 0)) AS "Consumption",
+    A."createdAt",
+    A."updatedAt"
+FROM
+    "DMAMeterReadings" A
+WHERE
+    CAST(A."Date" AS DATE) >= '${start}' AND CAST(A."Date" AS DATE) <= '${end}'
+ORDER BY
+    A."Date" DESC LIMIT 12 OFFSET '${offset}'`
       );
+
+      const [count, cmeta] =
+        await sequelize.query(`SELECT COUNT (*) ::int AS total FROM "DMAMeterReadings"
+        WHERE CAST("Date" AS DATE) >= '${start}' AND CAST("Date" AS DATE) <= '${end}'`);
 
       resolve({
         data: data,
+        total: count[0].total,
       });
     } catch (error) {
       reject({ error: "Retrieve failed" });
@@ -165,7 +163,6 @@ exports.findDMAReadings = (dma) => {
       const [data, metadata] = await sequelize.query(
         `SELECT  
     A."DMAName", 
-     
     A."MeterStatus", 
     A."Image", 
     A."Date", 
@@ -189,8 +186,7 @@ FROM
     "DMAMeterReadings" A
 WHERE 
     A."DMAName" = '${dma}'
-ORDER BY 
-    CAST(A."Units" AS FLOAT) DESC;`
+ORDER BY "Date" DESC;`
       );
       resolve({
         data: data,
