@@ -98,7 +98,7 @@ exports.findNRWInterventionById = (id) => {
     NRWIntervention.findByPk(id).then(
       (result) => {
         if (result == null) {
-          reject({ status: 404, error: "NRWIntervention not found" });
+          reject({ status: 404, error: "NRW Intervention not found" });
         }
         resolve(result);
       },
@@ -178,18 +178,29 @@ exports.findAllNRWIntervention = () => {
   });
 };
 
-exports.findNRWInterventionPagnited = (offset) => {
+exports.findNRWInterventionPaginated = (dma, type, start, end, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
+      let typeQuery =
+        type !== "All" && dma !== "All"
+          ? `WHERE "NRWInterventions"."MeterActivity" = '${type}' AND "DMAName" = '${dma}' 
+          AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type !== "All" && dma === "All"
+          ? `WHERE "NRWInterventions"."MeterActivity" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type === "All" && dma !== "All"
+          ? `WHERE "NRWInterventions"."DMAName" = '${dma}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : "";
+
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "NRWInterventions" ORDER BY "createdAt" ASC LIMIT 12 OFFSET ${offset}  `
+        `SELECT * FROM "NRWInterventions" ${typeQuery} ORDER BY "createdAt" DESC LIMIT 12 OFFSET ${offset}`
       );
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*) FROM "NRWInterventions"`
+        `SELECT COUNT(*)::int AS total FROM "NRWInterventions" ${typeQuery}`
       );
+
       resolve({
         data: result,
-        total: count[0].count,
+        total: count[0].total,
       });
     } catch (error) {
       reject({ error: "Retrieve Failed!" });
