@@ -189,6 +189,8 @@ exports.findNRWInterventionPaginated = (dma, type, start, end, offset) => {
           ? `WHERE "NRWInterventions"."MeterActivity" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
           : type === "All" && dma !== "All"
           ? `WHERE "NRWInterventions"."DMAName" = '${dma}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type === "All" && dma === "All"
+          ? `WHERE "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
           : "";
 
       const [result, meta] = await sequelize.query(
