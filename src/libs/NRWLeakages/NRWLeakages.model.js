@@ -1,7 +1,7 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../configs/connection");
 const NRWLeakages = require("../../models/NRWLeakages")(sequelize, Sequelize);
-const getNRWLeakageed = require("../Utils/ReportedIncident");
+const getNRWLeakages = require("../Utils/ReportedIncident");
 const NRWLeakagesMailer = require("../Utils/ReportsMailer");
 const multer = require("multer");
 const Path = require("path");
@@ -36,7 +36,7 @@ exports.createNRWLeakage = (NRWLeakagesData) => {
     }
 
     try {
-      const Images = `${NRWLeakagesData.Type}-${Date.now()}.png`;
+      const Images = `${NRWLeakagesData.DMAName}-${Date.now()}.png`;
       createFileFromBase64(NRWLeakagesData.Image, Images);
       NRWLeakagesData.Image = Images;
       const createdNRWLeakage = await NRWLeakages.create(NRWLeakagesData);
@@ -68,23 +68,20 @@ exports.createNRWLeakage = (NRWLeakagesData) => {
         `SELECT * FROM "NRWLeakages" WHERE "ID" =  '${id}' `
       );
 
-      let content = await getNRWLeakageed.getNRWLeakageed(
-        "Admin",
-        reportedData[0]
-      );
+      let content = await getNRWLeakages.getReported("Admin", reportedData[0]);
 
       NRWLeakagesMailer.sendMail(
-        "New Incident NRWLeakageed",
+        "New Incident Reported",
         createdNRWLeakage?.dataValues?.Email,
         content
       );
 
       resolve({
-        success: "NRWLeakageed successfully",
+        success: "Reported successfully",
         ID: id,
       });
     } catch (error) {
-      reject({ error: error.message ?? "NRWLeakage creation failed" });
+      reject({ error: error.message ?? "Creation failed" });
     }
   });
 };
