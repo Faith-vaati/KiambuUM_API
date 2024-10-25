@@ -16,7 +16,11 @@ exports.NRWMeterReadingsRoutes = function (app) {
   ]);
 
   app.get("/nrwreading/daily/:start/:end/:offset", [
-    NRWMeterReadingsController.findDailyReadings,
+    NRWMeterReadingsController.findNRWReadings,
+  ]);
+
+  app.get("/nrwreading/:dma/:type/:start/:end/:offset", [
+    NRWMeterReadingsController.findNRWTReadingPaginated,
   ]);
 
   app.delete("/nrwreading/:id", [

@@ -78,8 +78,25 @@ exports.findDMAReadings = (req, res) => {
   );
 };
 
-exports.findDailyReadings = (req, res) => {
-  NRWMeterReadingsModel.findDailyReadings(
+exports.findNRWReadings = (req, res) => {
+  NRWMeterReadingsModel.findNRWReadings(
+    req.params.start,
+    req.params.end,
+    req.params.offset
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findNRWTReadingPaginated = (req, res) => {
+  NRWMeterReadingsModel.findNRWTReadingPaginated(
+    req.params.dma,
+    req.params.type,
     req.params.start,
     req.params.end,
     req.params.offset

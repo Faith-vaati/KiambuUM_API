@@ -117,7 +117,7 @@ exports.findAllNRWMeterReadings = () => {
   });
 };
 
-exports.findDailyReadings = (start, end, offset) => {
+exports.findNRWReadings = (start, end, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
@@ -208,6 +208,38 @@ exports.searchDMA = (dma) => {
       });
     } catch (error) {
       reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
+exports.findNRWTReadingPaginated = (dma, type, start, end, offset) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let typeQuery =
+        type !== "All" && dma !== "All"
+          ? `WHERE "NRWMeterReadings"."Interval" = '${type}' AND "DMAName" = '${dma}' 
+          AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type !== "All" && dma === "All"
+          ? `WHERE "NRWMeterReadings"."Interval" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type === "All" && dma !== "All"
+          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type === "All" && dma === "All"
+          ? `WHERE "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : "";
+
+      const [result, meta] = await sequelize.query(
+        `SELECT * FROM "NRWMeterReadings" ${typeQuery} ORDER BY "createdAt" DESC LIMIT 12 OFFSET ${offset}`
+      );
+      const [count, mdata] = await sequelize.query(
+        `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery}`
+      );
+
+      resolve({
+        data: result,
+        total: count[0].total,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve Failed!" });
     }
   });
 };
