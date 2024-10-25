@@ -746,7 +746,7 @@ exports.findAllNRWLeakagesPaginated = (type, offset) => {
     try {
       let typeQuery = "";
       if (type != "All") {
-        typeQuery = `WHERE "NRWLeakages"."Type" = '${type}'`;
+        typeQuery = `WHERE "NRWLeakages"."Status" = '${type}'`;
       }
 
       const [result, metadata] = await sequelize.query(
