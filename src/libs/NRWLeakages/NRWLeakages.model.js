@@ -769,7 +769,7 @@ exports.findGeojson = (type) => {
     try {
       let typeQuery = "";
       if (type !== "All") {
-        typeQuery = `WHERE "NRWLeakages"."Type" = '${type}'`;
+        typeQuery = `WHERE "NRWLeakages"."Status" = '${type}'`;
       }
 
       const [result, metadata] = await sequelize.query(
@@ -787,15 +787,11 @@ exports.findGeojson = (type) => {
             SerialNo: report.SerialNo,
             Type: report.Type,
             Image: report.Image,
-            Name: report.Name,
-            Phone: report.Phone,
-            Description: report.Description,
+            DMAName: report.DMAName,
             Status: report.Status,
-            NRWUserID: report.NRWUserID,
-            UserID: report.UserID,
-            TaskResources: report.TaskResources,
-            TaskRemarks: report.TaskRemarks,
-            TaskDate: report.TaskDate,
+            ReportedBy: report.ReportedBy,
+            AssignedTo: report.AssignedTo,
+            DateResolved: report.DateResolved,
             createdAt: report.createdAt,
           },
         })),
