@@ -217,10 +217,10 @@ exports.findNRWTReadingPaginated = (dma, type, start, end, offset) => {
     try {
       let typeQuery =
         type !== "All" && dma !== "All"
-          ? `WHERE "NRWMeterReadings"."Interval" = '${type}' AND "DMAName" = '${dma}' 
+          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "DMAName" = '${dma}' 
           AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
           : type !== "All" && dma === "All"
-          ? `WHERE "NRWMeterReadings"."Interval" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
           : type === "All" && dma !== "All"
           ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
           : type === "All" && dma === "All"
