@@ -47,10 +47,13 @@ exports.createNRWLeakage = (NRWLeakagesData) => {
         WHERE "ID" = :id
       `;
       const updateSerial = `
-        UPDATE public."NRWLeakages"
-        SET "SerialNo" = COALESCE((SELECT MAX("SerialNo") FROM public."NRWLeakages") + 1, 1)
-        WHERE "ID" = :id
-      `;
+    UPDATE public."NRWLeakages"
+    SET "SerialNo" = 'NRW' || LPAD(COALESCE((
+        SELECT CAST(SUBSTRING(MAX("SerialNo") FROM 4) AS INTEGER) + 1
+        FROM public."NRWLeakages"
+    ), 1)::TEXT, 3, '0')
+    WHERE "ID" = :id`;
+
       const [data, dmeta] = await sequelize.query(updateGeom, {
         replacements: {
           longitude: NRWLeakagesData.Longitude,
@@ -71,7 +74,7 @@ exports.createNRWLeakage = (NRWLeakagesData) => {
       let content = await getNRWLeakages.getReported("Admin", reportedData[0]);
 
       NRWLeakagesMailer.sendMail(
-        "New Incident Reported",
+        "NRW Incident Reported",
         createdNRWLeakage?.dataValues?.Email,
         content
       );
@@ -947,6 +950,21 @@ exports.searchIncident = (value) => {
       resolve(result);
     } catch (error) {
       reject([]);
+    }
+  });
+};
+
+exports.findDistributionByDMA = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [Dist, dmameta] = await sequelize.query(
+        `SELECT "DMAName" AS name, COUNT("DMAName")::int AS value FROM "NRWLeakages" GROUP BY "DMAName"`
+      );
+      resolve({
+        Dist,
+      });
+    } catch (error) {
+      reject(null);
     }
   });
 };

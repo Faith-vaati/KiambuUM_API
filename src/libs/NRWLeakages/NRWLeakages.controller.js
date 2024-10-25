@@ -148,7 +148,10 @@ exports.findStatusByType = (req, res) => {
 };
 
 exports.findNRWLeakageByStatus = (req, res) => {
-  NRWLeakagesModel.findNRWLeakageByStatus(req.params.status, req.params.offset).then(
+  NRWLeakagesModel.findNRWLeakageByStatus(
+    req.params.status,
+    req.params.offset
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -170,7 +173,10 @@ exports.findMonthly = (req, res) => {
 };
 
 exports.findByType = (req, res) => {
-  NRWLeakagesModel.findNRWLeakageByType(req.params.type, req.params.offset).then(
+  NRWLeakagesModel.findNRWLeakageByType(
+    req.params.type,
+    req.params.offset
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -291,7 +297,10 @@ exports.findCharts = (req, res) => {
 };
 
 exports.findAllNRWLeakagesPaginated = (req, res) => {
-  NRWLeakagesModel.findAllNRWLeakagesPaginated(req.params.type, req.params.offset).then(
+  NRWLeakagesModel.findAllNRWLeakagesPaginated(
+    req.params.type,
+    req.params.offset
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -311,7 +320,6 @@ exports.findGeojson = (req, res) => {
     }
   );
 };
-
 
 exports.searchNRWLeakages = (req, res) => {
   NRWLeakagesModel.searchNRWLeakages(req.params.col, req.params.val).then(
@@ -397,6 +405,17 @@ exports.getNRWLeakagesNRWLeakageedByUserId = (req, res) => {
 
 exports.searchIncident = (req, res) => {
   NRWLeakagesModel.searchIncident(req.params.value).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (error) => {
+      res.status(203).send(error);
+    }
+  );
+};
+
+exports.findDistributionByDMA = (req, res) => {
+  NRWLeakagesModel.findDistributionByDMA().then(
     (result) => {
       res.status(200).send(result);
     },

@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
+    Interval: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     DMAName: {
       type: DataTypes.STRING,
       allowNull: false,

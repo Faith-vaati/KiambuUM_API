@@ -8,8 +8,13 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     SerialNo: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
+    },
+    Type: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "Leakage",
     },
     DMAName: {
       type: DataTypes.STRING,
@@ -30,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     Status: {
       type: DataTypes.STRING,
       allowNull: true,
+      defaultValue: "Received",
     },
     ReportedBy: {
       type: DataTypes.STRING,

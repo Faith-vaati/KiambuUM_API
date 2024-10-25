@@ -5,9 +5,17 @@ exports.NRWLeakagesRoutes = function (app) {
 
   app.get("/nrw_leakages/type", [NRWLeakagesController.findType]);
 
-  app.get("/nrw_leakages/serial/search/:value", [NRWLeakagesController.searchIncident]);
+  app.get("/nrw_leakages/dma/distibution", [
+    NRWLeakagesController.findDistributionByDMA,
+  ]);
 
-  app.get("/nrw_leakages/all/stats/:start/:end", [NRWLeakagesController.getStats]);
+  app.get("/nrw_leakages/serial/search/:value", [
+    NRWLeakagesController.searchIncident,
+  ]);
+
+  app.get("/nrw_leakages/all/stats/:start/:end", [
+    NRWLeakagesController.getStats,
+  ]);
 
   app.get("/nrw_leakages/stats", [NRWLeakagesController.findStats]);
 
@@ -19,9 +27,13 @@ exports.NRWLeakagesRoutes = function (app) {
     NRWLeakagesController.findMonthlyCountByType,
   ]);
 
-  app.get("/nrw_leakages/all/charts/:start/:end", [NRWLeakagesController.findCharts]);
+  app.get("/nrw_leakages/all/charts/:start/:end", [
+    NRWLeakagesController.findCharts,
+  ]);
 
-  app.get("/nrw_leakages/joined/:type", [NRWLeakagesController.findNRWLeakagesPaginated]);
+  app.get("/nrw_leakages/joined/:type", [
+    NRWLeakagesController.findNRWLeakagesPaginated,
+  ]);
 
   app.get("/nrw_leakages/assigned/:nrwId/:offset", [
     NRWLeakagesController.findAssignedNRWLeakagesPaginated,
@@ -29,7 +41,9 @@ exports.NRWLeakagesRoutes = function (app) {
 
   app.get("/nrw_leakages/status", [NRWLeakagesController.findStatus]);
 
-  app.get("/nrw_leakages/status/:type", [NRWLeakagesController.findStatusByType]);
+  app.get("/nrw_leakages/status/:type", [
+    NRWLeakagesController.findStatusByType,
+  ]);
 
   app.get("/nrw_leakages/status/:status/:offset", [
     NRWLeakagesController.findNRWLeakageByStatus,
@@ -37,17 +51,29 @@ exports.NRWLeakagesRoutes = function (app) {
 
   app.get("/nrw_leakages/monthly", [NRWLeakagesController.findMonthly]);
 
-  app.get("/nrw_leakages/type/count/:type/all", [NRWLeakagesController.countEachType]);
+  app.get("/nrw_leakages/type/count/:type/all", [
+    NRWLeakagesController.countEachType,
+  ]);
 
-  app.get("/nrw_leakages/type/count/:type", [NRWLeakagesController.findNRWLeakageTypeCount]);
+  app.get("/nrw_leakages/type/count/:type", [
+    NRWLeakagesController.findNRWLeakageTypeCount,
+  ]);
 
-  app.get("/nrw_leakages/type/:type/:offset", [NRWLeakagesController.findByType]);
+  app.get("/nrw_leakages/type/:type/:offset", [
+    NRWLeakagesController.findByType,
+  ]);
 
-  app.get("/nrw_leakages/type/:type", [NRWLeakagesController.findAllNRWLeakageByType]);
+  app.get("/nrw_leakages/type/:type", [
+    NRWLeakagesController.findAllNRWLeakageByType,
+  ]);
 
-  app.get("/nrw_leakages/search/:query/:offset", [NRWLeakagesController.findByKeyword]);
+  app.get("/nrw_leakages/search/:query/:offset", [
+    NRWLeakagesController.findByKeyword,
+  ]);
 
-  app.get("/nrw_leakages/statusbyid/:id", [NRWLeakagesController.getStatusByID]);
+  app.get("/nrw_leakages/statusbyid/:id", [
+    NRWLeakagesController.getStatusByID,
+  ]);
 
   app.get("/nrw_leakages/joined/paginated/:offset", [
     NRWLeakagesController.findNRWLeakagesJoined,
@@ -57,7 +83,9 @@ exports.NRWLeakagesRoutes = function (app) {
 
   app.delete("/nrw_leakages/:ID", [NRWLeakagesController.deleteNRWLeakageByID]);
 
-  app.put("/nrw_leakages/update/:ID", [NRWLeakagesController.updateNRWLeakageByID]);
+  app.put("/nrw_leakages/update/:ID", [
+    NRWLeakagesController.updateNRWLeakageByID,
+  ]);
 
   app.get("/nrw_leakages/:ID", [NRWLeakagesController.findNRWLeakageByID]);
 
@@ -73,7 +101,9 @@ exports.NRWLeakagesRoutes = function (app) {
     NRWLeakagesController.findNRWLeakagesnTasksPaginated,
   ]);
 
-  app.get("/nrw_leakages/searchall/:col/:val", [NRWLeakagesController.searchNRWLeakages]);
+  app.get("/nrw_leakages/searchall/:col/:val", [
+    NRWLeakagesController.searchNRWLeakages,
+  ]);
 
   app.get("/nrw_leakages/paginated/search/:column/:value/:offset", [
     NRWLeakagesController.paginatedSearchNRWLeakages,
