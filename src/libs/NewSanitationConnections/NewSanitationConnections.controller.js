@@ -120,3 +120,16 @@ exports.filterByYear = (req, res) => {
     }
   );
 };
+
+exports.searchSanitationConnection = (req, res) => {
+  NewSanitationConnectionsModel.searchSanitationConnection(
+    req.params.value
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};

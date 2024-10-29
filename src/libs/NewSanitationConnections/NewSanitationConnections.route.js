@@ -35,4 +35,8 @@ exports.NewSanitationConnectionsRoutes = function (app) {
   app.get("/sanitation", [
     NewSanitationConnectionsController.findAllNewSanitationConnections,
   ]);
+
+    app.get("/sanitation/searchsanitation/:value", [
+      NewSanitationConnectionsController.searchSanitationConnection,
+    ]);
 };

@@ -209,3 +209,20 @@ exports.findStats = () => {
     );
   });
 };
+
+exports.searchWaterConnection = (value) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [result, metadata] = await sequelize.query(
+        `SELECT * FROM "NewWaterConnections" WHERE ("AccountNo"::text ILIKE '%${value}%') LIMIT 1 OFFSET 0`
+      );
+      console.log("WaterConnection is " + resolve);
+
+      resolve(result);
+    } catch (error) {
+      console.log(error);
+
+      reject([]);
+    }
+  });
+};
