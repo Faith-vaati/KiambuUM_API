@@ -25,7 +25,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Units: {
+    FirstReading: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    SecondReading: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -41,9 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    Date: {
+    SecondReadingDate: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     Latitude: {
       type: DataTypes.FLOAT,
