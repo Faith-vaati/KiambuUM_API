@@ -1,7 +1,7 @@
-const DMAMeterReadingsModel = require("./DMAMeterReadings.model");
+const NRWMeterReadingsModel = require("./NRWMeterReadings.model");
 
 exports.create = (req, res) => {
-  DMAMeterReadingsModel.create(req.body).then(
+  NRWMeterReadingsModel.create(req.body).then(
     (result) => {
       res.status(200).send({ success: "Submitted Successfully" });
     },
@@ -11,8 +11,8 @@ exports.create = (req, res) => {
   );
 };
 
-exports.findDMAMeterReadingsById = (req, res) => {
-  DMAMeterReadingsModel.findDMAMeterReadingsById(req.params.ID).then(
+exports.findNRWMeterReadingsById = (req, res) => {
+  NRWMeterReadingsModel.findNRWMeterReadingsById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -22,8 +22,8 @@ exports.findDMAMeterReadingsById = (req, res) => {
   );
 };
 
-exports.updateDMAMeterReadingsById = (req, res) => {
-  DMAMeterReadingsModel.updateDMAMeterReadingsById(
+exports.updateNRWMeterReadingsById = (req, res) => {
+  NRWMeterReadingsModel.updateNRWMeterReadingsById(
     req.body,
     req.params.id
   ).then(
@@ -35,8 +35,8 @@ exports.updateDMAMeterReadingsById = (req, res) => {
     }
   );
 };
-exports.deleteDMAMeterReadingById = (req, res) => {
-  DMAMeterReadingsModel.deleteDMAMeterReadingById(req.params.id).then(
+exports.deleteNRWMeterReadingById = (req, res) => {
+  NRWMeterReadingsModel.deleteNRWMeterReadingById(req.params.id).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -45,8 +45,8 @@ exports.deleteDMAMeterReadingById = (req, res) => {
     }
   );
 };
-exports.findAllDMAMeterReadings = (req, res) => {
-  DMAMeterReadingsModel.findAllDMAMeterReadings().then(
+exports.findAllNRWMeterReadings = (req, res) => {
+  NRWMeterReadingsModel.findAllNRWMeterReadings().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -57,7 +57,7 @@ exports.findAllDMAMeterReadings = (req, res) => {
 };
 
 exports.searchDMA = (req, res) => {
-  DMAMeterReadingsModel.searchDMA(req.params.dma).then(
+  NRWMeterReadingsModel.searchDMA(req.params.dma).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -68,7 +68,7 @@ exports.searchDMA = (req, res) => {
 };
 
 exports.findDMAReadings = (req, res) => {
-  DMAMeterReadingsModel.findDMAReadings(req.params.dma).then(
+  NRWMeterReadingsModel.findDMAReadings(req.params.dma).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -78,8 +78,25 @@ exports.findDMAReadings = (req, res) => {
   );
 };
 
-exports.findDailyReadings = (req, res) => {
-  DMAMeterReadingsModel.findDailyReadings(
+exports.findNRWReadings = (req, res) => {
+  NRWMeterReadingsModel.findNRWReadings(
+    req.params.start,
+    req.params.end,
+    req.params.offset
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.findNRWTReadingPaginated = (req, res) => {
+  NRWMeterReadingsModel.findNRWTReadingPaginated(
+    req.params.dma,
+    req.params.type,
     req.params.start,
     req.params.end,
     req.params.offset

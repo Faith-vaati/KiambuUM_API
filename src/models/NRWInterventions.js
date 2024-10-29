@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
+    DMAName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     Scope: {
       type: DataTypes.STRING,
       allowNull: true,

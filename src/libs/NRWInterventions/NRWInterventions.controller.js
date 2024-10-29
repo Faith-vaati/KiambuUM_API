@@ -1,7 +1,7 @@
 const NRWInterventionModel = require("./NRWInterventions.model");
 
 exports.create = (req, res) => {
-    NRWInterventionModel.create(req.body).then(
+  NRWInterventionModel.create(req.body).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -12,7 +12,7 @@ exports.create = (req, res) => {
 };
 
 exports.findNRWInterventionById = (req, res) => {
-    NRWInterventionModel.findNRWInterventionById(req.params.ID).then(
+  NRWInterventionModel.findNRWInterventionById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -34,7 +34,7 @@ exports.findNRWInterventionByName = (req, res) => {
 };
 
 exports.updateNRWInterventionById = (req, res) => {
-    NRWInterventionModel.updateNRWInterventionById(req.body, req.params.ID).then(
+  NRWInterventionModel.updateNRWInterventionById(req.body, req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -46,7 +46,7 @@ exports.updateNRWInterventionById = (req, res) => {
 };
 
 exports.deleteNRWInterventionById = (req, res) => {
-    NRWInterventionModel.deleteNRWInterventionById(req.params.ID).then(
+  NRWInterventionModel.deleteNRWInterventionById(req.params.ID).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -57,7 +57,7 @@ exports.deleteNRWInterventionById = (req, res) => {
 };
 
 exports.findAllNRWIntervention = (req, res) => {
-    NRWInterventionModel.findAllNRWIntervention().then(
+  NRWInterventionModel.findAllNRWIntervention().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -67,8 +67,14 @@ exports.findAllNRWIntervention = (req, res) => {
   );
 };
 
-exports.findNRWInterventionPagnited = (req, res) => {
-    NRWInterventionModel.findNRWInterventionPagnited(req.params.offset).then(
+exports.findNRWInterventionPaginated = (req, res) => {
+  NRWInterventionModel.findNRWInterventionPaginated(
+    req.params.dma,
+    req.params.type,
+    req.params.start,
+    req.params.end,
+    req.params.offset
+  ).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -79,7 +85,7 @@ exports.findNRWInterventionPagnited = (req, res) => {
 };
 
 exports.findNRWInterventionPagnitedSearch = (req, res) => {
-    NRWInterventionModel.findNRWInterventionPagnitedSearch(
+  NRWInterventionModel.findNRWInterventionPagnitedSearch(
     req.params.column,
     req.params.value,
     req.params.offset
@@ -94,7 +100,7 @@ exports.findNRWInterventionPagnitedSearch = (req, res) => {
 };
 
 exports.searchOneNRWIntervention = (req, res) => {
-    NRWInterventionModel.searchOneNRWIntervention(req.params.value).then(
+  NRWInterventionModel.searchOneNRWIntervention(req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -105,7 +111,7 @@ exports.searchOneNRWIntervention = (req, res) => {
 };
 
 exports.searchOthers = (req, res) => {
-    NRWInterventionModel.searchOthers(req.params.table, req.params.value).then(
+  NRWInterventionModel.searchOthers(req.params.table, req.params.value).then(
     (result) => {
       res.status(200).send(result);
     },
@@ -116,7 +122,7 @@ exports.searchOthers = (req, res) => {
 };
 
 exports.filterNRWIntervention = (req, res) => {
-    NRWInterventionModel.filterNRWIntervention(
+  NRWInterventionModel.filterNRWIntervention(
     req.params.column,
     req.params.operator,
     req.params.value,
@@ -132,7 +138,7 @@ exports.filterNRWIntervention = (req, res) => {
 };
 
 exports.totalMapped = (req, res) => {
-    NRWInterventionModel.totalMapped().then(
+  NRWInterventionModel.totalMapped().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -143,7 +149,7 @@ exports.totalMapped = (req, res) => {
 };
 
 exports.getGeoJSON = (req, res) => {
-    NRWInterventionModel.getGeoJSON().then(
+  NRWInterventionModel.getGeoJSON().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -154,7 +160,7 @@ exports.getGeoJSON = (req, res) => {
 };
 
 exports.getStats = (req, res) => {
-    NRWInterventionModel.getStats().then(
+  NRWInterventionModel.getStats().then(
     (result) => {
       res.status(200).send(result);
     },
@@ -165,7 +171,7 @@ exports.getStats = (req, res) => {
 };
 
 exports.findCharts = (req, res) => {
-    NRWInterventionModel.findCharts().then(
+  NRWInterventionModel.findCharts().then(
     (result) => {
       res.status(200).send(result);
     },

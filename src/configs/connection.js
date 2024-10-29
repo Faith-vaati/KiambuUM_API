@@ -11,6 +11,7 @@ const sequelize = new Sequelize(env.db_name, env.db_username, env.db_password, {
     collate: "utf8_general_ci",
     timestamps: true, // Enables createdAt and updatedAt
     paranoid: true, // Enables deletedAt for soft deletion
+    logging: false,
   },
   pool: {
     max: 200,

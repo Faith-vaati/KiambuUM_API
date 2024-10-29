@@ -1,6 +1,6 @@
 const { Sequelize, Op } = require("sequelize");
 const sequelize = require("../../configs/connection");
-const DMAMeterReadings = require("../../models/DMAMeterReadings")(
+const NRWMeterReadings = require("../../models/NRWMeterReading")(
   sequelize,
   Sequelize
 );
@@ -8,7 +8,7 @@ const DMAMeterReadings = require("../../models/DMAMeterReadings")(
 const fs = require("fs");
 const Path = require("path");
 
-DMAMeterReadings.sync({ force: false });
+NRWMeterReadings.sync({ force: false });
 
 async function createFileFromBase64(base64Data, filePath) {
   if (filePath != null && base64Data != null) {
@@ -26,21 +26,21 @@ async function createFileFromBase64(base64Data, filePath) {
   }
 }
 
-exports.create = (DMAMeterReadingsData) => {
+exports.create = (NRWMeterReadingsData) => {
   return new Promise(async (resolve, reject) => {
     if (
-      DMAMeterReadingsData.Units === undefined ||
-      DMAMeterReadingsData.DMAName === undefined
+      NRWMeterReadingsData.Units === undefined ||
+      NRWMeterReadingsData.DMAName === undefined
     ) {
       reject({ error: "Body is required" });
     }
     try {
-      const Images = `${DMAMeterReadingsData.DMAName}-${
-        DMAMeterReadingsData.Date
+      const Images = `${NRWMeterReadingsData.DMAName}-${
+        NRWMeterReadingsData.Date
       }-${Date.now()}.png`;
-      createFileFromBase64(DMAMeterReadingsData.Image, Images);
-      DMAMeterReadingsData.Image = Images;
-      const createdMeter = await DMAMeterReadings.create(DMAMeterReadingsData);
+      createFileFromBase64(NRWMeterReadingsData.Image, Images);
+      NRWMeterReadingsData.Image = Images;
+      const createdMeter = await NRWMeterReadings.create(NRWMeterReadingsData);
       const id = createdMeter.dataValues.ID;
 
       resolve({
@@ -53,9 +53,9 @@ exports.create = (DMAMeterReadingsData) => {
   });
 };
 
-exports.findDMAMeterReadingsById = (id) => {
+exports.findNRWMeterReadingsById = (id) => {
   return new Promise((resolve, reject) => {
-    DMAMeterReadings.findByPk(id).then(
+    NRWMeterReadings.findByPk(id).then(
       (result) => {
         if (result == null) {
           reject({ error: "Not found" });
@@ -69,9 +69,9 @@ exports.findDMAMeterReadingsById = (id) => {
   });
 };
 
-exports.updateDMAMeterReadingsById = (DMAMeterReadingsData, id) => {
+exports.updateNRWMeterReadingsById = (NRWMeterReadingsData, id) => {
   return new Promise((resolve, reject) => {
-    DMAMeterReadings.update(DMAMeterReadingsData, {
+    NRWMeterReadings.update(NRWMeterReadingsData, {
       where: {
         ID: id,
       },
@@ -86,16 +86,16 @@ exports.updateDMAMeterReadingsById = (DMAMeterReadingsData, id) => {
   });
 };
 
-exports.deleteDMAMeterReadingById = (id) => {
+exports.deleteNRWMeterReadingById = (id) => {
   return new Promise((resolve, reject) => {
-    DMAMeterReadings.destroy({
+    NRWMeterReadings.destroy({
       where: {
         ID: id,
       },
     }).then(
       (result) => {
         if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "DMAMeterReading does not exist!!!" });
+        else reject({ error: "NRWMeterReading does not exist!!!" });
       },
       (err) => {
         reject({ error: err });
@@ -104,9 +104,9 @@ exports.deleteDMAMeterReadingById = (id) => {
   });
 };
 
-exports.findAllDMAMeterReadings = () => {
+exports.findAllNRWMeterReadings = () => {
   return new Promise((resolve, reject) => {
-    DMAMeterReadings.findAll({}).then(
+    NRWMeterReadings.findAll({}).then(
       (result) => {
         resolve(result);
       },
@@ -117,7 +117,7 @@ exports.findAllDMAMeterReadings = () => {
   });
 };
 
-exports.findDailyReadings = (start, end, offset) => {
+exports.findNRWReadings = (start, end, offset) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
@@ -129,14 +129,14 @@ exports.findDailyReadings = (start, end, offset) => {
     A."Date",
     (CAST(A."Units" AS FLOAT) - COALESCE(
         (SELECT CAST(B."Units" AS FLOAT)
-         FROM "DMAMeterReadings" B
+         FROM "NRWMeterReadings" B
          WHERE B."DMAName" = A."DMAName" 
            AND CAST(B."Date" AS DATE) = CAST(A."Date" AS DATE) - INTERVAL '1 day'
          LIMIT 1), 0)) AS "Consumption",
     A."createdAt",
     A."updatedAt"
 FROM
-    "DMAMeterReadings" A
+    "NRWMeterReadings" A
 WHERE
     CAST(A."Date" AS DATE) >= '${start}' AND CAST(A."Date" AS DATE) <= '${end}'
 ORDER BY
@@ -144,7 +144,7 @@ ORDER BY
       );
 
       const [count, cmeta] =
-        await sequelize.query(`SELECT COUNT (*) ::int AS total FROM "DMAMeterReadings"
+        await sequelize.query(`SELECT COUNT (*) ::int AS total FROM "NRWMeterReadings"
         WHERE CAST("Date" AS DATE) >= '${start}' AND CAST("Date" AS DATE) <= '${end}'`);
 
       resolve({
@@ -170,11 +170,11 @@ exports.findDMAReadings = (dma) => {
     CAST(A."Units" AS FLOAT) AS "Units",
     (CAST(A."Units" AS FLOAT) - COALESCE(
         (SELECT CAST(B."Units" AS FLOAT)
-         FROM "DMAMeterReadings" B 
+         FROM "NRWMeterReadings" B 
          WHERE B."DMAName" = A."DMAName" 
            AND B."Date" = (
                 SELECT MAX("Date") 
-                FROM "DMAMeterReadings" 
+                FROM "NRWMeterReadings" 
                 WHERE "DMAName" = A."DMAName" 
                   AND "Date" < A."Date"
             )
@@ -183,7 +183,7 @@ exports.findDMAReadings = (dma) => {
         ), 0)
     ) AS "Consumption"
 FROM 
-    "DMAMeterReadings" A
+    "NRWMeterReadings" A
 WHERE 
     A."DMAName" = '${dma}'
 ORDER BY "Date" DESC;`
@@ -201,13 +201,45 @@ exports.searchDMA = (dma) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [data, metadata] = await sequelize.query(
-        `SELECT * FROM "DMAMeterReadings" WHERE "DMAName" ILIKE '%${dma}%' ORDER BY "Date" DESC`
+        `SELECT * FROM "NRWMeterReadings" WHERE "DMAName" ILIKE '%${dma}%' ORDER BY "Date" DESC`
       );
       resolve({
         data: data,
       });
     } catch (error) {
       reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
+exports.findNRWTReadingPaginated = (dma, type, start, end, offset) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let typeQuery =
+        type !== "All" && dma !== "All"
+          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "DMAName" = '${dma}' 
+          AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type !== "All" && dma === "All"
+          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type === "All" && dma !== "All"
+          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : type === "All" && dma === "All"
+          ? `WHERE "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          : "";
+
+      const [result, meta] = await sequelize.query(
+        `SELECT * FROM "NRWMeterReadings" ${typeQuery} ORDER BY "createdAt" DESC LIMIT 12 OFFSET ${offset}`
+      );
+      const [count, mdata] = await sequelize.query(
+        `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery}`
+      );
+
+      resolve({
+        data: result,
+        total: count[0].total,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve Failed!" });
     }
   });
 };

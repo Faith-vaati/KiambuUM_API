@@ -3,8 +3,8 @@ const NRWInterventionController = require("./NRWInterventions.controller");
 exports.NRWInterventionRoutes = function (app) {
   app.post("/intervention/create", [NRWInterventionController.create]);
 
-  app.get("/intervention/paginated/:offset", [
-    NRWInterventionController.findNRWInterventionPagnited,
+  app.get("/intervention/:dma/:type/:start/:end/:offset", [
+    NRWInterventionController.findNRWInterventionPaginated,
   ]);
 
   app.get("/intervention/searchone/:value", [

@@ -35,7 +35,9 @@ const NewSanitationConnections = require("./libs/NewSanitationConnections/NewSan
 const NewConsumerLineConnections = require("./libs/NewConsumerLineConnection/NewConsumerLineConnection.route");
 const NewCustomerLineConnections = require("./libs/NewCustomerLineConnection/NewCustomerLineConnection.route");
 const ProductionMeterReadings = require("./libs/ProductionMeterReadings/ProductionMeterReadings.route");
-const NRWInterventions = require("./libs//NRWInterventions/NRWInterventions.route");
+const NRWInterventions = require("./libs/NRWInterventions/NRWInterventions.route");
+const NRWMeterReading = require("./libs/NRWMeterReadings/NRWMeterReadings.route");
+const NRWLeakages = require("./libs/NRWLeakages/NRWLeakages.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -192,6 +194,8 @@ NewCustomerLineConnections.NewCustomerLineConnectionRoutes(app);
 DMAMeterReadings.DMAMeterReadingsRoutes(app);
 ProductionMeterReadings.ProductionMeterReadingsRoutes(app);
 NRWInterventions.NRWInterventionRoutes(app);
+NRWMeterReading.NRWMeterReadingsRoutes(app);
+NRWLeakages.NRWLeakagesRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(

@@ -15,7 +15,7 @@ exports.DMAMeterReadingsRoutes = function (app) {
     DMAMeterReadingsController.findDMAReadings,
   ]);
 
-  app.get("/dmareading/daily/:start/:end", [
+  app.get("/dmareading/daily/:start/:end/:offset", [
     DMAMeterReadingsController.findDailyReadings,
   ]);
 
