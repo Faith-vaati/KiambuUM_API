@@ -4,7 +4,7 @@ const NRWLeakagesModel = require("./NRWLeakages.model");
 exports.insert = (req, res) => {
   NRWLeakagesModel.createNRWLeakage(req.body).then(
     (result) => {
-      res.status(200).send({ success: "NRWLeakage Submitted Successfully" });
+      res.status(200).send({ success: "Submitted Successfully" });
     },
     (err) => {
       res.status(203).send(err);
