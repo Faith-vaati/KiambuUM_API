@@ -112,6 +112,8 @@ exports.loginAuth = (res, AuthData) => {
         }
       },
       (err) => {
+        console.log(err);
+
         reject({ error: "Retrieve failed" });
       }
     );
