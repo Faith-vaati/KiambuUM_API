@@ -157,6 +157,46 @@ ORDER BY
   });
 };
 
+exports.findReadingAnalysis = (start, end) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [data, metadata] = await sequelize.query(
+        `SELECT DISTINCT
+    A."DMAName",
+    CAST(A."Units" AS FLOAT) AS "Units",
+    A."MeterStatus",
+    A."Image",
+    A."Date",
+    (CAST(A."Units" AS FLOAT) - COALESCE(
+        (SELECT CAST(B."Units" AS FLOAT)
+         FROM "DMAMeterReadings" B
+         WHERE B."DMAName" = A."DMAName" 
+           AND CAST(B."Date" AS DATE) = CAST(A."Date" AS DATE) - INTERVAL '1 day'
+         LIMIT 1), 0)) AS "Consumption",
+    A."createdAt",
+    A."updatedAt"
+FROM
+    "DMAMeterReadings" A
+WHERE
+    CAST(A."Date" AS DATE) >= '${start}' AND CAST(A."Date" AS DATE) <= '${end}'
+ORDER BY
+    A."Date" DESC `
+      );
+
+      const [count, cmeta] =
+        await sequelize.query(`SELECT COUNT (*) ::int AS total FROM "DMAMeterReadings"
+        WHERE CAST("Date" AS DATE) >= '${start}' AND CAST("Date" AS DATE) <= '${end}'`);
+
+      resolve({
+        data: data,
+        total: count[0].total,
+      });
+    } catch (error) {
+      reject({ error: "Retrieve failed" });
+    }
+  });
+};
+
 exports.findDMAReadings = (dma) => {
   return new Promise(async (resolve, reject) => {
     try {

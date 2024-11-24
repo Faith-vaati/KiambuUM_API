@@ -19,6 +19,10 @@ exports.DMAMeterReadingsRoutes = function (app) {
     DMAMeterReadingsController.findDailyReadings,
   ]);
 
+  app.get("/dmareading/analysis/:start/:end", [
+    DMAMeterReadingsController.findReadingAnalysis,
+  ]);
+
   app.delete("/dmareading/:id", [
     DMAMeterReadingsController.deleteDMAMeterReadingById,
   ]);

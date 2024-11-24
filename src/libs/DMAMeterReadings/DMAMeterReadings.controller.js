@@ -92,3 +92,17 @@ exports.findDailyReadings = (req, res) => {
     }
   );
 };
+
+exports.findReadingAnalysis = (req, res) => {
+  DMAMeterReadingsModel.findReadingAnalysis(
+    req.params.start,
+    req.params.end
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
