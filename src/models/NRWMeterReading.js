@@ -9,10 +9,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    Interval: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     DMAName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -43,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     Image: {
       type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    FirstReadingDate: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     SecondReadingDate: {

@@ -212,23 +212,23 @@ exports.searchDMA = (dma) => {
   });
 };
 
-exports.findNRWTReadingPaginated = (dma, type, start, end, offset) => {
+exports.findNRWReadingPaginated = (dma, type, start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
       let typeQuery =
         type !== "All" && dma !== "All"
           ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "DMAName" = '${dma}' 
-          AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
           : type !== "All" && dma === "All"
-          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
           : type === "All" && dma !== "All"
-          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
           : type === "All" && dma === "All"
-          ? `WHERE "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`
+          ? `WHERE "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
           : "";
 
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "NRWMeterReadings" ${typeQuery} ORDER BY "createdAt" DESC LIMIT 12 OFFSET ${offset}`
+        `SELECT * FROM "NRWMeterReadings" ${typeQuery} ORDER BY "createdAt" DESC `
       );
       const [count, mdata] = await sequelize.query(
         `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery}`
@@ -239,6 +239,7 @@ exports.findNRWTReadingPaginated = (dma, type, start, end, offset) => {
         total: count[0].total,
       });
     } catch (error) {
+      console.log(error);
       reject({ error: "Retrieve Failed!" });
     }
   });

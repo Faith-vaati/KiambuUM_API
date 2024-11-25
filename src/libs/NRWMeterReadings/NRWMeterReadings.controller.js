@@ -93,13 +93,12 @@ exports.findNRWReadings = (req, res) => {
   );
 };
 
-exports.findNRWTReadingPaginated = (req, res) => {
-  NRWMeterReadingsModel.findNRWTReadingPaginated(
+exports.findNRWReadingPaginated = (req, res) => {
+  NRWMeterReadingsModel.findNRWReadingPaginated(
     req.params.dma,
     req.params.type,
     req.params.start,
-    req.params.end,
-    req.params.offset
+    req.params.end
   ).then(
     (result) => {
       res.status(200).send(result);
