@@ -244,3 +244,38 @@ exports.findNRWReadingPaginated = (dma, type, start, end) => {
     }
   });
 };
+
+exports.dashboardAnalysis = (dma, start, end) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let typeQuery =
+        dma !== "All"
+          ? `WHERE "DMAName" = '${dma}' 
+          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND`
+          : `WHERE`;
+
+      const [customers, meta] = await sequelize.query(
+        `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery} "MeterType" = 'Customer Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
+      );
+      const [cus_cons, cdata] = await sequelize.query(
+        `SELECT SUM(("SecondReading"::numeric - "FirstReading"::numeric))::int AS total
+        FROM "NRWMeterReadings"
+        ${typeQuery} "MeterType" = 'Customer Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}';`
+      );
+      const [mst_cons, mdata] = await sequelize.query(
+        `SELECT SUM(("SecondReading"::numeric - "FirstReading"::numeric))::int AS total
+        FROM "NRWMeterReadings"
+        ${typeQuery} "MeterType" = 'Master Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}';`
+      );
+
+      resolve({
+        Customers: customers[0].total,
+        Cust_Cons: cus_cons[0].total,
+        Mast_Cons: mst_cons[0].total,
+      });
+    } catch (error) {
+      console.log(error);
+      reject({ error: "Retrieve Failed!" });
+    }
+  });
+};

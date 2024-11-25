@@ -23,6 +23,10 @@ exports.NRWMeterReadingsRoutes = function (app) {
     NRWMeterReadingsController.findNRWReadingPaginated,
   ]);
 
+  app.get("/nrwreading/dma/stats/:dma/:start/:end", [
+    NRWMeterReadingsController.dashboardAnalysis,
+  ]);
+
   app.delete("/nrwreading/:id", [
     NRWMeterReadingsController.deleteNRWMeterReadingById,
   ]);

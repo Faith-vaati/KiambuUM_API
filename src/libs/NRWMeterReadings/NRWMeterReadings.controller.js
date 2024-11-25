@@ -108,3 +108,18 @@ exports.findNRWReadingPaginated = (req, res) => {
     }
   );
 };
+
+exports.dashboardAnalysis = (req, res) => {
+  NRWMeterReadingsModel.dashboardAnalysis(
+    req.params.dma,
+    req.params.start,
+    req.params.end
+  ).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
