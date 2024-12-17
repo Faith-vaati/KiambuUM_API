@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    AssignedTo: {
+    NRWUserID: {
       type: DataTypes.STRING,
       allowNull: true,
     },
