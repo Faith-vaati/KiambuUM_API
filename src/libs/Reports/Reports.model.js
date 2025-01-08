@@ -395,14 +395,20 @@ exports.findReportByID = (id) => {
 exports.updateReportByID = (ReportsData, id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const Images = `${ReportsData.Type}-${Date.now()}.png`;
-      createFileFromBase64(ReportsData.TaskImage, Images);
-      ReportsData.TaskImage = Images;
-      Reports.update(ReportsData, {
+      let updateData = { ...ReportsData };
+
+      if (ReportsData.TaskImage) {
+        const Images = `${ReportsData.Type}-${Date.now()}.png`;
+        createFileFromBase64(ReportsData.TaskImage, Images);
+        updateData.TaskImage = Images;
+      } else {
+        // Remove TaskImage from update data if not provided
+        delete updateData.TaskImage;
+      }
+
+      await Reports.update(updateData, {
         where: { ID: id },
       });
-
-      console.log(ReportsData);
 
       resolve({
         success: "Updated Successfully",
