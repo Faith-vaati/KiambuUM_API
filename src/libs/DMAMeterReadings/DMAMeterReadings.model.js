@@ -197,47 +197,42 @@ ORDER BY
   });
 };
 
-exports.findDMAReadings = (dma) => {
+exports.findDMAReadings = (dma, start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
+      let dateFilter = "";
+      if (start && end) {
+        dateFilter = `AND "Date"::Date >= '${start}' AND "Date"::Date <= '${end}'`;
+      }
+
       const [data, metadata] = await sequelize.query(
-        `WITH RankedReadings AS (
-    SELECT
-        "DMAName",
-        "MeterStatus",
-        "Image",
-        "Date",
-        "createdAt",
-        CAST("Units" AS FLOAT) AS "Units",
-        LAG(CAST("Units" AS FLOAT)) OVER (
-            PARTITION BY "DMAName"
-            ORDER BY "Date"
-        ) AS "PreviousUnits"
-    FROM "DMAMeterReadings"
-    WHERE "DMAName" = '${dma}'
-),
-FilteredReadings AS (
-    SELECT
-        "DMAName",
-        "MeterStatus",
-        "Image",
-        "Date",
-        "createdAt",
-        "Units",
-        "PreviousUnits"
-    FROM RankedReadings
-    WHERE "PreviousUnits" IS NOT NULL
-)
-SELECT
-    "DMAName",
-    "MeterStatus",
-    "Image",
-    "Date",
-    "createdAt",
-    "Units",
-    ("Units" - "PreviousUnits") AS "Consumption"
-FROM FilteredReadings
-ORDER BY "Date" DESC;`
+        `SELECT  
+          A."DMAName", 
+          A."MeterStatus", 
+          A."Image", 
+          A."Date", 
+          A."createdAt",
+          CAST(A."Units" AS FLOAT) AS "Units",
+          (CAST(A."Units" AS FLOAT) - COALESCE(
+              (SELECT CAST(B."Units" AS FLOAT)
+               FROM "DMAMeterReadings" B 
+               WHERE B."DMAName" = A."DMAName" 
+                 AND B."Date" = (
+                      SELECT MAX("Date") 
+                      FROM "DMAMeterReadings" 
+                      WHERE "DMAName" = A."DMAName" 
+                        AND "Date" < A."Date"
+                  )
+               ORDER BY B."Date" DESC
+               LIMIT 1
+              ), 0)
+          ) AS "Consumption"
+      FROM 
+          "DMAMeterReadings" A
+      WHERE 
+          A."DMAName" = '${dma}'
+          ${dateFilter}
+      ORDER BY "Date" DESC;`
       );
       resolve({
         data: data,

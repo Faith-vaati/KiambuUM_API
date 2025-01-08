@@ -11,6 +11,10 @@ exports.DMAMeterReadingsRoutes = function (app) {
 
   app.get("/dmareading/searchdma/:dma", [DMAMeterReadingsController.searchDMA]);
 
+  app.get("/dmareading/bydma/:dma/:start/:end", [
+    DMAMeterReadingsController.findDMAReadings,
+  ]);
+
   app.get("/dmareading/bydma/:dma", [
     DMAMeterReadingsController.findDMAReadings,
   ]);

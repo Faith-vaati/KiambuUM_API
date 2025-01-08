@@ -68,7 +68,11 @@ exports.searchDMA = (req, res) => {
 };
 
 exports.findDMAReadings = (req, res) => {
-  DMAMeterReadingsModel.findDMAReadings(req.params.dma).then(
+  DMAMeterReadingsModel.findDMAReadings(
+    req.params.dma,
+    req.params.start,
+    req.params.end
+  ).then(
     (result) => {
       res.status(200).send(result);
     },

@@ -24,8 +24,6 @@ exports.findMasterMeterById = (req, res) => {
   );
 };
 
-
-
 exports.findMasterMeterByName = (req, res) => {
   MasterMetersModel.findMasterMeterByName(req.params.value).then(
     (result) => {
