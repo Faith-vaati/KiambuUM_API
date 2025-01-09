@@ -28,10 +28,7 @@ async function createFileFromBase64(base64Data, filePath) {
 
 exports.create = (NRWMeterReadingsData) => {
   return new Promise(async (resolve, reject) => {
-    if (
-      NRWMeterReadingsData.Interval === undefined ||
-      NRWMeterReadingsData.DMAName === undefined
-    ) {
+    if (NRWMeterReadingsData.DMAName === undefined) {
       reject({ error: "Body is required" });
     }
     try {
