@@ -276,3 +276,27 @@ exports.dashboardAnalysis = (dma, start, end) => {
     }
   });
 };
+
+exports.searchByAccountNo = (accountNo, meterType) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [result, meta] = await sequelize.query(
+        `SELECT * FROM "NRWMeterReadings" 
+         WHERE "AccountNo" LIKE '${accountNo}%'
+         AND "MeterType" = '${meterType}'
+         AND "FirstReading" IS NOT NULL 
+         AND "SecondReading" IS NULL 
+         AND "FirstReadingDate"::date >= CURRENT_DATE - INTERVAL '7 days'
+         AND "FirstReadingDate"::date <= CURRENT_DATE
+         ORDER BY "FirstReadingDate" DESC 
+         LIMIT 1`
+      );
+
+      resolve({
+        data: result[0] || null,
+      });
+    } catch (error) {
+      reject({ error: "Search Failed!" });
+    }
+  });
+};
