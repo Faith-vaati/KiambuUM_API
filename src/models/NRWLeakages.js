@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    Nature: {
+    Description: {
       type: DataTypes.STRING,
       allowNull: true,
     },

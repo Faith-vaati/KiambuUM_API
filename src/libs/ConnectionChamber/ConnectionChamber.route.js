@@ -24,23 +24,39 @@ exports.ConnectionChamberRoutes = function (app) {
     ConnectionChamberController.filterConnectionChamber,
   ]);
 
-  app.get("/connectionchamber/geojson", [ConnectionChamberController.getGeoJSON]);
+  app.get("/connectionchamber/geojson", [
+    ConnectionChamberController.getGeoJSON,
+  ]);
 
-  app.get("/connectionchamber/totalmapped", [ConnectionChamberController.totalMapped]);
+  app.get("/connectionchamber/totalmapped", [
+    ConnectionChamberController.totalMapped,
+  ]);
 
-  app.get("/connectionchamber/all/stats", [ConnectionChamberController.getStats]);
+  app.get("/connectionchamber/all/stats", [
+    ConnectionChamberController.getStats,
+  ]);
 
-  app.get("/connectionchamber/all/charts", [ConnectionChamberController.findCharts]);
+  app.get("/connectionchamber/all/charts", [
+    ConnectionChamberController.findCharts,
+  ]);
 
   app.get("/connectionchamber/details/:value", [
     ConnectionChamberController.findConnectionChamberByName,
   ]);
 
-  app.get("/connectionchamber/:ID", [ConnectionChamberController.findConnectionChamberById]);
+  app.get("/connectionchamber/:ID", [
+    ConnectionChamberController.findConnectionChamberById,
+  ]);
 
-  app.put("/connectionchamber/:ID", [ConnectionChamberController.updateConnectionChamberById]);
+  app.put("/connectionchamber/:ID", [
+    ConnectionChamberController.updateConnectionChamberById,
+  ]);
 
-  app.delete("/connectionchamber/:ID", [ConnectionChamberController.deleteConnectionChamberById]);
+  app.delete("/connectionchamber/:ID", [
+    ConnectionChamberController.deleteConnectionChamberById,
+  ]);
 
-  app.get("/connectionchamber", [ConnectionChamberController.findAllConnectionChamber]);
+  app.get("/connectionchamber", [
+    ConnectionChamberController.findAllConnectionChamber,
+  ]);
 };

@@ -129,7 +129,7 @@ exports.findAssignedNRWLeakagesPaginated = (nrwId, offset) => {
     try {
       const [pending, metap] = await sequelize.query(
         `SELECT "NRWLeakages".* FROM "NRWLeakages"
-        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."UserID"::varchar = "PublicUsers"."UserID"::varchar
+        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."NRWUserID"::varchar = "PublicUsers"."UserID"::varchar
         WHERE "NRWLeakages"."NRWUserID" = '${nrwId}'
         AND "NRWLeakages"."Status" = 'Assigned'
         ORDER BY "NRWLeakages"."createdAt" DESC
@@ -137,7 +137,7 @@ exports.findAssignedNRWLeakagesPaginated = (nrwId, offset) => {
       );
       const [complete, metac] = await sequelize.query(
         `SELECT "NRWLeakages".* FROM "NRWLeakages"
-        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."UserID"::varchar = "PublicUsers"."UserID"::varchar
+        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."NRWUserID"::varchar = "PublicUsers"."UserID"::varchar
         WHERE "NRWLeakages"."NRWUserID" = '${nrwId}'
         AND "NRWLeakages"."Status" = 'Resolved'
         ORDER BY "NRWLeakages"."createdAt" DESC
@@ -145,13 +145,13 @@ exports.findAssignedNRWLeakagesPaginated = (nrwId, offset) => {
       );
       const [countP, metacountR] = await sequelize.query(
         `SELECT COUNT(*) FROM "NRWLeakages"
-        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."UserID"::varchar = "PublicUsers"."UserID"::varchar
+        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."NRWUserID"::varchar = "PublicUsers"."UserID"::varchar
         WHERE "NRWLeakages"."NRWUserID" = '${nrwId}'
         AND "NRWLeakages"."Status" = 'Assigned'`
       );
       const [countR, metacountP] = await sequelize.query(
         `SELECT COUNT(*) FROM "NRWLeakages"
-        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."UserID"::varchar = "PublicUsers"."UserID"::varchar
+        LEFT OUTER JOIN "PublicUsers" ON "NRWLeakages"."NRWUserID"::varchar = "PublicUsers"."UserID"::varchar
         WHERE "NRWLeakages"."NRWUserID" = '${nrwId}'
         AND "NRWLeakages"."Status" = 'Resolved'`
       );
@@ -162,6 +162,8 @@ exports.findAssignedNRWLeakagesPaginated = (nrwId, offset) => {
         countR: countR[0].count,
       });
     } catch (error) {
+      console.log(error);
+
       reject({ error: "Retrieve failed!" });
     }
   });
