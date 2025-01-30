@@ -34,4 +34,12 @@ exports.NRWMeterReadingsRoutes = function (app) {
   app.put("/nrwreading/:id", [
     NRWMeterReadingsController.updateNRWMeterReadingsById,
   ]);
+
+  app.get("/nrwreading/search/:accountNo", [
+    NRWMeterReadingsController.searchByAccountNo,
+  ]);
+
+  app.put("/nrwreading/update/secondreading", [
+    NRWMeterReadingsController.updateSecondReading,
+  ]);
 };

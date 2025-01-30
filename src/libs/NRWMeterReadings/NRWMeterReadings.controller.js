@@ -123,3 +123,25 @@ exports.dashboardAnalysis = (req, res) => {
     }
   );
 };
+
+exports.searchByAccountNo = (req, res) => {
+  NRWMeterReadingsModel.searchByAccountNo(req.params.accountNo).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.updateSecondReading = (req, res) => {
+  NRWMeterReadingsModel.updateSecondReading(req.body).then(
+    (result) => {
+      res.status(200).send(result);
+    },
+    (err) => {
+      res.status(203).send(err);
+    }
+  );
+};

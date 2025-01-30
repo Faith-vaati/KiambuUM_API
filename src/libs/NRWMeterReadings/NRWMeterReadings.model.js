@@ -277,17 +277,15 @@ exports.dashboardAnalysis = (dma, start, end) => {
   });
 };
 
-exports.searchByAccountNo = (accountNo, meterType) => {
+exports.searchByAccountNo = (accountNo) => {
   return new Promise(async (resolve, reject) => {
     try {
       const [result, meta] = await sequelize.query(
         `SELECT * FROM "NRWMeterReadings" 
-         WHERE "AccountNo" LIKE '${accountNo}%'
-         AND "MeterType" = '${meterType}'
+         WHERE "AccountNo" = '${accountNo}'
          AND "FirstReading" IS NOT NULL 
-         AND "SecondReading" IS NULL 
+        
          AND "FirstReadingDate"::date >= CURRENT_DATE - INTERVAL '7 days'
-         AND "FirstReadingDate"::date <= CURRENT_DATE
          ORDER BY "FirstReadingDate" DESC 
          LIMIT 1`
       );
@@ -297,6 +295,43 @@ exports.searchByAccountNo = (accountNo, meterType) => {
       });
     } catch (error) {
       reject({ error: "Search Failed!" });
+    }
+  });
+};
+
+exports.updateSecondReading = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.AccountNo || !data.SecondReading) {
+        reject({ error: "Account number and second reading are required" });
+        return;
+      }
+
+      const [result] = await sequelize.query(
+        `UPDATE "NRWMeterReadings"
+         SET "SecondReading" = :secondReading,
+             "SecondReadingDate" = CURRENT_TIMESTAMP
+         WHERE "AccountNo" = :accountNo
+         AND "FirstReading" IS NOT NULL
+       
+         AND "FirstReadingDate"::date >= CURRENT_DATE - INTERVAL '7 days'
+         RETURNING *`,
+        {
+          replacements: {
+            accountNo: data.AccountNo,
+            secondReading: data.SecondReading,
+          },
+          type: sequelize.QueryTypes.UPDATE,
+        }
+      );
+
+      if (result && result.length > 0) {
+        resolve({ success: "Second reading updated successfully" });
+      } else {
+        reject({ error: "No matching record found to update" });
+      }
+    } catch (error) {
+      reject({ error: "Update Failed!" });
     }
   });
 };
