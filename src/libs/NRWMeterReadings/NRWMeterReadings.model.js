@@ -326,7 +326,7 @@ exports.updateSecondReading = (data) => {
       );
 
       if (result && result.length > 0) {
-        resolve({ success: "Second reading updated successfully" });
+        resolve({ success: "Updated successfully" });
       } else {
         reject({ error: "No matching record found to update" });
       }
