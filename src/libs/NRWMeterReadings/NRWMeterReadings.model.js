@@ -307,19 +307,47 @@ exports.updateSecondReading = (data) => {
         return;
       }
 
+      // First get the existing record to get DMAName for image naming
+      const [existingRecord] = await sequelize.query(
+        `SELECT "DMAName", "FirstReadingDate" FROM "NRWMeterReadings" 
+         WHERE "AccountNo" = :accountNo
+         AND "FirstReading" IS NOT NULL
+         AND "FirstReadingDate"::date >= CURRENT_DATE - INTERVAL '7 days'
+         ORDER BY "FirstReadingDate" DESC 
+         LIMIT 1`,
+        {
+          replacements: { accountNo: data.AccountNo },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+
+      if (!existingRecord) {
+        reject({ error: "No matching record found to update" });
+        return;
+      }
+
+      // Handle SR_Image if provided
+      let srImageFileName = null;
+      if (data.SR_Image) {
+        srImageFileName = `${existingRecord.DMAName}-SR-${Date.now()}.png`;
+        await createFileFromBase64(data.SR_Image, srImageFileName);
+      }
+
+      // Update the record with second reading and SR_Image
       const [result] = await sequelize.query(
         `UPDATE "NRWMeterReadings"
          SET "SecondReading" = :secondReading,
-             "SecondReadingDate" = CURRENT_TIMESTAMP
+             "SecondReadingDate" = CURRENT_TIMESTAMP,
+             "SR_Image" = :srImage
          WHERE "AccountNo" = :accountNo
          AND "FirstReading" IS NOT NULL
-       
          AND "FirstReadingDate"::date >= CURRENT_DATE - INTERVAL '7 days'
          RETURNING *`,
         {
           replacements: {
             accountNo: data.AccountNo,
             secondReading: data.SecondReading,
+            srImage: srImageFileName,
           },
           type: sequelize.QueryTypes.UPDATE,
         }
@@ -331,6 +359,7 @@ exports.updateSecondReading = (data) => {
         reject({ error: "No matching record found to update" });
       }
     } catch (error) {
+      console.error("Update error:", error);
       reject({ error: "Update Failed!" });
     }
   });

@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    SR_Image: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     FirstReadingDate: {
       type: DataTypes.STRING,
       allowNull: true,
