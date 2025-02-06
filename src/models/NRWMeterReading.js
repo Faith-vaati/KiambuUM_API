@@ -63,5 +63,10 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
+  // Add hooks to set SecondReading equal to FirstReading during creation
+  NRWMeterReadings.beforeCreate((reading, options) => {
+    reading.SecondReading = reading.FirstReading;
+  });
+
   return NRWMeterReadings;
 };
