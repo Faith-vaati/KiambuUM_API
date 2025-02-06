@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     SecondReading: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     MeterStatus: {
       type: DataTypes.STRING,
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     Remarks: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     Image: {
       type: DataTypes.TEXT,
