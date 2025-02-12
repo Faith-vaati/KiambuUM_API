@@ -85,14 +85,21 @@ exports.updateNRWMeterReadingsById = (NRWMeterReadingsData, id) => {
 
 exports.deleteNRWMeterReadingById = (id) => {
   return new Promise((resolve, reject) => {
-    NRWMeterReadings.destroy({
-      where: {
-        ID: id,
-      },
-    }).then(
+    NRWMeterReadings.update(
+      { deletedAt: new Date() },
+      {
+        where: {
+          ID: id,
+          deletedAt: null,
+        },
+      }
+    ).then(
       (result) => {
-        if (result != 0) resolve({ success: "Deleted successfully!!!" });
-        else reject({ error: "NRWMeterReading does not exist!!!" });
+        if (result[0] !== 0) resolve({ success: "Deleted successfully!!!" });
+        else
+          reject({
+            error: "NRWMeterReading does not exist or is already deleted!!!",
+          });
       },
       (err) => {
         reject({ error: err });
@@ -215,13 +222,13 @@ exports.findNRWReadingPaginated = (dma, type, start, end) => {
       let typeQuery =
         type !== "All" && dma !== "All"
           ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "DMAName" = '${dma}' 
-          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
+          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
           : type !== "All" && dma === "All"
-          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
+          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
           : type === "All" && dma !== "All"
-          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
+          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
           : type === "All" && dma === "All"
-          ? `WHERE "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
+          ? `WHERE "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
           : "";
 
       const [result, meta] = await sequelize.query(
@@ -248,8 +255,8 @@ exports.dashboardAnalysis = (dma, start, end) => {
       let typeQuery =
         dma !== "All"
           ? `WHERE "DMAName" = '${dma}' 
-          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND`
-          : `WHERE`;
+          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL AND`
+          : `WHERE "deletedAt" IS NULL AND`;
 
       const [customers, meta] = await sequelize.query(
         `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery} "MeterType" = 'Customer Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
