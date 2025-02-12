@@ -10,6 +10,28 @@ const Path = require("path");
 
 NRWMeterReadings.sync({ force: false });
 
+const executeQueryWithRetry = async (query, params = {}, maxRetries = 3) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await sequelize.query(query, {
+        replacements: params,
+        type: sequelize.QueryTypes.SELECT,
+      });
+      return result;
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      // Wait before retrying (exponential backoff)
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      // Ensure connection is alive
+      try {
+        await sequelize.authenticate();
+      } catch (e) {
+        console.log("Reconnecting to database...");
+      }
+    }
+  }
+};
+
 async function createFileFromBase64(base64Data, filePath) {
   if (filePath != null && base64Data != null) {
     const base64DataWithoutHeader = base64Data.replace(
@@ -305,42 +327,44 @@ exports.findNRWReadingPaginated = (dma, type, start, end) => {
 exports.dashboardAnalysis = (dma, start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let dmaFilter = dma !== "All" ? `AND "DMAName" = '${dma}'` : "";
+      let dmaFilter = dma !== "All" ? `AND "DMAName" = :dma` : "";
 
       // Get total customers
-      const [customers, meta] = await sequelize.query(
+      const customers = await executeQueryWithRetry(
         `SELECT COUNT(*)::int AS total 
          FROM "NRWMeterReadings" 
          WHERE "deletedAt" IS NULL 
-         AND "FirstReadingDate"::Date >= '${start}' 
-         AND "FirstReadingDate"::Date <= '${end}'
+         AND "FirstReadingDate"::Date >= :start 
+         AND "FirstReadingDate"::Date <= :end
          AND "MeterType" = 'Customer Meter'
-         ${dmaFilter}`
+         ${dmaFilter}`,
+        { dma, start, end }
       );
 
       // Calculate customer consumption
-      const [cus_cons, cdata] = await sequelize.query(
+      const cus_cons = await executeQueryWithRetry(
         `SELECT COALESCE(SUM(
            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
          ), 0)::numeric AS total
          FROM "NRWMeterReadings"
          WHERE "deletedAt" IS NULL 
-         AND "FirstReadingDate"::Date >= '${start}' 
-         AND "FirstReadingDate"::Date <= '${end}'
+         AND "FirstReadingDate"::Date >= :start 
+         AND "FirstReadingDate"::Date <= :end
          AND "MeterType" = 'Customer Meter'
-         ${dmaFilter}`
+         ${dmaFilter}`,
+        { dma, start, end }
       );
 
       // Calculate master meter consumption
-      const [mst_cons, mdata] = await sequelize.query(
+      const mst_cons = await executeQueryWithRetry(
         `WITH samaki2_raw AS (
           SELECT 
             (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as samaki2_cons
           FROM "NRWMeterReadings"
           WHERE "DMAName" = 'Samaki 2'
           AND "MeterType" = 'Master Meter'
-          AND "FirstReadingDate"::Date >= '${start}' 
-          AND "FirstReadingDate"::Date <= '${end}'
+          AND "FirstReadingDate"::Date >= :start 
+          AND "FirstReadingDate"::Date <= :end
           AND "deletedAt" IS NULL
           LIMIT 1
         ),
@@ -351,8 +375,8 @@ exports.dashboardAnalysis = (dma, start, end) => {
           FROM "NRWMeterReadings"
           WHERE "DMAName" = 'Samaki 1'
           AND "MeterType" = 'Master Meter'
-          AND "FirstReadingDate"::Date >= '${start}' 
-          AND "FirstReadingDate"::Date <= '${end}'
+          AND "FirstReadingDate"::Date >= :start 
+          AND "FirstReadingDate"::Date <= :end
           AND "deletedAt" IS NULL
           LIMIT 1
         ),
@@ -362,8 +386,8 @@ exports.dashboardAnalysis = (dma, start, end) => {
           FROM "NRWMeterReadings"
           WHERE "DMAName" = 'Makanja 2'
           AND "MeterType" = 'Master Meter'
-          AND "FirstReadingDate"::Date >= '${start}' 
-          AND "FirstReadingDate"::Date <= '${end}'
+          AND "FirstReadingDate"::Date >= :start 
+          AND "FirstReadingDate"::Date <= :end
           AND "deletedAt" IS NULL
           LIMIT 1
         )
@@ -383,28 +407,31 @@ exports.dashboardAnalysis = (dma, start, end) => {
         ), 0)::numeric AS total
         FROM "NRWMeterReadings"
         WHERE "deletedAt" IS NULL 
-        AND "FirstReadingDate"::Date >= '${start}' 
-        AND "FirstReadingDate"::Date <= '${end}'
-        ${dmaFilter}`
+        AND "FirstReadingDate"::Date >= :start 
+        AND "FirstReadingDate"::Date <= :end
+        ${dmaFilter}`,
+        { dma, start, end }
       );
 
       // Calculate NRW Volume and Ratio with values rounded to 2 decimal places
-      const masterMeterCons = Number(Number(mst_cons[0].total).toFixed(2)) || 0;
-      const customerCons = Number(Number(cus_cons[0].total).toFixed(2)) || 0;
+      const masterMeterCons = Number(
+        Number(mst_cons[0]?.total || 0).toFixed(2)
+      );
+      const customerCons = Number(Number(cus_cons[0]?.total || 0).toFixed(2));
       const nrwVolume = Number((masterMeterCons - customerCons).toFixed(2));
       const nrwRatio = masterMeterCons
         ? Number(((nrwVolume / masterMeterCons) * 100).toFixed(2))
         : 0;
 
       resolve({
-        Customers: customers[0].total,
+        Customers: customers[0]?.total || 0,
         Cust_Cons: customerCons,
         Mast_Cons: masterMeterCons,
         NRW_Volume: nrwVolume,
         NRW_Ratio: nrwRatio,
       });
     } catch (error) {
-      console.log(error);
+      console.error("Dashboard Analysis Error:", error);
       reject({ error: "Retrieve Failed!" });
     }
   });
