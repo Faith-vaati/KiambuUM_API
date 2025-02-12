@@ -221,21 +221,43 @@ exports.findNRWReadingPaginated = (dma, type, start, end) => {
     try {
       let typeQuery =
         type !== "All" && dma !== "All"
-          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "DMAName" = '${dma}' 
-          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
+          ? `WHERE main."MeterType" = '${type}' AND main."DMAName" = '${dma}' 
+          AND main."FirstReadingDate"::Date >= '${start}' AND main."FirstReadingDate"::Date <= '${end}' AND main."deletedAt" IS NULL`
           : type !== "All" && dma === "All"
-          ? `WHERE "NRWMeterReadings"."MeterType" = '${type}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
+          ? `WHERE main."MeterType" = '${type}' AND main."FirstReadingDate"::Date >= '${start}' AND main."FirstReadingDate"::Date <= '${end}' AND main."deletedAt" IS NULL`
           : type === "All" && dma !== "All"
-          ? `WHERE "NRWMeterReadings"."DMAName" = '${dma}' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
+          ? `WHERE main."DMAName" = '${dma}' AND main."FirstReadingDate"::Date >= '${start}' AND main."FirstReadingDate"::Date <= '${end}' AND main."deletedAt" IS NULL`
           : type === "All" && dma === "All"
-          ? `WHERE "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL`
+          ? `WHERE main."FirstReadingDate"::Date >= '${start}' AND main."FirstReadingDate"::Date <= '${end}' AND main."deletedAt" IS NULL`
           : "";
 
       const [result, meta] = await sequelize.query(
-        `SELECT * FROM "NRWMeterReadings" ${typeQuery} ORDER BY "createdAt" DESC `
+        `WITH samaki2_consumption AS (
+          SELECT 
+            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as samaki2_cons
+          FROM "NRWMeterReadings"
+          WHERE "DMAName" = 'Samaki 2'
+          AND "MeterType" = 'Master Meter'
+          AND "FirstReadingDate"::Date >= '${start}' 
+          AND "FirstReadingDate"::Date <= '${end}'
+          AND "deletedAt" IS NULL
+          LIMIT 1
+        )
+        SELECT 
+          main.*,
+          CASE 
+            WHEN main."DMAName" = 'Samaki 1' AND main."MeterType" = 'Master Meter' THEN
+              (REPLACE(main."SecondReading", ' ', '')::numeric - REPLACE(main."FirstReading", ' ', '')::numeric) - COALESCE((SELECT samaki2_cons FROM samaki2_consumption), 0)
+            ELSE
+              (REPLACE(main."SecondReading", ' ', '')::numeric - REPLACE(main."FirstReading", ' ', '')::numeric)
+          END AS "Consumption"
+        FROM "NRWMeterReadings" main
+        ${typeQuery} 
+        ORDER BY main."createdAt" DESC`
       );
+
       const [count, mdata] = await sequelize.query(
-        `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery}`
+        `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" main ${typeQuery}`
       );
 
       resolve({
@@ -252,30 +274,76 @@ exports.findNRWReadingPaginated = (dma, type, start, end) => {
 exports.dashboardAnalysis = (dma, start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let typeQuery =
-        dma !== "All"
-          ? `WHERE "DMAName" = '${dma}' 
-          AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}' AND "deletedAt" IS NULL AND`
-          : `WHERE "deletedAt" IS NULL AND`;
+      let dmaFilter = dma !== "All" ? `AND "DMAName" = '${dma}'` : "";
 
+      // Get total customers
       const [customers, meta] = await sequelize.query(
-        `SELECT COUNT(*)::int AS total FROM "NRWMeterReadings" ${typeQuery} "MeterType" = 'Customer Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}'`
+        `SELECT COUNT(*)::int AS total 
+         FROM "NRWMeterReadings" 
+         WHERE "deletedAt" IS NULL 
+         AND "FirstReadingDate"::Date >= '${start}' 
+         AND "FirstReadingDate"::Date <= '${end}'
+         AND "MeterType" = 'Customer Meter'
+         ${dmaFilter}`
       );
+
+      // Calculate customer consumption
       const [cus_cons, cdata] = await sequelize.query(
-        `SELECT SUM(("SecondReading"::numeric - "FirstReading"::numeric))::int AS total
-        FROM "NRWMeterReadings"
-        ${typeQuery} "MeterType" = 'Customer Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}';`
+        `SELECT COALESCE(SUM(
+           (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+         ), 0)::numeric AS total
+         FROM "NRWMeterReadings"
+         WHERE "deletedAt" IS NULL 
+         AND "FirstReadingDate"::Date >= '${start}' 
+         AND "FirstReadingDate"::Date <= '${end}'
+         AND "MeterType" = 'Customer Meter'
+         ${dmaFilter}`
       );
+
+      // Calculate master meter consumption with special handling for Samaki 1
       const [mst_cons, mdata] = await sequelize.query(
-        `SELECT SUM(("SecondReading"::numeric - "FirstReading"::numeric))::int AS total
-        FROM "NRWMeterReadings"
-        ${typeQuery} "MeterType" = 'Master Meter' AND "FirstReadingDate"::Date >= '${start}' AND "FirstReadingDate"::Date <= '${end}';`
+        `WITH samaki2_consumption AS (
+           SELECT 
+             (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as samaki2_cons
+           FROM "NRWMeterReadings"
+           WHERE "DMAName" = 'Samaki 2'
+           AND "MeterType" = 'Master Meter'
+           AND "FirstReadingDate"::Date >= '${start}' 
+           AND "FirstReadingDate"::Date <= '${end}'
+           AND "deletedAt" IS NULL
+           LIMIT 1
+         )
+         SELECT COALESCE(SUM(
+           CASE 
+             WHEN "DMAName" = 'Samaki 1' AND "MeterType" = 'Master Meter' THEN
+               (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
+               COALESCE((SELECT samaki2_cons FROM samaki2_consumption), 0)
+             WHEN "MeterType" = 'Master Meter' THEN
+               (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+             ELSE 0
+           END
+         ), 0)::numeric AS total
+         FROM "NRWMeterReadings"
+         WHERE "deletedAt" IS NULL 
+         AND "FirstReadingDate"::Date >= '${start}' 
+         AND "FirstReadingDate"::Date <= '${end}'
+         ${dmaFilter}`
       );
+
+      // Calculate NRW Volume and Ratio with values rounded to 2 decimal places
+      const masterMeterCons = Number(Number(mst_cons[0].total).toFixed(2)) || 0;
+      const customerCons = Number(Number(cus_cons[0].total).toFixed(2)) || 0;
+      const nrwVolume = Number((masterMeterCons - customerCons).toFixed(2));
+      const nrwRatio = masterMeterCons 
+        ? Number(((nrwVolume / masterMeterCons) * 100).toFixed(2))
+        : 0;
 
       resolve({
         Customers: customers[0].total,
-        Cust_Cons: cus_cons[0].total,
-        Mast_Cons: mst_cons[0].total,
+        Cust_Cons: customerCons,
+        Mast_Cons: masterMeterCons,
+        NRW_Volume: nrwVolume,
+        NRW_Ratio: nrwRatio,
       });
     } catch (error) {
       console.log(error);
