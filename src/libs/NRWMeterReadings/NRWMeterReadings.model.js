@@ -328,110 +328,85 @@ exports.dashboardAnalysis = (dma, start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
       let dmaFilter = dma !== "All" ? `AND "DMAName" = :dma` : "";
-
-      // Get total customers
-      const customers = await executeQueryWithRetry(
-        `SELECT COUNT(*)::int AS total 
-         FROM "NRWMeterReadings" 
-         WHERE "deletedAt" IS NULL 
-         AND "FirstReadingDate"::Date >= :start 
-         AND "FirstReadingDate"::Date <= :end
-         AND "MeterType" = 'Customer Meter'
-         ${dmaFilter}`,
-        { dma, start, end }
-      );
-
-      // Calculate customer consumption
-      const cus_cons = await executeQueryWithRetry(
-        `SELECT COALESCE(SUM(
-           (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-         ), 0)::numeric AS total
-         FROM "NRWMeterReadings"
-         WHERE "deletedAt" IS NULL 
-         AND "FirstReadingDate"::Date >= :start 
-         AND "FirstReadingDate"::Date <= :end
-         AND "MeterType" = 'Customer Meter'
-         ${dmaFilter}`,
-        { dma, start, end }
-      );
-
-      // Calculate master meter consumption
-      const mst_cons = await executeQueryWithRetry(
-        `WITH samaki2_raw AS (
+      
+      // Combine multiple queries into a single query for better performance
+      const [result] = await sequelize.query(`
+        WITH customer_stats AS (
           SELECT 
-            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as samaki2_cons
-          FROM "NRWMeterReadings"
-          WHERE "DMAName" = 'Samaki 2'
-          AND "MeterType" = 'Master Meter'
-          AND "FirstReadingDate"::Date >= :start 
-          AND "FirstReadingDate"::Date <= :end
-          AND "deletedAt" IS NULL
-          LIMIT 1
-        ),
-        samaki1_consumption AS (
-          SELECT 
-            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
-            COALESCE((SELECT samaki2_cons FROM samaki2_raw), 0) as samaki1_cons
-          FROM "NRWMeterReadings"
-          WHERE "DMAName" = 'Samaki 1'
-          AND "MeterType" = 'Master Meter'
-          AND "FirstReadingDate"::Date >= :start 
-          AND "FirstReadingDate"::Date <= :end
-          AND "deletedAt" IS NULL
-          LIMIT 1
-        ),
-        makanja2_raw AS (
-          SELECT 
-            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as makanja2_cons
-          FROM "NRWMeterReadings"
-          WHERE "DMAName" = 'Makanja 2'
-          AND "MeterType" = 'Master Meter'
-          AND "FirstReadingDate"::Date >= :start 
-          AND "FirstReadingDate"::Date <= :end
-          AND "deletedAt" IS NULL
-          LIMIT 1
-        )
-        SELECT COALESCE(SUM(
-          CASE 
-            WHEN "DMAName" = 'Makanja 1' AND "MeterType" = 'Master Meter' THEN
-              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
-              COALESCE((SELECT makanja2_cons FROM makanja2_raw), 0) - 
-              COALESCE((SELECT samaki1_cons FROM samaki1_consumption), 0)
-            WHEN "DMAName" = 'Samaki 1' AND "MeterType" = 'Master Meter' THEN
-              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
-              COALESCE((SELECT samaki2_cons FROM samaki2_raw), 0)
-            WHEN "MeterType" = 'Master Meter' THEN
+            COUNT(*)::int AS total_customers,
+            COALESCE(SUM(
               (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+            ), 0)::numeric AS customer_consumption
+          FROM "NRWMeterReadings"
+          WHERE "deletedAt" IS NULL 
+          AND "FirstReadingDate"::Date >= :start 
+          AND "FirstReadingDate"::Date <= :end
+          AND "MeterType" = 'Customer Meter'
+          ${dmaFilter}
+        ),
+        master_meter_stats AS (
+          WITH samaki2_raw AS (
+            SELECT 
+              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as samaki2_cons
+            FROM "NRWMeterReadings"
+            WHERE "DMAName" = 'Samaki 2'
+            AND "MeterType" = 'Master Meter'
+            AND "FirstReadingDate"::Date >= :start 
+            AND "FirstReadingDate"::Date <= :end
+            AND "deletedAt" IS NULL
+            LIMIT 1
+          ),
+          samaki1_consumption AS (
+            SELECT 
+              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
+              COALESCE((SELECT samaki2_cons FROM samaki2_raw), 0) as samaki1_cons
+            FROM "NRWMeterReadings"
+            WHERE "DMAName" = 'Samaki 1'
+            AND "MeterType" = 'Master Meter'
+            AND "FirstReadingDate"::Date >= :start 
+            AND "FirstReadingDate"::Date <= :end
+            AND "deletedAt" IS NULL
+            LIMIT 1
+          )
+          SELECT COALESCE(SUM(
+            CASE 
+              WHEN "DMAName" = 'Makanja 1' AND "MeterType" = 'Master Meter' THEN
+                (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
+                COALESCE((SELECT samaki1_cons FROM samaki1_consumption), 0)
+              WHEN "DMAName" = 'Samaki 1' AND "MeterType" = 'Master Meter' THEN
+                (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
+                COALESCE((SELECT samaki2_cons FROM samaki2_raw), 0)
+              WHEN "MeterType" = 'Master Meter' THEN
+                (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+              ELSE 0
+            END
+          ), 0)::numeric AS master_consumption
+          FROM "NRWMeterReadings"
+          WHERE "deletedAt" IS NULL 
+          AND "FirstReadingDate"::Date >= :start 
+          AND "FirstReadingDate"::Date <= :end
+          ${dmaFilter}
+        )
+        SELECT 
+          cs.total_customers AS "Customers",
+          cs.customer_consumption AS "Cust_Cons",
+          ms.master_consumption AS "Mast_Cons",
+          (ms.master_consumption - cs.customer_consumption)::numeric(10,2) AS "NRW_Volume",
+          CASE 
+            WHEN ms.master_consumption > 0 THEN
+              ((ms.master_consumption - cs.customer_consumption) / ms.master_consumption * 100)::numeric(10,2)
             ELSE 0
-          END
-        ), 0)::numeric AS total
-        FROM "NRWMeterReadings"
-        WHERE "deletedAt" IS NULL 
-        AND "FirstReadingDate"::Date >= :start 
-        AND "FirstReadingDate"::Date <= :end
-        ${dmaFilter}`,
-        { dma, start, end }
-      );
-
-      // Calculate NRW Volume and Ratio with values rounded to 2 decimal places
-      const masterMeterCons = Number(
-        Number(mst_cons[0]?.total || 0).toFixed(2)
-      );
-      const customerCons = Number(Number(cus_cons[0]?.total || 0).toFixed(2));
-      const nrwVolume = Number((masterMeterCons - customerCons).toFixed(2));
-      const nrwRatio = masterMeterCons
-        ? Number(((nrwVolume / masterMeterCons) * 100).toFixed(2))
-        : 0;
-
-      resolve({
-        Customers: customers[0]?.total || 0,
-        Cust_Cons: customerCons,
-        Mast_Cons: masterMeterCons,
-        NRW_Volume: nrwVolume,
-        NRW_Ratio: nrwRatio,
+          END AS "NRW_Ratio"
+        FROM customer_stats cs
+        CROSS JOIN master_meter_stats ms
+      `, {
+        replacements: { dma, start, end },
+        type: sequelize.QueryTypes.SELECT
       });
+
+      resolve(result[0]);
     } catch (error) {
-      console.error("Dashboard Analysis Error:", error);
+      console.error('Dashboard Analysis Error:', error);
       reject({ error: "Retrieve Failed!" });
     }
   });
@@ -523,4 +498,12 @@ exports.updateSecondReading = (data) => {
       reject({ error: "Update Failed!" });
     }
   });
+};
+
+exports.optimizeQueries = async () => {
+  await sequelize.query(`
+    CREATE INDEX IF NOT EXISTS idx_nrw_dma_date ON "NRWMeterReadings" ("DMAName", "FirstReadingDate");
+    CREATE INDEX IF NOT EXISTS idx_nrw_meter_type ON "NRWMeterReadings" ("MeterType");
+    CREATE INDEX IF NOT EXISTS idx_nrw_deleted ON "NRWMeterReadings" ("deletedAt");
+  `);
 };
