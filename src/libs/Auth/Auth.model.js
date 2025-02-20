@@ -173,6 +173,7 @@ exports.updateAuthById = async (AuthData, AuthID) => {
           }
         },
         (err) => {
+          console.log(err);
           reject({ error: "Retrieve failed" });
         }
       );
