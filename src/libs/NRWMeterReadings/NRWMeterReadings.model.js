@@ -328,9 +328,9 @@ exports.dashboardAnalysis = (dma, start, end) => {
   return new Promise(async (resolve, reject) => {
     try {
       let dmaFilter = dma !== "All" ? `AND "DMAName" = :dma` : "";
-      
-      // Combine multiple queries into a single query for better performance
-      const [result] = await sequelize.query(`
+
+      const [result] = await sequelize.query(
+        `
         WITH customer_stats AS (
           SELECT 
             COUNT(*)::int AS total_customers,
@@ -345,40 +345,53 @@ exports.dashboardAnalysis = (dma, start, end) => {
           ${dmaFilter}
         ),
         master_meter_stats AS (
-          WITH samaki2_raw AS (
-            SELECT 
-              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as samaki2_cons
-            FROM "NRWMeterReadings"
-            WHERE "DMAName" = 'Samaki 2'
-            AND "MeterType" = 'Master Meter'
-            AND "FirstReadingDate"::Date >= :start 
-            AND "FirstReadingDate"::Date <= :end
-            AND "deletedAt" IS NULL
-            LIMIT 1
-          ),
-          samaki1_consumption AS (
-            SELECT 
-              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
-              COALESCE((SELECT samaki2_cons FROM samaki2_raw), 0) as samaki1_cons
-            FROM "NRWMeterReadings"
-            WHERE "DMAName" = 'Samaki 1'
-            AND "MeterType" = 'Master Meter'
-            AND "FirstReadingDate"::Date >= :start 
-            AND "FirstReadingDate"::Date <= :end
-            AND "deletedAt" IS NULL
-            LIMIT 1
-          )
           SELECT COALESCE(SUM(
             CASE 
-              WHEN "DMAName" = 'Makanja 1' AND "MeterType" = 'Master Meter' THEN
-                (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
-                COALESCE((SELECT samaki1_cons FROM samaki1_consumption), 0)
-              WHEN "DMAName" = 'Samaki 1' AND "MeterType" = 'Master Meter' THEN
-                (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) - 
-                COALESCE((SELECT samaki2_cons FROM samaki2_raw), 0)
-              WHEN "MeterType" = 'Master Meter' THEN
-                (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-              ELSE 0
+              WHEN :dma = 'All' THEN
+                CASE
+                  WHEN "DMAName" = 'Makanja 1' AND "MeterType" = 'Master Meter' THEN
+                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) -
+                    COALESCE((
+                      SELECT (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                      FROM "NRWMeterReadings"
+                      WHERE "DMAName" = 'Makanja 2'
+                      AND "MeterType" = 'Master Meter'
+                      AND "FirstReadingDate"::Date >= :start 
+                      AND "FirstReadingDate"::Date <= :end
+                      AND "deletedAt" IS NULL
+                      LIMIT 1
+                    ), 0) -
+                    COALESCE((
+                      SELECT (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                      FROM "NRWMeterReadings"
+                      WHERE "DMAName" = 'Samaki 1'
+                      AND "MeterType" = 'Master Meter'
+                      AND "FirstReadingDate"::Date >= :start 
+                      AND "FirstReadingDate"::Date <= :end
+                      AND "deletedAt" IS NULL
+                      LIMIT 1
+                    ), 0)
+                  WHEN "DMAName" = 'Samaki 1' AND "MeterType" = 'Master Meter' THEN
+                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) -
+                    COALESCE((
+                      SELECT (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                      FROM "NRWMeterReadings"
+                      WHERE "DMAName" = 'Samaki 2'
+                      AND "MeterType" = 'Master Meter'
+                      AND "FirstReadingDate"::Date >= :start 
+                      AND "FirstReadingDate"::Date <= :end
+                      AND "deletedAt" IS NULL
+                      LIMIT 1
+                    ), 0)
+                  WHEN "MeterType" = 'Master Meter' THEN
+                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                  ELSE 0
+                END
+              ELSE
+                CASE WHEN "MeterType" = 'Master Meter' THEN
+                  (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                ELSE 0
+                END
             END
           ), 0)::numeric AS master_consumption
           FROM "NRWMeterReadings"
@@ -399,14 +412,16 @@ exports.dashboardAnalysis = (dma, start, end) => {
           END AS "NRW_Ratio"
         FROM customer_stats cs
         CROSS JOIN master_meter_stats ms
-      `, {
-        replacements: { dma, start, end },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { dma, start, end },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
 
-      resolve(result[0]);
+      resolve(result);
     } catch (error) {
-      console.error('Dashboard Analysis Error:', error);
+      console.error("Dashboard Analysis Error:", error);
       reject({ error: "Retrieve Failed!" });
     }
   });
