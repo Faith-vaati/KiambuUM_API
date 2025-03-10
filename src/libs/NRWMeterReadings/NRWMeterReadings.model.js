@@ -329,7 +329,7 @@ exports.dashboardAnalysis = (dma, start, end) => {
     try {
       let dmaFilter = dma !== "All" ? `AND "DMAName" = :dma` : "";
 
-      const [result] = await sequelize.query(
+      const results = await sequelize.query(
         `
         WITH customer_stats AS (
           SELECT 
@@ -344,54 +344,50 @@ exports.dashboardAnalysis = (dma, start, end) => {
           AND "MeterType" = 'Customer Meter'
           ${dmaFilter}
         ),
+        master_readings AS (
+          SELECT 
+            "DMAName",
+            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as consumption
+          FROM "NRWMeterReadings"
+          WHERE "MeterType" = 'Master Meter'
+          AND "FirstReadingDate"::Date >= :start 
+          AND "FirstReadingDate"::Date <= :end
+          AND "deletedAt" IS NULL
+        ),
         master_meter_stats AS (
           SELECT COALESCE(SUM(
             CASE 
-              WHEN :dma = 'All' THEN
-                CASE
-                  WHEN "DMAName" = 'Makanja 1' AND "MeterType" = 'Master Meter' THEN
-                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) -
+              WHEN "MeterType" = 'Master Meter' THEN
+                CASE 
+                  WHEN "DMAName" = 'Makanja 1' THEN
                     COALESCE((
-                      SELECT (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-                      FROM "NRWMeterReadings"
-                      WHERE "DMAName" = 'Makanja 2'
-                      AND "MeterType" = 'Master Meter'
-                      AND "FirstReadingDate"::Date >= :start 
-                      AND "FirstReadingDate"::Date <= :end
-                      AND "deletedAt" IS NULL
-                      LIMIT 1
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Makanja 1'
                     ), 0) -
                     COALESCE((
-                      SELECT (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-                      FROM "NRWMeterReadings"
-                      WHERE "DMAName" = 'Samaki 1'
-                      AND "MeterType" = 'Master Meter'
-                      AND "FirstReadingDate"::Date >= :start 
-                      AND "FirstReadingDate"::Date <= :end
-                      AND "deletedAt" IS NULL
-                      LIMIT 1
-                    ), 0)
-                  WHEN "DMAName" = 'Samaki 1' AND "MeterType" = 'Master Meter' THEN
-                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) -
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Makanja 2'
+                    ), 0) -
                     COALESCE((
-                      SELECT (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-                      FROM "NRWMeterReadings"
-                      WHERE "DMAName" = 'Samaki 2'
-                      AND "MeterType" = 'Master Meter'
-                      AND "FirstReadingDate"::Date >= :start 
-                      AND "FirstReadingDate"::Date <= :end
-                      AND "deletedAt" IS NULL
-                      LIMIT 1
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 1'
+                    ), 0) -
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 2'
                     ), 0)
-                  WHEN "MeterType" = 'Master Meter' THEN
+                  WHEN "DMAName" = 'Samaki 1' THEN
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 1'
+                    ), 0) -
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 2'
+                    ), 0)
+                  WHEN "DMAName" IN ('Makanja 2', 'Samaki 2') THEN
                     (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-                  ELSE 0
+                  ELSE
+                    CASE 
+                      WHEN :dma = 'All' THEN 0
+                      ELSE (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                    END
                 END
-              ELSE
-                CASE WHEN "MeterType" = 'Master Meter' THEN
-                  (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
-                ELSE 0
-                END
+              ELSE 0
             END
           ), 0)::numeric AS master_consumption
           FROM "NRWMeterReadings"
@@ -402,12 +398,12 @@ exports.dashboardAnalysis = (dma, start, end) => {
         )
         SELECT 
           cs.total_customers AS "Customers",
-          cs.customer_consumption AS "Cust_Cons",
-          ms.master_consumption AS "Mast_Cons",
-          (ms.master_consumption - cs.customer_consumption)::numeric(10,2) AS "NRW_Volume",
+          ROUND(cs.customer_consumption::numeric, 2) AS "Cust_Cons",
+          ROUND(ms.master_consumption::numeric, 2) AS "Mast_Cons",
+          ROUND((ms.master_consumption - cs.customer_consumption)::numeric, 2) AS "NRW_Volume",
           CASE 
             WHEN ms.master_consumption > 0 THEN
-              ((ms.master_consumption - cs.customer_consumption) / ms.master_consumption * 100)::numeric(10,2)
+              ROUND(((ms.master_consumption - cs.customer_consumption) / ms.master_consumption * 100)::numeric, 2)
             ELSE 0
           END AS "NRW_Ratio"
         FROM customer_stats cs
@@ -419,7 +415,17 @@ exports.dashboardAnalysis = (dma, start, end) => {
         }
       );
 
-      resolve(result);
+      const data = results[0] || {
+        Customers: 0,
+        Cust_Cons: "0.00",
+        Mast_Cons: "0.00",
+        NRW_Volume: "0.00",
+        NRW_Ratio: "0.00",
+      };
+
+      console.log("Dashboard Analysis Data:", data);
+
+      resolve(data);
     } catch (error) {
       console.error("Dashboard Analysis Error:", error);
       reject({ error: "Retrieve Failed!" });
