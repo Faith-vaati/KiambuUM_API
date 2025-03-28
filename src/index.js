@@ -38,6 +38,7 @@ const ProductionMeterReadings = require("./libs/ProductionMeterReadings/Producti
 const NRWInterventions = require("./libs/NRWInterventions/NRWInterventions.route");
 const NRWMeterReading = require("./libs/NRWMeterReadings/NRWMeterReadings.route");
 const NRWLeakages = require("./libs/NRWLeakages/NRWLeakages.route");
+const Network = require("./libs/Network/Network.route");
 
 const fetch = require("node-fetch");
 const path = require("path");
@@ -106,7 +107,7 @@ function getUrl(url) {
 }
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", getUrl(req.headers.origin));
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
   res.header("Access-Control-Expose-Headers", "Content-Length");
@@ -116,9 +117,8 @@ app.use(function (req, res, next) {
   );
   if (req.method === "OPTIONS") {
     return res.send(200);
-  } else {
-    return next();
   }
+  next();
 });
 
 app.get("/homepage", (req, res) => {
@@ -196,6 +196,7 @@ ProductionMeterReadings.ProductionMeterReadingsRoutes(app);
 NRWInterventions.NRWInterventionRoutes(app);
 NRWMeterReading.NRWMeterReadingsRoutes(app);
 NRWLeakages.NRWLeakagesRoutes(app);
+Network.NetworkRoutes(app);
 
 app.get("/update/:scheme/:start", (req, res) => {
   fetch(

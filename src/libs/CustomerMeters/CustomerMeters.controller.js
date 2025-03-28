@@ -174,3 +174,13 @@ exports.findCharts = (req, res) => {
     }
   );
 };
+
+exports.getMeterTypes = async (req, res) => {
+  try {
+    const meterTypes = await CustomerModel.getMeterTypes();
+    res.status(200).json(meterTypes);
+  } catch (error) {
+    console.error("Failed to get meter types:", error);
+    res.status(500).json({ error: "Failed to get meter types" });
+  }
+};

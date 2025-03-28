@@ -363,3 +363,26 @@ exports.findCharts = () => {
     }
   });
 };
+
+exports.getMeterTypes = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [meterTypes] = await sequelize.query(`
+        SELECT 
+          "Type" as type,
+          COUNT(*)::int as count
+        FROM "CustomerMeters"
+        WHERE "Type" IS NOT NULL
+        GROUP BY "Type"
+        ORDER BY count DESC;
+      `, {
+        type: Sequelize.QueryTypes.SELECT
+      });
+
+      resolve(meterTypes || []);
+    } catch (error) {
+      console.error("Error getting meter types:", error);
+      resolve([]);
+    }
+  });
+};

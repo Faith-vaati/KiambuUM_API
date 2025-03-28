@@ -43,4 +43,6 @@ exports.CustomersRoutes = function (app) {
   app.delete("/customers/:ID", [CustomerMetersController.deleteCustomerById]);
 
   app.get("/customers", [CustomerMetersController.findAllCustomers]);
+
+  app.get("/customermeters/types", CustomerMetersController.getMeterTypes);
 };
