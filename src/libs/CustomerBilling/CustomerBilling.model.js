@@ -12,17 +12,35 @@ const CustomerMeters = require("../../models/CustomerMeters")(
 CustomerBilling.sync({ force: false });
 exports.createCustomerBilling = (CustomerBillingData) => {
   return new Promise(async (resolve, reject) => {
-    if (CustomerBillingData?.account === undefined) {
-      return reject({ message: "Body is required!!!" });
-    }
-    CustomerBilling.create(CustomerBillingData).then(
-      (result) => {
-        resolve({ success: "CustomerBilling Created Successfully" });
-      },
-      (err) => {
-        reject({ error: "Creation failed" });
+    try {
+      // Ensure numeric fields are not NULL or invalid
+      const amount =
+        CustomerBillingData.Amount != null
+          ? parseFloat(CustomerBillingData.Amount)
+          : 0;
+      const balance =
+        CustomerBillingData.CurrentBalance != null
+          ? parseFloat(CustomerBillingData.CurrentBalance)
+          : 0;
+      const previousBalance =
+        CustomerBillingData.PreviousBalance != null
+          ? parseFloat(CustomerBillingData.PreviousBalance)
+          : 0;
+
+      if (CustomerBillingData?.account === undefined) {
+        return reject({ message: "Body is required!!!" });
       }
-    );
+      CustomerBilling.create(CustomerBillingData).then(
+        (result) => {
+          resolve({ success: "CustomerBilling Created Successfully" });
+        },
+        (err) => {
+          reject({ error: "Creation failed" });
+        }
+      );
+    } catch (error) {
+      reject({ error: "Failed to create customer billing" });
+    }
   });
 };
 
