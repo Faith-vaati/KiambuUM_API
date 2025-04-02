@@ -20,7 +20,7 @@ const CustomerChamber = require("../../models/CustomerChamber")(
   sequelize,
   Sequelize
 );
-const SewerLines = require("../../models/SewerLines")(sequelize, Sequelize);
+const SewerLines = require("../../models/Sewerlines")(sequelize, Sequelize);
 
 exports.getNetworkStats = () => {
   return new Promise(async (resolve, reject) => {
