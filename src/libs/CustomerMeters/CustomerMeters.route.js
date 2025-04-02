@@ -44,5 +44,11 @@ exports.CustomersRoutes = function (app) {
 
   app.get("/customers", [CustomerMetersController.findAllCustomers]);
 
-  app.get("/customermeters/types", CustomerMetersController.getMeterTypes);
+  app.get("/customermeters/types", [CustomerMetersController.getMeterTypes]);
+
+  app.get("/customers/summary/stats", [
+    CustomerMetersController.getSummaryStats,
+  ]);
+
+  app.get("/customermeters/status", [CustomerMetersController.getMeterStatus]);
 };

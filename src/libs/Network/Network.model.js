@@ -119,13 +119,40 @@ exports.getNetworkStats = () => {
       } catch (e) {
         console.error("Sewer Lines query failed:", e);
       }
-
-      console.log("Network stats:", stats);
       resolve(stats);
     } catch (error) {
       console.error("Network Stats Error:", error);
       reject({
         error: "Failed to retrieve network statistics",
+        details: error.message,
+      });
+    }
+  });
+};
+
+exports.getMasterMeterBrands = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const brands = await sequelize.query(
+        `
+        SELECT 
+          COALESCE("BrandName", 'Unknown') as name,
+          COUNT(*)::int as value
+        FROM "MasterMeters"
+        GROUP BY "BrandName"
+        ORDER BY value DESC
+      `,
+        {
+          type: sequelize.QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+
+      resolve(brands);
+    } catch (error) {
+      console.error("Master Meter Brands Error:", error);
+      reject({
+        error: "Failed to retrieve master meter brands",
         details: error.message,
       });
     }

@@ -8,7 +8,6 @@ const CustomerMeters = require("../../models/CustomerMeters")(
   sequelize,
   Sequelize
 );
-const Reports = require("../../models/Reports")(sequelize, Sequelize);
 
 CustomerBilling.sync({ force: false });
 exports.createCustomerBilling = (CustomerBillingData) => {
@@ -284,7 +283,6 @@ exports.findCharts = (year) => {
             EXTRACT(MONTH FROM "Period");
         `
       );
-
       const [Water, wrmeta] = await sequelize.query(
         `SELECT
             to_char("Period", 'Mon') AS month,
@@ -301,7 +299,6 @@ exports.findCharts = (year) => {
             EXTRACT(MONTH FROM "Period");
         `
       );
-
       const [ZoneWater, zwrmeta] = await sequelize.query(
         `SELECT
           "Zone" AS name,
@@ -314,7 +311,6 @@ exports.findCharts = (year) => {
       ORDER BY "Zone"::int ASC; 
       `
       );
-
       const [ZoneSewer, swrmeta] = await sequelize.query(
         `SELECT
           "Zone" AS name,
@@ -340,7 +336,6 @@ exports.findCharts = (year) => {
       ORDER BY "Sub_Zone" ASC; 
       `
       );
-
       const [SubZoneSewer, sswrmeta] = await sequelize.query(
         `SELECT
           "Sub_Zone" AS name,
@@ -353,7 +348,6 @@ exports.findCharts = (year) => {
       ORDER BY "Sub_Zone" ASC; 
       `
       );
-
       const [Estimate, ewrmeta] = await sequelize.query(
         `SELECT
           "Est" AS label,
@@ -367,115 +361,6 @@ exports.findCharts = (year) => {
       `
       );
 
-      // Customer meter statistics by month and status
-      const [customerMeterStats] = await sequelize.query(
-        `
-        WITH months AS (
-          SELECT generate_series(1, 12) AS month
-        ),
-        meter_status AS (
-          SELECT 
-            EXTRACT(MONTH FROM "CreatedAt") as month,
-            COUNT(CASE WHEN "Status" = 'Active' THEN 1 END) as active,
-            COUNT(CASE WHEN "Status" = 'Abandoned' THEN 1 END) as abandoned,
-            COUNT(CASE WHEN "Status" = 'Dormant' THEN 1 END) as dormant,
-            COUNT(CASE WHEN "Status" = 'Dilapidated' THEN 1 END) as dilapidated
-          FROM "CustomerMeters"
-          WHERE EXTRACT(YEAR FROM "CreatedAt") = :year
-          GROUP BY EXTRACT(MONTH FROM "CreatedAt")
-        )
-        SELECT 
-          m.month,
-          COALESCE(ms.active, 0) as active,
-          COALESCE(ms.abandoned, 0) as abandoned,
-          COALESCE(ms.dormant, 0) as dormant,
-          COALESCE(ms.dilapidated, 0) as dilapidated
-        FROM months m
-        LEFT JOIN meter_status ms ON m.month = ms.month
-        ORDER BY m.month;
-      `,
-        {
-          replacements: { year },
-          type: Sequelize.QueryTypes.SELECT,
-        }
-      );
-
-      // Transform customer meter data into arrays for each status
-      const customerMeterData = {
-        active: Array(12).fill(0),
-        abandoned: Array(12).fill(0),
-        dormant: Array(12).fill(0),
-        dilapidated: Array(12).fill(0),
-      };
-
-      if (Array.isArray(customerMeterStats)) {
-        customerMeterStats.forEach((stat) => {
-          if (
-            stat &&
-            typeof stat.month === "number" &&
-            stat.month >= 1 &&
-            stat.month <= 12
-          ) {
-            const monthIndex = stat.month - 1;
-            customerMeterData.active[monthIndex] = parseInt(stat.active || 0);
-            customerMeterData.abandoned[monthIndex] = parseInt(
-              stat.abandoned || 0
-            );
-            customerMeterData.dormant[monthIndex] = parseInt(stat.dormant || 0);
-            customerMeterData.dilapidated[monthIndex] = parseInt(
-              stat.dilapidated || 0
-            );
-          }
-        });
-      }
-
-      // First check the table structure
-      const [columns] = await sequelize.query(
-        `
-        SELECT column_name, data_type 
-        FROM information_schema.columns 
-        WHERE table_name = 'CustomerMeters';
-      `,
-        {
-          type: Sequelize.QueryTypes.SELECT,
-          logging: console.log,
-        }
-      );
-
-      console.log("Available columns:", columns);
-
-      // Check sample data
-      const [sampleRow] = await sequelize.query(
-        `
-        SELECT * FROM "CustomerMeters" LIMIT 1;
-      `,
-        {
-          type: Sequelize.QueryTypes.SELECT,
-          logging: console.log,
-        }
-      );
-
-      console.log("Sample data:", sampleRow);
-
-      // Get meter types statistics with potential alternative column names
-      const [meterTypes] = await sequelize.query(
-        `
-        SELECT 
-          COALESCE("MeterTypes", "MeterType", "Meter_Type", "Type") as type,
-          COUNT(*)::int as count
-        FROM "CustomerMeters"
-        WHERE COALESCE("MeterTypes", "MeterType", "Meter_Type", "Type") IS NOT NULL
-        GROUP BY COALESCE("MeterTypes", "MeterType", "Meter_Type", "Type")
-        ORDER BY count DESC;
-      `,
-        {
-          type: Sequelize.QueryTypes.SELECT,
-          logging: console.log,
-        }
-      );
-
-      console.log("Meter Types Query Result:", meterTypes);
-
       resolve({
         Month,
         Water,
@@ -484,96 +369,49 @@ exports.findCharts = (year) => {
         SubZoneWater,
         SubZoneSewer,
         Estimate,
-        customerMeterStats: customerMeterData,
-        meterTypes: meterTypes || [],
       });
     } catch (error) {
-      console.error("Charts Error:", error);
-      resolve({
-        Month: [],
-        Water: [],
-        ZoneWater: [],
-        ZoneSewer: [],
-        SubZoneWater: [],
-        SubZoneSewer: [],
-        Estimate: [],
-        customerMeterStats: {
-          active: Array(12).fill(0),
-          abandoned: Array(12).fill(0),
-          dormant: Array(12).fill(0),
-          dilapidated: Array(12).fill(0),
-        },
-        meterTypes: [],
-      });
+      reject(null);
     }
   });
-};
-
-exports.getCharts = (year) => {
-  return this.findCharts(year);
 };
 
 exports.findStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      // Total Customers (from CustomerMeters)
-      const [totalCustomers] = await sequelize.query(
-        `SELECT COUNT(*)::int AS total FROM "CustomerMeters"`
+      const [Total, metadata] = await sequelize.query(
+        `SELECT Sum("m_Total")::float AS total FROM "CustomerBillings"`
       );
-
-      // Total O&M Incidents (from Reports)
-      const [totalIncidents] = await sequelize.query(
-        `SELECT COUNT(*)::int AS total FROM "Reports"`
+      const [Sewer, swmetadata] = await sequelize.query(
+        `SELECT Sum("Sewer")::float AS total FROM "CustomerBillings"`
       );
-
-      // Sewered vs Non-Sewered Customers
-      const [seweredStats] = await sequelize.query(
-        `SELECT 
-          COUNT(CASE WHEN "Sewered" = 'true' THEN 1 END)::int AS sewered,
-          COUNT(CASE WHEN "Sewered" = 'false' OR "Sewered" IS NULL THEN 1 END)::int AS unsewered
-        FROM "CustomerMeters"`
+      const [Water, wrmeta] = await sequelize.query(
+        `SELECT Sum("Water")::float AS total FROM "CustomerBillings"`
       );
-
-      // NRW Ratio calculation
-      const [nrwRatio] = await sequelize.query(
-        `SELECT 
-          ROUND(
-            (("SystemInput" - "BilledConsumption") / NULLIF("SystemInput", 0) * 100)::numeric, 
-            2
-          ) as ratio
-        FROM (
-          SELECT 
-            COALESCE(SUM("Reading"), 0) as "SystemInput",
-            COALESCE(SUM("BilledConsumption"), 0) as "BilledConsumption"
-          FROM "ProductionMeterReadings"
-          WHERE DATE_TRUNC('month', "ReadingDate") = DATE_TRUNC('month', CURRENT_DATE)
-        ) AS CurrentMonth`
+      const [Customers, csmeta] = await sequelize.query(
+        `SELECT Count(DISTINCT "Acc_No")::float AS total FROM "CustomerBillings"`
+      );
+      const [Arrears, armeta] = await sequelize.query(
+        `SELECT SUM(cb."Arrears")::float AS total
+            FROM "CustomerBillings" cb
+            INNER JOIN (
+                SELECT "Acc_No", MAX("Period") AS latest_period
+                FROM "CustomerBillings"
+                GROUP BY "Acc_No"
+            ) latest_cb
+            ON cb."Acc_No" = latest_cb."Acc_No" AND cb."Period" = latest_cb."latest_period";
+            `
       );
 
       resolve({
-        totalCustomers: totalCustomers[0]?.total || 0,
-        totalIncidents: totalIncidents[0]?.total || 0,
-        seweredStats: {
-          sewered: seweredStats[0]?.sewered || 0,
-          unsewered: seweredStats[0]?.unsewered || 0,
-          total:
-            (seweredStats[0]?.sewered || 0) + (seweredStats[0]?.unsewered || 0),
-        },
-        nrwRatio: nrwRatio[0]?.ratio || 0,
+        Total: Total[0].total,
+        Sewer: Sewer[0].total,
+        Water: Water[0].total,
+        Customers: Customers[0].total,
+        Arrears: Arrears[0].total,
       });
     } catch (error) {
-      console.error("Stats Error:", error);
-      // Return default values on error
-      resolve({
-        totalCustomers: 0,
-        totalIncidents: 0,
-        seweredStats: {
-          sewered: 0,
-          unsewered: 0,
-          total: 0,
-        },
-        nrwRatio: 0,
-      });
+      reject({ error: "Retrieve failed!" });
     }
   });
 };

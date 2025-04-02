@@ -289,6 +289,115 @@ exports.getGeoJSON = () => {
   });
 };
 
+exports.getSummaryStats = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Total Customers (from CustomerMeters)
+      const [totalCustomers] = await sequelize.query(
+        `SELECT COUNT(*)::int AS total FROM "CustomerMeters"`
+      );
+
+      // Total O&M Incidents (from Reports)
+      const [totalIncidents] = await sequelize.query(
+        `SELECT COUNT(*)::int AS total FROM "Reports"`
+      );
+
+      // Sewered vs Non-Sewered Customers
+      const [seweredStats] = await sequelize.query(
+        `SELECT 
+          COUNT(CASE WHEN "Sewered" = 'Yes' THEN 1 END)::int AS sewered,
+          COUNT(CASE WHEN "Sewered" = 'No' OR "Sewered" IS NULL THEN 1 END)::int AS unsewered
+        FROM "CustomerMeters"`
+      );
+
+      // NRW Ratio calculation
+      const [nrwRatio] = await sequelize.query(`
+        WITH customer_stats AS (
+          SELECT 
+            COUNT(*)::int AS total_customers,
+            COALESCE(SUM(
+              (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+            ), 0)::numeric AS customer_consumption
+          FROM "NRWMeterReadings"
+          WHERE "deletedAt" IS NULL 
+          AND "MeterType" = 'Customer Meter'
+          AND "FirstReadingDate"::Date >= CURRENT_DATE - INTERVAL '30 days'
+        ),
+        master_readings AS (
+          SELECT 
+            "DMAName",
+            (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric) as consumption
+          FROM "NRWMeterReadings"
+          WHERE "MeterType" = 'Master Meter'
+          AND "FirstReadingDate"::Date >= CURRENT_DATE - INTERVAL '30 days'
+          AND "deletedAt" IS NULL
+        ),
+        master_meter_stats AS (
+          SELECT COALESCE(SUM(
+            CASE 
+              WHEN "MeterType" = 'Master Meter' THEN
+                CASE 
+                  WHEN "DMAName" = 'Makanja 1' THEN
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Makanja 1'
+                    ), 0) -
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Makanja 2'
+                    ), 0) -
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 1'
+                    ), 0) -
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 2'
+                    ), 0)
+                  WHEN "DMAName" = 'Samaki 1' THEN
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 1'
+                    ), 0) -
+                    COALESCE((
+                      SELECT consumption FROM master_readings WHERE "DMAName" = 'Samaki 2'
+                    ), 0)
+                  WHEN "DMAName" IN ('Makanja 2', 'Samaki 2') THEN
+                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                  ELSE
+                    (REPLACE("SecondReading", ' ', '')::numeric - REPLACE("FirstReading", ' ', '')::numeric)
+                END
+              ELSE 0
+            END
+          ), 0)::numeric AS master_consumption
+          FROM "NRWMeterReadings"
+          WHERE "deletedAt" IS NULL 
+          AND "FirstReadingDate"::Date >= CURRENT_DATE - INTERVAL '30 days'
+        )
+        SELECT 
+          CASE 
+            WHEN ms.master_consumption > 0 THEN
+              ROUND(((ms.master_consumption - cs.customer_consumption) / ms.master_consumption * 100)::numeric, 2)
+            ELSE 0
+          END AS ratio
+        FROM customer_stats cs
+        CROSS JOIN master_meter_stats ms
+      `);
+
+      const result = {
+        totalCustomers: totalCustomers[0]?.total || 0,
+        totalIncidents: totalIncidents[0]?.total || 0,
+        seweredStats: {
+          sewered: seweredStats[0]?.sewered || 0,
+          unsewered: seweredStats[0]?.unsewered || 0,
+          total:
+            (seweredStats[0]?.sewered || 0) + (seweredStats[0]?.unsewered || 0),
+        },
+        nrwRatio: nrwRatio[0]?.ratio || 0,
+      };
+      resolve(result);
+    } catch (error) {
+      console.error("Stats Error:", error);
+      reject(error); // Changed to reject instead of resolve with defaults
+    }
+  });
+};
+
 exports.getStats = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -367,22 +476,71 @@ exports.findCharts = () => {
 exports.getMeterTypes = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [meterTypes] = await sequelize.query(`
+      const meterTypes = await sequelize.query(
+        `
         SELECT 
-          "Type" as type,
-          COUNT(*)::int as count
+          COALESCE("MeterType", 'Unknown') as name,
+          COUNT(*)::int as value
         FROM "CustomerMeters"
-        WHERE "Type" IS NOT NULL
-        GROUP BY "Type"
-        ORDER BY count DESC;
-      `, {
-        type: Sequelize.QueryTypes.SELECT
-      });
+        GROUP BY "MeterType"
+        ORDER BY value DESC
+      `,
+        {
+          type: sequelize.QueryTypes.SELECT,
+          raw: true,
+        }
+      );
 
-      resolve(meterTypes || []);
+      console.log("Meter types query result:", meterTypes);
+      resolve(meterTypes); // Should already be an array
     } catch (error) {
-      console.error("Error getting meter types:", error);
-      resolve([]);
+      console.error("Meter Types Error:", error);
+      reject({
+        error: "Failed to retrieve meter types",
+        details: error.message,
+      });
+    }
+  });
+};
+
+exports.getMeterStatus = (year = new Date().getFullYear()) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const meterStatus = await sequelize.query(
+        `
+        WITH months AS (
+          SELECT generate_series(
+            make_date($1, 1, 1),
+            make_date($1, 12, 31),
+            interval '1 month'
+          )::date AS month
+        )
+        SELECT 
+          to_char(m.month, 'Mon') as month,
+          COALESCE(SUM(CASE WHEN cm."Status" = 'Dilapidated' THEN 1 ELSE 0 END), 0) as "Dilapidated",
+          COALESCE(SUM(CASE WHEN cm."Status" = 'Abandoned' THEN 1 ELSE 0 END), 0) as "Abandoned",
+          COALESCE(SUM(CASE WHEN cm."Status" = 'Dormant' THEN 1 ELSE 0 END), 0) as "Dormant",
+          COALESCE(SUM(CASE WHEN cm."Status" = 'Active' THEN 1 ELSE 0 END), 0) as "Active"
+        FROM months m
+        LEFT JOIN "CustomerMeters" cm ON 
+          date_trunc('month', cm."createdAt") = m.month
+        GROUP BY m.month
+        ORDER BY m.month ASC
+      `,
+        {
+          type: sequelize.QueryTypes.SELECT,
+          bind: [year],
+        }
+      );
+
+      console.log("Meter status query result:", meterStatus);
+      resolve(meterStatus);
+    } catch (error) {
+      console.error("Meter Status Error:", error);
+      reject({
+        error: "Failed to retrieve meter status",
+        details: error.message,
+      });
     }
   });
 };

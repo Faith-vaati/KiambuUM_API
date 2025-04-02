@@ -175,12 +175,50 @@ exports.findCharts = (req, res) => {
   );
 };
 
-exports.getMeterTypes = async (req, res) => {
-  try {
-    const meterTypes = await CustomerModel.getMeterTypes();
-    res.status(200).json(meterTypes);
-  } catch (error) {
-    console.error("Failed to get meter types:", error);
-    res.status(500).json({ error: "Failed to get meter types" });
-  }
+exports.getMeterTypes = (req, res) => {
+  CustomerModel.getMeterTypes()
+    .then((result) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(result || []);
+    })
+    .catch((err) => {
+      console.error("Get meter types error:", err);
+      res.setHeader("Content-Type", "application/json");
+      res.status(203).json({
+        error: err.error || "Failed to retrieve meter types",
+        details: err.details || err.message,
+      });
+    });
+};
+
+exports.getSummaryStats = (req, res) => {
+  console.log("getSummaryStats controller called");
+  CustomerModel.getSummaryStats().then(
+    (result) => {
+      console.log("Summary stats result:", result);
+      res.status(200).send(result);
+    },
+    (err) => {
+      console.error("Summary stats error:", err);
+      res.status(203).send(err);
+    }
+  );
+};
+
+exports.getMeterStatus = (req, res) => {
+  const year = parseInt(req.query.year) || new Date().getFullYear();
+
+  CustomerModel.getMeterStatus(year)
+    .then((result) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(result || []);
+    })
+    .catch((err) => {
+      console.error("Get meter status error:", err);
+      res.setHeader("Content-Type", "application/json");
+      res.status(400).json({
+        error: err.error || "Failed to retrieve meter status",
+        details: err.details || err.message,
+      });
+    });
 };
